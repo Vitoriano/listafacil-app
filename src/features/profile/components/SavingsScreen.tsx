@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { AppHeader } from '@/shared/components/AppHeader';
 import { EmptyState } from '@/shared/components/EmptyState';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { formatDate } from '@/shared/utils/formatDate';
 import { logger } from '@/shared/utils/logger';
@@ -13,6 +14,7 @@ import type { MonthlySaving, RecentPurchase } from '@/features/auth/types';
 
 export function SavingsScreen() {
   const router = useRouter();
+  const colors = useThemeColors();
   const { data: savings, isLoading } = useSavings();
 
   function handleBack() {
@@ -107,7 +109,7 @@ export function SavingsScreen() {
                         {formatCurrency(item.total)}
                       </Text>
                       <View className="flex-row items-center gap-1">
-                        <Ionicons name="trending-down" size={12} color="#05966A" />
+                        <Ionicons name="trending-down" size={12} color={colors.success} />
                         <Text className="text-xs font-bold text-success-600">
                           -{formatCurrency(item.savings)}
                         </Text>

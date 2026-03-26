@@ -67,7 +67,26 @@ export class MockProductRepository implements IProductRepository {
   async searchByBarcode(barcode: string): Promise<Product | null> {
     await simulateDelay();
     const results = this.store.filter((p) => p.barcode === barcode);
-    return results[0] ?? null;
+    if (results[0]) return results[0];
+
+    // Mock: gera um produto para qualquer barcode escaneado (simula backend)
+    const mockProduct: Product = {
+      id: `prod-scan-${barcode}`,
+      name: `Produto ${barcode.slice(-4)}`,
+      brand: 'Marca Genérica',
+      barcode,
+      category: 'other',
+      unit: 'un',
+      imageUrl: null,
+      averagePrice: 9.9 + Math.random() * 20,
+      lowestPrice: 5.9 + Math.random() * 10,
+      priceCount: Math.floor(Math.random() * 5) + 1,
+      createdAt: new Date().toISOString(),
+    };
+    mockProduct.averagePrice = Math.round(mockProduct.averagePrice * 100) / 100;
+    mockProduct.lowestPrice = Math.round(mockProduct.lowestPrice * 100) / 100;
+    this.store.create(mockProduct);
+    return mockProduct;
   }
 
   async search(query: string): Promise<Product[]> {

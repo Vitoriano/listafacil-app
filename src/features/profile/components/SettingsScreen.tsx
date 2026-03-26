@@ -2,11 +2,13 @@ import React from 'react';
 import { Platform, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { logger } from '@/shared/utils/logger';
 import { useAuthStore } from '@/features/auth/stores/authStore';
 
 export function SettingsScreen() {
   const router = useRouter();
+  const colors = useThemeColors();
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const user = useAuthStore((state) => state.user);
 
@@ -21,7 +23,7 @@ export function SettingsScreen() {
   return (
     <View className="flex-1 bg-background-50" style={{ paddingTop: androidPadding }}>
       {/* Header */}
-      <View className="bg-background-0 border-b border-outline-100 px-4 pb-3 pt-4">
+      <View className="bg-background-0 px-5 pb-3 pt-4">
         <Text className="text-2xl font-bold text-typography-900">Configuracoes</Text>
       </View>
 
@@ -55,12 +57,12 @@ export function SettingsScreen() {
         >
           <View className="flex-row items-center gap-3">
             <View className="h-10 w-10 items-center justify-center rounded-full bg-error-50">
-              <Ionicons name="log-out-outline" size={20} color="#C41C1C" />
+              <Ionicons name="log-out-outline" size={20} color={colors.error} />
             </View>
             <Text className="flex-1 text-sm font-bold text-error-600">
               Sair da Conta
             </Text>
-            <Ionicons name="chevron-forward" size={18} color="#C8C8C8" />
+            <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
           </View>
         </TouchableOpacity>
       </View>

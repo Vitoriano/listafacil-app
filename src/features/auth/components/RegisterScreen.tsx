@@ -13,12 +13,14 @@ import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { logger } from '@/shared/utils/logger';
 import { useAuth } from '../hooks/useAuth';
 import { registerSchema, type RegisterFormData } from '../schemas/registerSchema';
 
 export function RegisterScreen() {
   const router = useRouter();
+  const colors = useThemeColors();
   const { register } = useAuth();
 
   const {
@@ -70,8 +72,8 @@ export function RegisterScreen() {
         <View className="gap-8">
           {/* Title */}
           <View className="items-center gap-3">
-            <View className="h-16 w-16 items-center justify-center rounded-2xl bg-primary-500">
-              <Ionicons name="person-add" size={32} color="#FFFFFF" />
+            <View className="h-16 w-16 items-center justify-center rounded-full bg-primary-500">
+              <Ionicons name="person-add" size={32} color={colors.white} />
             </View>
             <Text className="text-3xl font-bold text-typography-900">
               Criar Conta
@@ -93,11 +95,11 @@ export function RegisterScreen() {
                   name={field.name}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      className={`rounded-xl border bg-background-50 px-4 py-3.5 text-sm text-typography-900 ${
+                      className={`rounded-2xl border bg-background-50 px-4 py-3.5 text-sm text-typography-900 ${
                         errors[field.name] ? 'border-error-500' : 'border-outline-200'
                       }`}
                       placeholder={field.placeholder}
-                      placeholderTextColor="#A8A8A8"
+                      placeholderTextColor={colors.textQuaternary}
                       keyboardType={field.keyboardType}
                       autoCapitalize={field.autoCapitalize}
                       autoComplete={field.autoComplete}

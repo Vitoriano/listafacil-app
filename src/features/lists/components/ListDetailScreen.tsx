@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { AppHeader } from '@/shared/components/AppHeader';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { logger } from '@/shared/utils/logger';
 import { productRepository } from '@/data/repositories';
@@ -30,6 +31,7 @@ export function ListDetailScreen() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
 
+  const colors = useThemeColors();
   const { searchQuery, setSearchQuery, reset: resetEditor } = useListEditorStore();
 
   const { data: list, isLoading } = useListDetail(id ?? null);
@@ -128,7 +130,7 @@ export function ListDetailScreen() {
             accessibilityRole="button"
             accessibilityLabel="Compartilhar lista"
           >
-            <Ionicons name="share-outline" size={20} color="#EA1D2C" />
+            <Ionicons name="share-outline" size={20} color={colors.primary} />
           </TouchableOpacity>
         }
       />
@@ -155,7 +157,7 @@ export function ListDetailScreen() {
                 className="flex-row items-center justify-center gap-2 rounded-full border-2 border-primary-500 py-3.5"
                 activeOpacity={0.7}
               >
-                <Ionicons name="add-circle-outline" size={20} color="#EA1D2C" />
+                <Ionicons name="add-circle-outline" size={20} color={colors.primary} />
                 <Text className="text-sm font-bold text-primary-500">
                   Adicionar Item
                 </Text>
@@ -168,7 +170,7 @@ export function ListDetailScreen() {
                 className="flex-row items-center justify-center gap-2 rounded-full bg-primary-500 py-4"
                 activeOpacity={0.8}
               >
-                <Ionicons name="flash" size={20} color="#FFFFFF" />
+                <Ionicons name="flash" size={20} color={colors.white} />
                 <Text className="text-sm font-bold text-white">
                   Otimizar Compras
                 </Text>
@@ -193,7 +195,7 @@ export function ListDetailScreen() {
                   activeOpacity={0.7}
                 >
                   {item.checked ? (
-                    <Ionicons name="checkmark" size={14} color="#FFFFFF" />
+                    <Ionicons name="checkmark" size={14} color={colors.white} />
                   ) : null}
                 </TouchableOpacity>
 
@@ -224,7 +226,7 @@ export function ListDetailScreen() {
                   className="mt-2 h-7 w-7 items-center justify-center rounded-full bg-error-50"
                   activeOpacity={0.7}
                 >
-                  <Ionicons name="trash-outline" size={14} color="#C41C1C" />
+                  <Ionicons name="trash-outline" size={14} color={colors.error} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -244,11 +246,11 @@ export function ListDetailScreen() {
 
           <View className="px-4 py-3">
             <View className="flex-row items-center rounded-xl bg-background-100 px-3">
-              <Ionicons name="search" size={18} color="#A8A8A8" />
+              <Ionicons name="search" size={18} color={colors.textQuaternary} />
               <TextInput
                 className="ml-2 flex-1 py-3 text-sm text-typography-900"
                 placeholder="Buscar produtos..."
-                placeholderTextColor="#A8A8A8"
+                placeholderTextColor={colors.textQuaternary}
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 accessibilityLabel="Buscar produtos"
@@ -287,7 +289,7 @@ export function ListDetailScreen() {
                           {formatCurrency(item.lowestPrice)}
                         </Text>
                         <View className="h-7 w-7 items-center justify-center rounded-full bg-primary-500">
-                          <Ionicons name="add" size={16} color="#FFFFFF" />
+                          <Ionicons name="add" size={16} color={colors.white} />
                         </View>
                       </View>
                     </View>

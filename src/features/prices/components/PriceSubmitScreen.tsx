@@ -14,6 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { AppHeader } from '@/shared/components/AppHeader';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { logger } from '@/shared/utils/logger';
 import { storeRepository } from '@/data/repositories';
 import { useSubmitPrice } from '../hooks/useSubmitPrice';
@@ -26,6 +27,7 @@ export function PriceSubmitScreen() {
   const [stores, setStores] = useState<Store[]>([]);
   const [loadingStores, setLoadingStores] = useState(true);
 
+  const colors = useThemeColors();
   const {
     control,
     handleSubmit,
@@ -114,7 +116,7 @@ export function PriceSubmitScreen() {
                       : 'border-outline-300'
                   }`}>
                     {selectedStoreId === store.id ? (
-                      <Ionicons name="checkmark" size={12} color="#FFFFFF" />
+                      <Ionicons name="checkmark" size={12} color={colors.white} />
                     ) : null}
                   </View>
                   <View className="flex-1">
@@ -155,7 +157,7 @@ export function PriceSubmitScreen() {
                     errors.price ? 'border-error-500' : 'border-outline-200'
                   }`}
                   placeholder="0,00"
-                  placeholderTextColor="#A8A8A8"
+                  placeholderTextColor={colors.textQuaternary}
                   keyboardType="decimal-pad"
                   onBlur={onBlur}
                   onChangeText={(text) => {
@@ -185,7 +187,7 @@ export function PriceSubmitScreen() {
             accessibilityLabel="Enviar Preco"
             activeOpacity={0.8}
           >
-            <Ionicons name="send" size={18} color="#FFFFFF" />
+            <Ionicons name="send" size={18} color={colors.white} />
             <Text className="text-sm font-bold text-white">
               {isPending ? 'Enviando...' : 'Enviar Preco'}
             </Text>

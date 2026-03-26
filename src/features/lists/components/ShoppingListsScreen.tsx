@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { EmptyState } from '@/shared/components/EmptyState';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { formatDate } from '@/shared/utils/formatDate';
 import { logger } from '@/shared/utils/logger';
@@ -13,6 +14,7 @@ import type { ShoppingList } from '../types';
 
 export function ShoppingListsScreen() {
   const router = useRouter();
+  const colors = useThemeColors();
   const { data: lists, isLoading } = useLists();
   const { mutate: deleteList } = useDeleteList();
 
@@ -45,7 +47,7 @@ export function ShoppingListsScreen() {
   return (
     <View className="flex-1 bg-background-50" style={{ paddingTop: androidPadding }}>
       {/* Header */}
-      <View className="bg-background-0 border-b border-outline-100 px-4 pb-3 pt-4">
+      <View className="bg-background-0 px-5 pb-3 pt-4">
         <View className="flex-row items-center justify-between">
           <Text className="text-2xl font-bold text-typography-900">
             Minhas Listas
@@ -58,7 +60,7 @@ export function ShoppingListsScreen() {
               className="h-10 w-10 items-center justify-center rounded-full bg-background-50"
               activeOpacity={0.7}
             >
-              <Ionicons name="qr-code-outline" size={20} color="#323232" />
+              <Ionicons name="qr-code-outline" size={20} color={colors.icon} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleCreateList}
@@ -67,7 +69,7 @@ export function ShoppingListsScreen() {
               className="flex-row items-center gap-1.5 rounded-full bg-primary-500 px-4 py-2.5"
               activeOpacity={0.8}
             >
-              <Ionicons name="add" size={18} color="#FFFFFF" />
+              <Ionicons name="add" size={18} color={colors.white} />
               <Text className="text-xs font-bold text-white">Nova Lista</Text>
             </TouchableOpacity>
           </View>
@@ -94,7 +96,7 @@ export function ShoppingListsScreen() {
                     {item.name}
                   </Text>
                   <View className="mt-1 flex-row items-center gap-1">
-                    <Ionicons name="cart-outline" size={13} color="#7D7D7D" />
+                    <Ionicons name="cart-outline" size={13} color={colors.textTertiary} />
                     <Text className="text-xs text-typography-500">
                       {item.itemCount}{' '}
                       {item.itemCount === 1 ? 'item' : 'itens'}
@@ -115,7 +117,7 @@ export function ShoppingListsScreen() {
                     className="mt-2 flex-row items-center gap-1 rounded-full bg-error-50 px-3 py-1.5"
                     activeOpacity={0.7}
                   >
-                    <Ionicons name="trash-outline" size={12} color="#C41C1C" />
+                    <Ionicons name="trash-outline" size={12} color={colors.error} />
                     <Text className="text-xs font-semibold text-error-600">
                       Excluir
                     </Text>

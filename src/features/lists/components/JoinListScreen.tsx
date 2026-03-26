@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { EmptyState } from '@/shared/components/EmptyState';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { useJoinByInvite } from '../hooks/useShareList';
 import { useInvite } from '../hooks/useInvite';
 import { useScanner } from '@/features/scanner/hooks/useScanner';
@@ -20,6 +21,7 @@ export function JoinListScreen() {
     resumeScan,
   } = useScanner();
 
+  const colors = useThemeColors();
   const [inviteId, setInviteId] = useState<string | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -104,7 +106,7 @@ export function JoinListScreen() {
   return (
     <View className="flex-1 bg-black">
       <CameraView
-        className="flex-1"
+        style={{ flex: 1 }}
         facing="back"
         barcodeScannerSettings={{
           barcodeTypes: ['qr'],
@@ -124,7 +126,7 @@ export function JoinListScreen() {
           accessibilityRole="button"
           accessibilityLabel="Voltar"
         >
-          <Ionicons name="chevron-back" size={22} color="#FFFFFF" />
+          <Ionicons name="chevron-back" size={22} color={colors.white} />
         </TouchableOpacity>
         <Text className="ml-3 text-lg font-bold text-white">
           Escanear Convite
@@ -166,7 +168,7 @@ export function JoinListScreen() {
             <View>
               <View className="mb-4 flex-row items-center gap-3">
                 <View className="h-12 w-12 items-center justify-center rounded-full bg-primary-50">
-                  <Ionicons name="list" size={22} color="#EA1D2C" />
+                  <Ionicons name="list" size={22} color={colors.primary} />
                 </View>
                 <View className="flex-1">
                   <Text className="text-lg font-bold text-typography-900">
@@ -180,14 +182,14 @@ export function JoinListScreen() {
 
               <View className="mb-4 flex-row gap-3">
                 <View className="flex-1 items-center rounded-xl bg-background-50 py-3">
-                  <Ionicons name="create-outline" size={16} color="#05966A" />
+                  <Ionicons name="create-outline" size={16} color={colors.success} />
                   <Text className="mt-1 text-xs font-semibold text-typography-700">
                     {invite.role === 'editor' ? 'Editor' : 'Leitor'}
                   </Text>
                   <Text className="text-xs text-typography-400">Permissao</Text>
                 </View>
                 <View className="flex-1 items-center rounded-xl bg-background-50 py-3">
-                  <Ionicons name="people-outline" size={16} color="#2563EB" />
+                  <Ionicons name="people-outline" size={16} color={colors.info} />
                   <Text className="mt-1 text-xs font-semibold text-typography-700">
                     Colaborativa
                   </Text>
@@ -209,7 +211,7 @@ export function JoinListScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="Entrar na lista"
               >
-                <Ionicons name="log-in-outline" size={20} color="#FFFFFF" />
+                <Ionicons name="log-in-outline" size={20} color={colors.white} />
                 <Text className="text-sm font-bold text-white">
                   {joinByInvite.isPending ? 'Entrando...' : 'Entrar na Lista'}
                 </Text>
@@ -227,7 +229,7 @@ export function JoinListScreen() {
             </View>
           ) : (
             <View className="items-center py-6">
-              <Ionicons name="alert-circle-outline" size={40} color="#C41C1C" />
+              <Ionicons name="alert-circle-outline" size={40} color={colors.error} />
               <Text className="mt-2 text-sm font-bold text-typography-900">
                 Convite Invalido
               </Text>

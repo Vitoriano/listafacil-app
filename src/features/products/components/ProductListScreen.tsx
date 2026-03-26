@@ -3,6 +3,7 @@ import { FlatList, Platform, StatusBar, Text, TextInput, TouchableOpacity, View 
 import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { EmptyState } from '@/shared/components/EmptyState';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { logger } from '@/shared/utils/logger';
 import { PAGINATION_LIMIT } from '@/config/constants';
@@ -36,6 +37,7 @@ const SORT_OPTIONS: { label: string; value: 'name' | 'price' | 'recent'; icon: k
 
 export function ProductListScreen() {
   const router = useRouter();
+  const colors = useThemeColors();
   const { search, category, sortBy, setSearch, setCategory, setSortBy } =
     useProductFilterStore();
 
@@ -90,16 +92,16 @@ export function ProductListScreen() {
   return (
     <View className="flex-1 bg-background-50" style={{ paddingTop: androidPadding }}>
       {/* Header */}
-      <View className="bg-background-0 px-4 pb-3 pt-4">
+      <View className="bg-background-0 px-5 pb-3 pt-4">
         <Text className="mb-3 text-2xl font-bold text-typography-900">Produtos</Text>
 
         {/* Search input */}
-        <View className="flex-row items-center rounded-xl bg-background-50 px-3">
-          <Ionicons name="search" size={18} color="#A8A8A8" />
+        <View className="flex-row items-center rounded-2xl bg-background-50 px-4">
+          <Ionicons name="search" size={18} color={colors.textQuaternary} />
           <TextInput
             className="ml-2 flex-1 py-3 text-sm text-typography-900"
             placeholder="Buscar por nome ou marca..."
-            placeholderTextColor="#A8A8A8"
+            placeholderTextColor={colors.textQuaternary}
             value={inputValue}
             onChangeText={handleSearchChange}
             accessibilityLabel="Buscar produtos"
@@ -107,7 +109,7 @@ export function ProductListScreen() {
           />
           {inputValue ? (
             <TouchableOpacity onPress={() => handleSearchChange('')} activeOpacity={0.7}>
-              <Ionicons name="close-circle" size={18} color="#A8A8A8" />
+              <Ionicons name="close-circle" size={18} color={colors.textQuaternary} />
             </TouchableOpacity>
           ) : null}
         </View>
@@ -132,7 +134,7 @@ export function ProductListScreen() {
                 <Ionicons
                   name={opt.icon}
                   size={14}
-                  color={sortBy === opt.value ? '#FFFFFF' : '#5A5A5A'}
+                  color={sortBy === opt.value ? colors.white : colors.textSecondary}
                 />
                 <Text
                   className={`text-xs font-semibold ${
@@ -148,13 +150,13 @@ export function ProductListScreen() {
       </View>
 
       {/* Category filter */}
-      <View className="bg-background-0 border-b border-outline-100 pb-3">
+      <View className="bg-background-0 pb-3">
         <FlatList
           horizontal
           data={CATEGORIES}
           keyExtractor={(item) => item.value ?? 'all'}
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 8, gap: 8 }}
+          contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, gap: 8 }}
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => handleCategorySelect(item.value)}

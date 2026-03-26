@@ -13,6 +13,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
 import { AppHeader } from '@/shared/components/AppHeader';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { useListDetail } from '../hooks/useListDetail';
 import { useListMembers } from '../hooks/useListMembers';
@@ -33,6 +34,7 @@ export function ShareListScreen() {
   const [email, setEmail] = useState('');
   const [qrValue, setQrValue] = useState<string | null>(null);
 
+  const colors = useThemeColors();
   const { data: list, isLoading: loadingList } = useListDetail(id ?? null);
   const { data: members, isLoading: loadingMembers } = useListMembers(id ?? null);
   const shareByEmail = useShareByEmail();
@@ -168,7 +170,7 @@ export function ShareListScreen() {
             {/* Email invite */}
             <View className="rounded-2xl bg-background-0 p-4">
               <View className="mb-3 flex-row items-center gap-2">
-                <Ionicons name="mail-outline" size={18} color="#323232" />
+                <Ionicons name="mail-outline" size={18} color={colors.icon} />
                 <Text className="text-sm font-bold text-typography-900">
                   Convidar por Email
                 </Text>
@@ -180,7 +182,7 @@ export function ShareListScreen() {
                 <TextInput
                   className="flex-1 rounded-xl border border-outline-200 bg-background-50 px-4 py-3 text-sm text-typography-900"
                   placeholder="email@exemplo.com"
-                  placeholderTextColor="#A8A8A8"
+                  placeholderTextColor={colors.textQuaternary}
                   value={email}
                   onChangeText={setEmail}
                   keyboardType="email-address"
@@ -216,7 +218,7 @@ export function ShareListScreen() {
             {/* QR Code */}
             <View className="rounded-2xl bg-background-0 p-4">
               <View className="mb-3 flex-row items-center gap-2">
-                <Ionicons name="qr-code-outline" size={18} color="#323232" />
+                <Ionicons name="qr-code-outline" size={18} color={colors.icon} />
                 <Text className="text-sm font-bold text-typography-900">
                   Compartilhar via QR Code
                 </Text>
@@ -231,7 +233,7 @@ export function ShareListScreen() {
                     <QRCode
                       value={qrValue}
                       size={200}
-                      color="#111111"
+                      color={colors.text}
                       backgroundColor="#FFFFFF"
                     />
                   </View>
@@ -253,7 +255,7 @@ export function ShareListScreen() {
                   className="mt-3 flex-row items-center gap-1.5"
                   activeOpacity={0.7}
                 >
-                  <Ionicons name="refresh" size={14} color="#EA1D2C" />
+                  <Ionicons name="refresh" size={14} color={colors.primary} />
                   <Text className="text-xs font-semibold text-primary-500">
                     Gerar novo codigo
                   </Text>
@@ -267,7 +269,7 @@ export function ShareListScreen() {
         {activeTab === 'members' ? (
           <View className="gap-3">
             <View className="flex-row items-center gap-2">
-              <Ionicons name="people" size={18} color="#323232" />
+              <Ionicons name="people" size={18} color={colors.icon} />
               <Text className="text-sm font-bold text-typography-900">
                 Membros da Lista
               </Text>
@@ -285,7 +287,7 @@ export function ShareListScreen() {
             ) : !members || members.length === 0 ? (
               <View className="items-center rounded-2xl bg-background-0 py-10">
                 <View className="mb-3 h-14 w-14 items-center justify-center rounded-full bg-background-100">
-                  <Ionicons name="people-outline" size={24} color="#7D7D7D" />
+                  <Ionicons name="people-outline" size={24} color={colors.textTertiary} />
                 </View>
                 <Text className="text-sm font-semibold text-typography-700">
                   Nenhum membro
@@ -330,7 +332,7 @@ export function ShareListScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={`Remover ${member.name}`}
                     >
-                      <Ionicons name="close" size={14} color="#C41C1C" />
+                      <Ionicons name="close" size={14} color={colors.error} />
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -343,7 +345,7 @@ export function ShareListScreen() {
         {activeTab === 'scan' ? (
           <View className="flex-1 items-center justify-center gap-5 py-10">
             <View className="h-20 w-20 items-center justify-center rounded-full bg-primary-50">
-              <Ionicons name="qr-code" size={40} color="#EA1D2C" />
+              <Ionicons name="qr-code" size={40} color={colors.primary} />
             </View>
             <View className="items-center">
               <Text className="text-lg font-bold text-typography-900">
@@ -360,7 +362,7 @@ export function ShareListScreen() {
               accessibilityRole="button"
               accessibilityLabel="Abrir camera para escanear"
             >
-              <Ionicons name="camera" size={20} color="#FFFFFF" />
+              <Ionicons name="camera" size={20} color={colors.white} />
               <Text className="text-sm font-bold text-white">
                 Abrir Camera
               </Text>

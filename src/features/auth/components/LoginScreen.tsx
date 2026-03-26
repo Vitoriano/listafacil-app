@@ -13,12 +13,14 @@ import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { logger } from '@/shared/utils/logger';
 import { useAuth } from '../hooks/useAuth';
 import { loginSchema, type LoginFormData } from '../schemas/loginSchema';
 
 export function LoginScreen() {
   const router = useRouter();
+  const colors = useThemeColors();
   const { login } = useAuth();
 
   const {
@@ -58,8 +60,8 @@ export function LoginScreen() {
         <View className="gap-8">
           {/* Logo & Title */}
           <View className="items-center gap-3">
-            <View className="h-16 w-16 items-center justify-center rounded-2xl bg-primary-500">
-              <Ionicons name="cart" size={32} color="#FFFFFF" />
+            <View className="h-16 w-16 items-center justify-center rounded-full bg-primary-500">
+              <Ionicons name="cart" size={32} color={colors.white} />
             </View>
             <Text className="text-3xl font-bold text-typography-900">
               Lista Facil
@@ -81,11 +83,11 @@ export function LoginScreen() {
                 name="email"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className={`rounded-xl border bg-background-50 px-4 py-3.5 text-sm text-typography-900 ${
+                    className={`rounded-2xl border bg-background-50 px-4 py-3.5 text-sm text-typography-900 ${
                       errors.email ? 'border-error-500' : 'border-outline-200'
                     }`}
                     placeholder="seu@email.com"
-                    placeholderTextColor="#A8A8A8"
+                    placeholderTextColor={colors.textQuaternary}
                     keyboardType="email-address"
                     autoCapitalize="none"
                     autoComplete="email"
@@ -113,11 +115,11 @@ export function LoginScreen() {
                 name="password"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className={`rounded-xl border bg-background-50 px-4 py-3.5 text-sm text-typography-900 ${
+                    className={`rounded-2xl border bg-background-50 px-4 py-3.5 text-sm text-typography-900 ${
                       errors.password ? 'border-error-500' : 'border-outline-200'
                     }`}
                     placeholder="******"
-                    placeholderTextColor="#A8A8A8"
+                    placeholderTextColor={colors.textQuaternary}
                     secureTextEntry
                     autoComplete="password"
                     onBlur={onBlur}

@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { AppHeader } from '@/shared/components/AppHeader';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { formatDate } from '@/shared/utils/formatDate';
 import { logger } from '@/shared/utils/logger';
@@ -17,6 +18,7 @@ export function PriceHistoryScreen() {
     storeId?: string;
   }>();
 
+  const colors = useThemeColors();
   const { data: history, isLoading } = usePriceHistory(
     productId ?? null,
     storeId ?? undefined,
@@ -81,7 +83,7 @@ export function PriceHistoryScreen() {
           accessibilityLabel="Voltar"
           activeOpacity={0.7}
         >
-          <Ionicons name="arrow-back" size={18} color="#EA1D2C" />
+          <Ionicons name="arrow-back" size={18} color={colors.primary} />
           <Text className="text-sm font-bold text-primary-500">
             Voltar
           </Text>

@@ -3,12 +3,14 @@ import { Platform, StatusBar, Text, TouchableOpacity, View } from 'react-native'
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { logger } from '@/shared/utils/logger';
 import { useProfile } from '../hooks/useProfile';
 
 export function ProfileScreen() {
   const router = useRouter();
+  const colors = useThemeColors();
   const { data: user, isLoading } = useProfile();
 
   function handleViewSavings() {
@@ -30,7 +32,7 @@ export function ProfileScreen() {
   return (
     <View className="flex-1 bg-background-50" style={{ paddingTop: androidPadding }}>
       {/* Header / Profile card */}
-      <View className="bg-background-0 border-b border-outline-100 px-4 pb-6 pt-4">
+      <View className="bg-background-0 px-5 pb-6 pt-4">
         <View className="items-center gap-3">
           {/* Avatar */}
           <View
@@ -55,7 +57,7 @@ export function ProfileScreen() {
       </View>
 
       {/* Stats */}
-      <View className="mx-4 mt-4 rounded-2xl bg-background-0 p-4">
+      <View className="mx-5 mt-4 rounded-2xl bg-background-0 p-4">
         <Text className="mb-3 text-sm font-bold text-typography-900">
           Estatisticas
         </Text>
@@ -83,7 +85,7 @@ export function ProfileScreen() {
       </View>
 
       {/* Actions */}
-      <View className="mx-4 mt-4 gap-3">
+      <View className="mx-5 mt-4 gap-3">
         <TouchableOpacity
           onPress={handleViewSavings}
           accessibilityRole="button"
@@ -93,7 +95,7 @@ export function ProfileScreen() {
         >
           <View className="flex-row items-center gap-3">
             <View className="h-10 w-10 items-center justify-center rounded-full bg-success-50">
-              <Ionicons name="trending-up" size={20} color="#05966A" />
+              <Ionicons name="trending-up" size={20} color={colors.success} />
             </View>
             <View className="flex-1">
               <Text className="text-sm font-bold text-typography-900">
@@ -103,7 +105,7 @@ export function ProfileScreen() {
                 Veja economia mensal e compras recentes
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={18} color="#C8C8C8" />
+            <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
           </View>
         </TouchableOpacity>
 
@@ -116,7 +118,7 @@ export function ProfileScreen() {
         >
           <View className="flex-row items-center gap-3">
             <View className="h-10 w-10 items-center justify-center rounded-full bg-background-100">
-              <Ionicons name="settings-outline" size={20} color="#5A5A5A" />
+              <Ionicons name="settings-outline" size={20} color={colors.textSecondary} />
             </View>
             <View className="flex-1">
               <Text className="text-sm font-bold text-typography-900">
@@ -126,7 +128,7 @@ export function ProfileScreen() {
                 Gerencie suas preferencias
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={18} color="#C8C8C8" />
+            <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
           </View>
         </TouchableOpacity>
       </View>

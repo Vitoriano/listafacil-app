@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { AppHeader } from '@/shared/components/AppHeader';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { formatDate } from '@/shared/utils/formatDate';
 import { logger } from '@/shared/utils/logger';
@@ -14,6 +15,7 @@ export function ProductDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
 
+  const colors = useThemeColors();
   const { data: product, isLoading } = useProductDetail(id ?? null);
 
   function handleBack() {
@@ -66,7 +68,7 @@ export function ProductDetailScreen() {
             className="mb-4 h-48 w-full items-center justify-center rounded-2xl bg-background-100"
             accessibilityLabel="Sem imagem disponivel"
           >
-            <Ionicons name="image-outline" size={48} color="#C8C8C8" />
+            <Ionicons name="image-outline" size={48} color={colors.textMuted} />
             <Text className="mt-2 text-xs text-typography-400">Sem imagem</Text>
           </View>
         )}
@@ -114,7 +116,7 @@ export function ProductDetailScreen() {
           </View>
 
           <View className="mt-3 flex-row items-center gap-1">
-            <Ionicons name="people-outline" size={14} color="#7D7D7D" />
+            <Ionicons name="people-outline" size={14} color={colors.textTertiary} />
             <Text className="text-xs text-typography-500">
               {product.priceCount}{' '}
               {product.priceCount === 1 ? 'contribuicao' : 'contribuicoes'}
@@ -170,7 +172,7 @@ export function ProductDetailScreen() {
             accessibilityLabel="Comparar Precos"
             activeOpacity={0.8}
           >
-            <Ionicons name="swap-horizontal" size={20} color="#FFFFFF" />
+            <Ionicons name="swap-horizontal" size={20} color={colors.white} />
             <Text className="text-sm font-bold text-white">Comparar Precos</Text>
           </TouchableOpacity>
 
@@ -181,7 +183,7 @@ export function ProductDetailScreen() {
             accessibilityLabel="Enviar Preco"
             activeOpacity={0.7}
           >
-            <Ionicons name="add-circle-outline" size={20} color="#EA1D2C" />
+            <Ionicons name="add-circle-outline" size={20} color={colors.primary} />
             <Text className="text-sm font-bold text-primary-500">
               Enviar Preco
             </Text>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
 import type { Product } from '@/features/products/types';
 
@@ -10,6 +11,8 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onPress }: ProductCardProps) {
+  const colors = useThemeColors();
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -47,7 +50,7 @@ export function ProductCard({ product, onPress }: ProductCardProps) {
               {formatCurrency(product.lowestPrice)}
             </Text>
             <View className="mt-1 flex-row items-center gap-1">
-              <Ionicons name="pricetag-outline" size={11} color="#7D7D7D" />
+              <Ionicons name="pricetag-outline" size={11} color={colors.textTertiary} />
               <Text className="text-xs text-typography-400">
                 {product.priceCount} {product.priceCount === 1 ? 'preco' : 'precos'}
               </Text>

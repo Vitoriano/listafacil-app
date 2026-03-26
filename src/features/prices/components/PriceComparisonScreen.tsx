@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { AppHeader } from '@/shared/components/AppHeader';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { formatDate } from '@/shared/utils/formatDate';
 import { logger } from '@/shared/utils/logger';
@@ -17,6 +18,7 @@ export function PriceComparisonScreen() {
   const { productId } = useLocalSearchParams<{ productId: string }>();
   const [validatingId, setValidatingId] = useState<string | null>(null);
 
+  const colors = useThemeColors();
   const { data: comparison, isLoading, refetch } = usePriceComparison(productId ?? null);
 
   function handleBack() {
@@ -84,7 +86,7 @@ export function PriceComparisonScreen() {
               </View>
             </View>
             <View className="mt-3 flex-row items-center gap-1">
-              <Ionicons name="storefront-outline" size={14} color="#7D7D7D" />
+              <Ionicons name="storefront-outline" size={14} color={colors.textTertiary} />
               <Text className="text-xs text-typography-500">
                 {comparison.storeCount}{' '}
                 {comparison.storeCount === 1 ? 'loja' : 'lojas'} reportando precos
@@ -117,7 +119,7 @@ export function PriceComparisonScreen() {
                       {formatDate(entry.submittedAt)}
                     </Text>
                     <View className="mt-1 flex-row items-center gap-1">
-                      <Ionicons name="checkmark-circle-outline" size={12} color="#7D7D7D" />
+                      <Ionicons name="checkmark-circle-outline" size={12} color={colors.textTertiary} />
                       <Text className="text-xs text-typography-500">
                         {entry.validations}{' '}
                         {entry.validations === 1 ? 'validacao' : 'validacoes'}
@@ -137,7 +139,7 @@ export function PriceComparisonScreen() {
                         className="h-9 w-9 items-center justify-center rounded-full bg-success-50"
                         activeOpacity={0.7}
                       >
-                        <Ionicons name="thumbs-up-outline" size={16} color="#05966A" />
+                        <Ionicons name="thumbs-up-outline" size={16} color={colors.success} />
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => handleValidate(entry, false)}
@@ -147,7 +149,7 @@ export function PriceComparisonScreen() {
                         className="h-9 w-9 items-center justify-center rounded-full bg-error-50"
                         activeOpacity={0.7}
                       >
-                        <Ionicons name="thumbs-down-outline" size={16} color="#C41C1C" />
+                        <Ionicons name="thumbs-down-outline" size={16} color={colors.error} />
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -167,7 +169,7 @@ export function PriceComparisonScreen() {
               accessibilityLabel="Enviar Preco"
               activeOpacity={0.8}
             >
-              <Ionicons name="add-circle-outline" size={20} color="#FFFFFF" />
+              <Ionicons name="add-circle-outline" size={20} color={colors.white} />
               <Text className="text-sm font-bold text-white">
                 Enviar Preco
               </Text>
@@ -180,7 +182,7 @@ export function PriceComparisonScreen() {
               accessibilityLabel="Ver Historico"
               activeOpacity={0.7}
             >
-              <Ionicons name="time-outline" size={20} color="#EA1D2C" />
+              <Ionicons name="time-outline" size={20} color={colors.primary} />
               <Text className="text-sm font-bold text-primary-500">
                 Ver Historico
               </Text>

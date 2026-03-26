@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 
 interface EmptyStateAction {
   label: string;
@@ -15,10 +16,12 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({ message, title, icon = 'file-tray-outline', action }: EmptyStateProps) {
+  const colors = useThemeColors();
+
   return (
     <View className="flex-1 items-center justify-center px-8 py-16">
       <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-background-100">
-        <Ionicons name={icon} size={28} color="#7D7D7D" />
+        <Ionicons name={icon} size={28} color={colors.textTertiary} />
       </View>
       {title ? (
         <Text className="mb-1 text-lg font-bold text-typography-900">{title}</Text>
@@ -26,7 +29,7 @@ export function EmptyState({ message, title, icon = 'file-tray-outline', action 
       <Text className="text-center text-sm leading-5 text-typography-500">{message}</Text>
       {action ? (
         <TouchableOpacity
-          className="mt-6 rounded-full bg-primary-500 px-8 py-3"
+          className="mt-6 rounded-full bg-primary-500 px-8 py-3.5"
           onPress={action.onPress}
           accessibilityRole="button"
           activeOpacity={0.8}

@@ -1,0 +1,51 @@
+[
+  {
+    "id": "purchase-001",
+    "storeId": "store-001",
+    "storeName": "Pão de Açúcar",
+    "date": "2025-03-20T14:30:00Z",
+    "items": [
+      { "id": "pi-001", "productId": "prod-001", "productName": "Arroz Branco Tipo 1 Tio João", "barcode": "7891093010014", "price": 21.90, "quantity": 1 },
+      { "id": "pi-002", "productId": "prod-005", "productName": "Leite Integral Parmalat", "barcode": "7891097029607", "price": 3.99, "quantity": 3 },
+      { "id": "pi-003", "productId": "prod-009", "productName": "Refrigerante Coca-Cola", "barcode": "7894900700015", "price": 7.49, "quantity": 2 }
+    ],
+    "total": 48.85,
+    "itemCount": 6,
+    "status": "completed",
+    "createdAt": "2025-03-20T14:00:00Z",
+    "completedAt": "2025-03-20T14:45:00Z"
+  },
+  {
+    "id": "purchase-002",
+    "storeId": "store-003",
+    "storeName": "Carrefour",
+    "date": "2025-03-18T10:15:00Z",
+    "items": [
+      { "id": "pi-004", "productId": "prod-004", "productName": "Café Pilão Torrado e Moído", "barcode": "7896048060007", "price": 13.49, "quantity": 1 },
+      { "id": "pi-005", "productId": "prod-016", "productName": "Pão de Forma Wickbold", "barcode": "7896213001051", "price": 5.29, "quantity": 1 },
+      { "id": "pi-006", "productId": "prod-013", "productName": "Queijo Mussarela Fatiado Vigor", "barcode": "7891908010101", "price": 8.99, "quantity": 2 },
+      { "id": "pi-007", "productId": "prod-023", "productName": "Detergente Líquido Ypê", "barcode": "7896098900046", "price": 3.19, "quantity": 2 }
+    ],
+    "total": 43.14,
+    "itemCount": 6,
+    "status": "completed",
+    "createdAt": "2025-03-18T10:00:00Z",
+    "completedAt": "2025-03-18T10:30:00Z"
+  },
+  {
+    "id": "purchase-003",
+    "storeId": "store-004",
+    "storeName": "Atacadão",
+    "date": "2025-03-15T16:00:00Z",
+    "items": [
+      { "id": "pi-008", "productId": "prod-002", "productName": "Feijão Carioca Kicaldo", "barcode": "7896336601116", "price": 6.99, "quantity": 3 },
+      { "id": "pi-009", "productId": "prod-006", "productName": "Óleo de Soja Soya", "barcode": "7891107101621", "price": 7.89, "quantity": 2 },
+      { "id": "pi-010", "productId": "prod-024", "productName": "Sabão em Pó OMO Multi Ação", "barcode": "7891150045067", "price": 16.49, "quantity": 1 }
+    ],
+    "total": 53.24,
+    "itemCount": 6,
+    "status": "completed",
+    "createdAt": "2025-03-15T15:45:00Z",
+    "completedAt": "2025-03-15T16:15:00Z"
+  }
+]

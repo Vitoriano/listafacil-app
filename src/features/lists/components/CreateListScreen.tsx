@@ -13,12 +13,14 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Ionicons } from '@expo/vector-icons';
 import { AppHeader } from '@/shared/components/AppHeader';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { logger } from '@/shared/utils/logger';
 import { useCreateList } from '../hooks/useCreateList';
 import { createListSchema, type CreateListFormData } from '../schemas/createListSchema';
 
 export function CreateListScreen() {
   const router = useRouter();
+  const colors = useThemeColors();
   const { mutate: createList, isPending } = useCreateList();
 
   const {
@@ -66,7 +68,7 @@ export function CreateListScreen() {
                     errors.name ? 'border-error-500' : 'border-outline-200'
                   }`}
                   placeholder="Ex: Compras da Semana"
-                  placeholderTextColor="#A8A8A8"
+                  placeholderTextColor={colors.textQuaternary}
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
@@ -92,7 +94,7 @@ export function CreateListScreen() {
             accessibilityLabel="Criar Lista"
             activeOpacity={0.8}
           >
-            <Ionicons name="add-circle" size={20} color="#FFFFFF" />
+            <Ionicons name="add-circle" size={20} color={colors.white} />
             <Text className="text-sm font-bold text-white">
               {isPending ? 'Criando...' : 'Criar Lista'}
             </Text>

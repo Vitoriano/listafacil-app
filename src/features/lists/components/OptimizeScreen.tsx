@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { AppHeader } from '@/shared/components/AppHeader';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { logger } from '@/shared/utils/logger';
 import { useOptimize } from '../hooks/useOptimize';
@@ -13,6 +14,7 @@ export function OptimizeScreen() {
   const router = useRouter();
   const { listId } = useLocalSearchParams<{ listId: string }>();
 
+  const colors = useThemeColors();
   const { data: result, isLoading } = useOptimize(listId ?? null);
 
   function handleBack() {
@@ -73,7 +75,7 @@ export function OptimizeScreen() {
                 <View className="items-end">
                   <Text className="text-xs text-white opacity-70">Voce Economiza</Text>
                   <View className="mt-0.5 flex-row items-center gap-1">
-                    <Ionicons name="trending-down" size={16} color="#86EFAC" />
+                    <Ionicons name="trending-down" size={16} color={colors.success} />
                     <Text className="text-xl font-bold text-success-200">
                       {formatCurrency(result.savings)}
                     </Text>
@@ -106,7 +108,7 @@ export function OptimizeScreen() {
                       </Text>
                       {index === 0 ? (
                         <View className="flex-row items-center gap-1 rounded-full bg-primary-500 px-2.5 py-0.5">
-                          <Ionicons name="star" size={10} color="#FFFFFF" />
+                          <Ionicons name="star" size={10} color={colors.white} />
                           <Text className="text-xs font-bold text-white">
                             Melhor
                           </Text>
@@ -114,7 +116,7 @@ export function OptimizeScreen() {
                       ) : null}
                     </View>
                     <View className="mt-1 flex-row items-center gap-1">
-                      <Ionicons name="checkmark-circle" size={12} color="#05966A" />
+                      <Ionicons name="checkmark-circle" size={12} color={colors.success} />
                       <Text className="text-xs text-typography-500">
                         {breakdown.itemsAvailable} disponiveis
                       </Text>

@@ -9,6 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeColors } from '@/shared/hooks/useThemeColors';
 
 interface ManualEntryModalProps {
   visible: boolean;
@@ -17,6 +18,7 @@ interface ManualEntryModalProps {
 }
 
 export function ManualEntryModal({ visible, onClose, onSubmit }: ManualEntryModalProps) {
+  const colors = useThemeColors();
   const [inputValue, setInputValue] = useState('');
 
   function handleSubmit() {
@@ -59,7 +61,7 @@ export function ManualEntryModal({ visible, onClose, onSubmit }: ManualEntryModa
               accessibilityLabel="Fechar"
               className="h-8 w-8 items-center justify-center rounded-full bg-background-50"
             >
-              <Ionicons name="close" size={18} color="#7D7D7D" />
+              <Ionicons name="close" size={18} color={colors.textTertiary} />
             </TouchableOpacity>
           </View>
 
@@ -70,7 +72,7 @@ export function ManualEntryModal({ visible, onClose, onSubmit }: ManualEntryModa
           <TextInput
             className="mb-4 rounded-xl border border-outline-200 bg-background-50 px-4 py-3.5 text-base text-typography-900"
             placeholder="Ex: 7891093010014"
-            placeholderTextColor="#A8A8A8"
+            placeholderTextColor={colors.textQuaternary}
             value={inputValue}
             onChangeText={setInputValue}
             keyboardType="numeric"
@@ -87,7 +89,7 @@ export function ManualEntryModal({ visible, onClose, onSubmit }: ManualEntryModa
             accessibilityLabel="Buscar produto"
             activeOpacity={0.8}
           >
-            <Ionicons name="search" size={18} color="#FFFFFF" />
+            <Ionicons name="search" size={18} color={colors.white} />
             <Text className="text-sm font-bold text-white">Buscar Produto</Text>
           </TouchableOpacity>
         </View>
