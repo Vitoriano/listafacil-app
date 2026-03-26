@@ -1,0 +1,158 @@
+[
+  { "id": "price-001", "productId": "prod-001", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 23.90, "userId": "user-001", "submittedAt": "2026-03-20T09:00:00Z", "validations": 3, "isValid": true },
+  { "id": "price-002", "productId": "prod-001", "storeId": "store-002", "storeName": "Extra Hipermercado", "price": 21.50, "userId": "user-002", "submittedAt": "2026-03-19T14:00:00Z", "validations": 5, "isValid": true },
+  { "id": "price-003", "productId": "prod-001", "storeId": "store-003", "storeName": "Carrefour", "price": 22.90, "userId": "user-003", "submittedAt": "2026-03-18T11:00:00Z", "validations": 2, "isValid": true },
+  { "id": "price-004", "productId": "prod-001", "storeId": "store-004", "storeName": "Atacadão", "price": 19.99, "userId": "user-001", "submittedAt": "2026-03-17T10:00:00Z", "validations": 8, "isValid": true },
+
+  { "id": "price-005", "productId": "prod-002", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 8.49, "userId": "user-002", "submittedAt": "2026-03-20T09:30:00Z", "validations": 4, "isValid": true },
+  { "id": "price-006", "productId": "prod-002", "storeId": "store-004", "storeName": "Atacadão", "price": 6.49, "userId": "user-003", "submittedAt": "2026-03-19T15:00:00Z", "validations": 6, "isValid": true },
+  { "id": "price-007", "productId": "prod-002", "storeId": "store-005", "storeName": "Dia%", "price": 7.29, "userId": "user-001", "submittedAt": "2026-03-18T12:00:00Z", "validations": 3, "isValid": true },
+  { "id": "price-008", "productId": "prod-002", "storeId": "store-006", "storeName": "Assaí Atacadista", "price": 6.79, "userId": "user-002", "submittedAt": "2026-03-17T09:00:00Z", "validations": 7, "isValid": true },
+
+  { "id": "price-009", "productId": "prod-003", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 5.29, "userId": "user-003", "submittedAt": "2026-03-20T10:00:00Z", "validations": 2, "isValid": true },
+  { "id": "price-010", "productId": "prod-003", "storeId": "store-004", "storeName": "Atacadão", "price": 3.89, "userId": "user-001", "submittedAt": "2026-03-19T11:00:00Z", "validations": 9, "isValid": true },
+  { "id": "price-011", "productId": "prod-003", "storeId": "store-002", "storeName": "Extra Hipermercado", "price": 4.49, "userId": "user-002", "submittedAt": "2026-03-18T14:00:00Z", "validations": 5, "isValid": true },
+  { "id": "price-012", "productId": "prod-003", "storeId": "store-006", "storeName": "Assaí Atacadista", "price": 4.09, "userId": "user-003", "submittedAt": "2026-03-17T16:00:00Z", "validations": 4, "isValid": true },
+
+  { "id": "price-013", "productId": "prod-004", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 16.90, "userId": "user-001", "submittedAt": "2026-03-20T08:00:00Z", "validations": 3, "isValid": true },
+  { "id": "price-014", "productId": "prod-004", "storeId": "store-003", "storeName": "Carrefour", "price": 14.50, "userId": "user-002", "submittedAt": "2026-03-19T13:00:00Z", "validations": 6, "isValid": true },
+  { "id": "price-015", "productId": "prod-004", "storeId": "store-005", "storeName": "Dia%", "price": 12.99, "userId": "user-003", "submittedAt": "2026-03-18T10:00:00Z", "validations": 8, "isValid": true },
+  { "id": "price-016", "productId": "prod-004", "storeId": "store-006", "storeName": "Assaí Atacadista", "price": 13.49, "userId": "user-001", "submittedAt": "2026-03-17T11:00:00Z", "validations": 5, "isValid": true },
+
+  { "id": "price-017", "productId": "prod-005", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 4.69, "userId": "user-002", "submittedAt": "2026-03-20T11:00:00Z", "validations": 4, "isValid": true },
+  { "id": "price-018", "productId": "prod-005", "storeId": "store-002", "storeName": "Extra Hipermercado", "price": 3.99, "userId": "user-003", "submittedAt": "2026-03-19T09:00:00Z", "validations": 7, "isValid": true },
+  { "id": "price-019", "productId": "prod-005", "storeId": "store-004", "storeName": "Atacadão", "price": 3.69, "userId": "user-001", "submittedAt": "2026-03-18T16:00:00Z", "validations": 10, "isValid": true },
+  { "id": "price-020", "productId": "prod-005", "storeId": "store-005", "storeName": "Dia%", "price": 4.29, "userId": "user-002", "submittedAt": "2026-03-17T12:00:00Z", "validations": 3, "isValid": true },
+
+  { "id": "price-021", "productId": "prod-006", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 9.99, "userId": "user-003", "submittedAt": "2026-03-20T12:00:00Z", "validations": 2, "isValid": true },
+  { "id": "price-022", "productId": "prod-006", "storeId": "store-004", "storeName": "Atacadão", "price": 7.49, "userId": "user-001", "submittedAt": "2026-03-19T10:00:00Z", "validations": 8, "isValid": true },
+  { "id": "price-023", "productId": "prod-006", "storeId": "store-006", "storeName": "Assaí Atacadista", "price": 7.99, "userId": "user-002", "submittedAt": "2026-03-18T09:00:00Z", "validations": 5, "isValid": true },
+
+  { "id": "price-024", "productId": "prod-007", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 7.49, "userId": "user-003", "submittedAt": "2026-03-20T13:00:00Z", "validations": 3, "isValid": true },
+  { "id": "price-025", "productId": "prod-007", "storeId": "store-003", "storeName": "Carrefour", "price": 5.99, "userId": "user-001", "submittedAt": "2026-03-19T16:00:00Z", "validations": 6, "isValid": true },
+  { "id": "price-026", "productId": "prod-007", "storeId": "store-004", "storeName": "Atacadão", "price": 5.29, "userId": "user-002", "submittedAt": "2026-03-18T13:00:00Z", "validations": 9, "isValid": true },
+
+  { "id": "price-027", "productId": "prod-008", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 3.79, "userId": "user-001", "submittedAt": "2026-03-20T14:00:00Z", "validations": 4, "isValid": true },
+  { "id": "price-028", "productId": "prod-008", "storeId": "store-002", "storeName": "Extra Hipermercado", "price": 2.99, "userId": "user-002", "submittedAt": "2026-03-19T11:00:00Z", "validations": 7, "isValid": true },
+  { "id": "price-029", "productId": "prod-008", "storeId": "store-005", "storeName": "Dia%", "price": 2.79, "userId": "user-003", "submittedAt": "2026-03-18T15:00:00Z", "validations": 5, "isValid": true },
+  { "id": "price-030", "productId": "prod-008", "storeId": "store-006", "storeName": "Assaí Atacadista", "price": 3.19, "userId": "user-001", "submittedAt": "2026-03-17T13:00:00Z", "validations": 3, "isValid": true },
+
+  { "id": "price-031", "productId": "prod-009", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 9.49, "userId": "user-002", "submittedAt": "2026-03-20T15:00:00Z", "validations": 5, "isValid": true },
+  { "id": "price-032", "productId": "prod-009", "storeId": "store-002", "storeName": "Extra Hipermercado", "price": 7.99, "userId": "user-003", "submittedAt": "2026-03-19T12:00:00Z", "validations": 8, "isValid": true },
+  { "id": "price-033", "productId": "prod-009", "storeId": "store-004", "storeName": "Atacadão", "price": 6.99, "userId": "user-001", "submittedAt": "2026-03-18T11:00:00Z", "validations": 12, "isValid": true },
+  { "id": "price-034", "productId": "prod-009", "storeId": "store-005", "storeName": "Dia%", "price": 8.49, "userId": "user-002", "submittedAt": "2026-03-17T14:00:00Z", "validations": 4, "isValid": true },
+
+  { "id": "price-035", "productId": "prod-010", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 8.29, "userId": "user-003", "submittedAt": "2026-03-20T16:00:00Z", "validations": 3, "isValid": true },
+  { "id": "price-036", "productId": "prod-010", "storeId": "store-003", "storeName": "Carrefour", "price": 7.49, "userId": "user-001", "submittedAt": "2026-03-19T13:00:00Z", "validations": 6, "isValid": true },
+  { "id": "price-037", "productId": "prod-010", "storeId": "store-004", "storeName": "Atacadão", "price": 6.49, "userId": "user-002", "submittedAt": "2026-03-18T10:00:00Z", "validations": 9, "isValid": true },
+
+  { "id": "price-038", "productId": "prod-011", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 20.90, "userId": "user-001", "submittedAt": "2026-03-20T09:00:00Z", "validations": 2, "isValid": true },
+  { "id": "price-039", "productId": "prod-011", "storeId": "store-002", "storeName": "Extra Hipermercado", "price": 17.99, "userId": "user-002", "submittedAt": "2026-03-19T14:00:00Z", "validations": 5, "isValid": true },
+  { "id": "price-040", "productId": "prod-011", "storeId": "store-004", "storeName": "Atacadão", "price": 15.99, "userId": "user-003", "submittedAt": "2026-03-18T12:00:00Z", "validations": 7, "isValid": true },
+
+  { "id": "price-041", "productId": "prod-012", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 18.90, "userId": "user-001", "submittedAt": "2026-03-20T10:00:00Z", "validations": 3, "isValid": true },
+  { "id": "price-042", "productId": "prod-012", "storeId": "store-003", "storeName": "Carrefour", "price": 15.90, "userId": "user-002", "submittedAt": "2026-03-19T11:00:00Z", "validations": 4, "isValid": true },
+  { "id": "price-043", "productId": "prod-012", "storeId": "store-006", "storeName": "Assaí Atacadista", "price": 14.50, "userId": "user-003", "submittedAt": "2026-03-18T09:00:00Z", "validations": 6, "isValid": true },
+
+  { "id": "price-044", "productId": "prod-013", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 10.49, "userId": "user-002", "submittedAt": "2026-03-20T11:00:00Z", "validations": 4, "isValid": true },
+  { "id": "price-045", "productId": "prod-013", "storeId": "store-002", "storeName": "Extra Hipermercado", "price": 8.99, "userId": "user-003", "submittedAt": "2026-03-19T10:00:00Z", "validations": 6, "isValid": true },
+  { "id": "price-046", "productId": "prod-013", "storeId": "store-005", "storeName": "Dia%", "price": 8.49, "userId": "user-001", "submittedAt": "2026-03-18T14:00:00Z", "validations": 5, "isValid": true },
+
+  { "id": "price-047", "productId": "prod-014", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 3.99, "userId": "user-003", "submittedAt": "2026-03-20T12:00:00Z", "validations": 3, "isValid": true },
+  { "id": "price-048", "productId": "prod-014", "storeId": "store-004", "storeName": "Atacadão", "price": 2.99, "userId": "user-001", "submittedAt": "2026-03-19T09:00:00Z", "validations": 7, "isValid": true },
+  { "id": "price-049", "productId": "prod-014", "storeId": "store-005", "storeName": "Dia%", "price": 3.29, "userId": "user-002", "submittedAt": "2026-03-18T16:00:00Z", "validations": 4, "isValid": true },
+
+  { "id": "price-050", "productId": "prod-015", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 8.99, "userId": "user-001", "submittedAt": "2026-03-20T13:00:00Z", "validations": 2, "isValid": true },
+  { "id": "price-051", "productId": "prod-015", "storeId": "store-003", "storeName": "Carrefour", "price": 7.49, "userId": "user-002", "submittedAt": "2026-03-19T16:00:00Z", "validations": 5, "isValid": true },
+  { "id": "price-052", "productId": "prod-015", "storeId": "store-006", "storeName": "Assaí Atacadista", "price": 6.79, "userId": "user-003", "submittedAt": "2026-03-18T11:00:00Z", "validations": 8, "isValid": true },
+
+  { "id": "price-053", "productId": "prod-016", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 6.99, "userId": "user-002", "submittedAt": "2026-03-20T14:00:00Z", "validations": 4, "isValid": true },
+  { "id": "price-054", "productId": "prod-016", "storeId": "store-002", "storeName": "Extra Hipermercado", "price": 5.49, "userId": "user-003", "submittedAt": "2026-03-19T11:00:00Z", "validations": 6, "isValid": true },
+  { "id": "price-055", "productId": "prod-016", "storeId": "store-005", "storeName": "Dia%", "price": 4.99, "userId": "user-001", "submittedAt": "2026-03-18T15:00:00Z", "validations": 7, "isValid": true },
+  { "id": "price-056", "productId": "prod-016", "storeId": "store-004", "storeName": "Atacadão", "price": 5.19, "userId": "user-002", "submittedAt": "2026-03-17T10:00:00Z", "validations": 3, "isValid": true },
+
+  { "id": "price-057", "productId": "prod-017", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 4.79, "userId": "user-003", "submittedAt": "2026-03-20T15:00:00Z", "validations": 3, "isValid": true },
+  { "id": "price-058", "productId": "prod-017", "storeId": "store-002", "storeName": "Extra Hipermercado", "price": 3.99, "userId": "user-001", "submittedAt": "2026-03-19T12:00:00Z", "validations": 5, "isValid": true },
+  { "id": "price-059", "productId": "prod-017", "storeId": "store-005", "storeName": "Dia%", "price": 3.49, "userId": "user-002", "submittedAt": "2026-03-18T10:00:00Z", "validations": 8, "isValid": true },
+
+  { "id": "price-060", "productId": "prod-018", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 9.99, "userId": "user-001", "submittedAt": "2026-03-20T16:00:00Z", "validations": 2, "isValid": true },
+  { "id": "price-061", "productId": "prod-018", "storeId": "store-003", "storeName": "Carrefour", "price": 7.99, "userId": "user-002", "submittedAt": "2026-03-19T13:00:00Z", "validations": 4, "isValid": true },
+  { "id": "price-062", "productId": "prod-018", "storeId": "store-006", "storeName": "Assaí Atacadista", "price": 6.99, "userId": "user-003", "submittedAt": "2026-03-18T09:00:00Z", "validations": 7, "isValid": true },
+
+  { "id": "price-063", "productId": "prod-019", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 5.49, "userId": "user-002", "submittedAt": "2026-03-20T09:00:00Z", "validations": 3, "isValid": true },
+  { "id": "price-064", "productId": "prod-019", "storeId": "store-004", "storeName": "Atacadão", "price": 3.29, "userId": "user-003", "submittedAt": "2026-03-19T14:00:00Z", "validations": 9, "isValid": true },
+  { "id": "price-065", "productId": "prod-019", "storeId": "store-007", "storeName": "Supermercado BH", "price": 3.99, "userId": "user-001", "submittedAt": "2026-03-18T12:00:00Z", "validations": 5, "isValid": true },
+
+  { "id": "price-066", "productId": "prod-020", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 7.49, "userId": "user-003", "submittedAt": "2026-03-20T10:00:00Z", "validations": 4, "isValid": true },
+  { "id": "price-067", "productId": "prod-020", "storeId": "store-002", "storeName": "Extra Hipermercado", "price": 5.99, "userId": "user-001", "submittedAt": "2026-03-19T11:00:00Z", "validations": 6, "isValid": true },
+  { "id": "price-068", "productId": "prod-020", "storeId": "store-005", "storeName": "Dia%", "price": 4.99, "userId": "user-002", "submittedAt": "2026-03-18T14:00:00Z", "validations": 5, "isValid": true },
+
+  { "id": "price-069", "productId": "prod-021", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 5.99, "userId": "user-001", "submittedAt": "2026-03-20T11:00:00Z", "validations": 3, "isValid": true },
+  { "id": "price-070", "productId": "prod-021", "storeId": "store-004", "storeName": "Atacadão", "price": 3.99, "userId": "user-002", "submittedAt": "2026-03-19T10:00:00Z", "validations": 7, "isValid": true },
+  { "id": "price-071", "productId": "prod-021", "storeId": "store-006", "storeName": "Assaí Atacadista", "price": 4.29, "userId": "user-003", "submittedAt": "2026-03-18T09:00:00Z", "validations": 5, "isValid": true },
+
+  { "id": "price-072", "productId": "prod-022", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 5.49, "userId": "user-002", "submittedAt": "2026-03-20T12:00:00Z", "validations": 2, "isValid": true },
+  { "id": "price-073", "productId": "prod-022", "storeId": "store-003", "storeName": "Carrefour", "price": 4.29, "userId": "user-003", "submittedAt": "2026-03-19T16:00:00Z", "validations": 5, "isValid": true },
+  { "id": "price-074", "productId": "prod-022", "storeId": "store-004", "storeName": "Atacadão", "price": 3.49, "userId": "user-001", "submittedAt": "2026-03-18T11:00:00Z", "validations": 8, "isValid": true },
+
+  { "id": "price-075", "productId": "prod-023", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 4.49, "userId": "user-003", "submittedAt": "2026-03-20T13:00:00Z", "validations": 3, "isValid": true },
+  { "id": "price-076", "productId": "prod-023", "storeId": "store-005", "storeName": "Dia%", "price": 2.99, "userId": "user-001", "submittedAt": "2026-03-19T09:00:00Z", "validations": 6, "isValid": true },
+  { "id": "price-077", "productId": "prod-023", "storeId": "store-006", "storeName": "Assaí Atacadista", "price": 3.29, "userId": "user-002", "submittedAt": "2026-03-18T16:00:00Z", "validations": 4, "isValid": true },
+  { "id": "price-078", "productId": "prod-023", "storeId": "store-004", "storeName": "Atacadão", "price": 2.89, "userId": "user-003", "submittedAt": "2026-03-17T12:00:00Z", "validations": 9, "isValid": true },
+
+  { "id": "price-079", "productId": "prod-024", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 21.90, "userId": "user-001", "submittedAt": "2026-03-20T14:00:00Z", "validations": 2, "isValid": true },
+  { "id": "price-080", "productId": "prod-024", "storeId": "store-002", "storeName": "Extra Hipermercado", "price": 17.49, "userId": "user-002", "submittedAt": "2026-03-19T11:00:00Z", "validations": 5, "isValid": true },
+  { "id": "price-081", "productId": "prod-024", "storeId": "store-006", "storeName": "Assaí Atacadista", "price": 15.99, "userId": "user-003", "submittedAt": "2026-03-18T15:00:00Z", "validations": 7, "isValid": true },
+
+  { "id": "price-082", "productId": "prod-025", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 16.90, "userId": "user-002", "submittedAt": "2026-03-20T15:00:00Z", "validations": 3, "isValid": true },
+  { "id": "price-083", "productId": "prod-025", "storeId": "store-003", "storeName": "Carrefour", "price": 13.49, "userId": "user-003", "submittedAt": "2026-03-19T12:00:00Z", "validations": 5, "isValid": true },
+  { "id": "price-084", "productId": "prod-025", "storeId": "store-005", "storeName": "Dia%", "price": 11.99, "userId": "user-001", "submittedAt": "2026-03-18T10:00:00Z", "validations": 7, "isValid": true },
+
+  { "id": "price-085", "productId": "prod-026", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 8.49, "userId": "user-003", "submittedAt": "2026-03-20T16:00:00Z", "validations": 4, "isValid": true },
+  { "id": "price-086", "productId": "prod-026", "storeId": "store-002", "storeName": "Extra Hipermercado", "price": 6.99, "userId": "user-001", "submittedAt": "2026-03-19T13:00:00Z", "validations": 6, "isValid": true },
+  { "id": "price-087", "productId": "prod-026", "storeId": "store-004", "storeName": "Atacadão", "price": 5.99, "userId": "user-002", "submittedAt": "2026-03-18T09:00:00Z", "validations": 9, "isValid": true },
+  { "id": "price-088", "productId": "prod-026", "storeId": "store-005", "storeName": "Dia%", "price": 6.49, "userId": "user-003", "submittedAt": "2026-03-17T14:00:00Z", "validations": 3, "isValid": true },
+
+  { "id": "price-089", "productId": "prod-027", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 6.99, "userId": "user-001", "submittedAt": "2026-03-20T09:00:00Z", "validations": 2, "isValid": true },
+  { "id": "price-090", "productId": "prod-027", "storeId": "store-002", "storeName": "Extra Hipermercado", "price": 5.29, "userId": "user-002", "submittedAt": "2026-03-19T14:00:00Z", "validations": 5, "isValid": true },
+  { "id": "price-091", "productId": "prod-027", "storeId": "store-004", "storeName": "Atacadão", "price": 4.49, "userId": "user-003", "submittedAt": "2026-03-18T12:00:00Z", "validations": 8, "isValid": true },
+
+  { "id": "price-092", "productId": "prod-028", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 13.49, "userId": "user-002", "submittedAt": "2026-03-20T10:00:00Z", "validations": 3, "isValid": true },
+  { "id": "price-093", "productId": "prod-028", "storeId": "store-003", "storeName": "Carrefour", "price": 10.99, "userId": "user-003", "submittedAt": "2026-03-19T11:00:00Z", "validations": 5, "isValid": true },
+  { "id": "price-094", "productId": "prod-028", "storeId": "store-005", "storeName": "Dia%", "price": 9.99, "userId": "user-001", "submittedAt": "2026-03-18T14:00:00Z", "validations": 7, "isValid": true },
+
+  { "id": "price-095", "productId": "prod-029", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 34.90, "userId": "user-003", "submittedAt": "2026-03-20T11:00:00Z", "validations": 2, "isValid": true },
+  { "id": "price-096", "productId": "prod-029", "storeId": "store-002", "storeName": "Extra Hipermercado", "price": 27.90, "userId": "user-001", "submittedAt": "2026-03-19T10:00:00Z", "validations": 4, "isValid": true },
+  { "id": "price-097", "productId": "prod-029", "storeId": "store-010", "storeName": "Sam's Club", "price": 24.99, "userId": "user-002", "submittedAt": "2026-03-18T09:00:00Z", "validations": 6, "isValid": true },
+
+  { "id": "price-098", "productId": "prod-030", "storeId": "store-001", "storeName": "Pão de Açúcar", "price": 2.99, "userId": "user-001", "submittedAt": "2026-03-20T12:00:00Z", "validations": 4, "isValid": true },
+  { "id": "price-099", "productId": "prod-030", "storeId": "store-004", "storeName": "Atacadão", "price": 1.89, "userId": "user-002", "submittedAt": "2026-03-19T16:00:00Z", "validations": 8, "isValid": true },
+  { "id": "price-100", "productId": "prod-030", "storeId": "store-005", "storeName": "Dia%", "price": 2.19, "userId": "user-003", "submittedAt": "2026-03-18T11:00:00Z", "validations": 5, "isValid": true },
+  { "id": "price-101", "productId": "prod-030", "storeId": "store-006", "storeName": "Assaí Atacadista", "price": 1.99, "userId": "user-001", "submittedAt": "2026-03-17T13:00:00Z", "validations": 7, "isValid": true },
+
+  { "id": "price-102", "productId": "prod-001", "storeId": "store-005", "storeName": "Dia%", "price": 20.99, "userId": "user-002", "submittedAt": "2026-03-16T09:00:00Z", "validations": 4, "isValid": true },
+  { "id": "price-103", "productId": "prod-001", "storeId": "store-006", "storeName": "Assaí Atacadista", "price": 20.49, "userId": "user-003", "submittedAt": "2026-03-15T14:00:00Z", "validations": 6, "isValid": true },
+
+  { "id": "price-104", "productId": "prod-005", "storeId": "store-006", "storeName": "Assaí Atacadista", "price": 3.79, "userId": "user-001", "submittedAt": "2026-03-16T10:00:00Z", "validations": 5, "isValid": true },
+  { "id": "price-105", "productId": "prod-005", "storeId": "store-008", "storeName": "GPA Minuto", "price": 4.99, "userId": "user-002", "submittedAt": "2026-03-15T11:00:00Z", "validations": 2, "isValid": true },
+
+  { "id": "price-106", "productId": "prod-009", "storeId": "store-006", "storeName": "Assaí Atacadista", "price": 7.49, "userId": "user-003", "submittedAt": "2026-03-16T15:00:00Z", "validations": 4, "isValid": true },
+  { "id": "price-107", "productId": "prod-009", "storeId": "store-008", "storeName": "GPA Minuto", "price": 10.49, "userId": "user-001", "submittedAt": "2026-03-15T09:00:00Z", "validations": 1, "isValid": true },
+
+  { "id": "price-108", "productId": "prod-016", "storeId": "store-008", "storeName": "GPA Minuto", "price": 7.49, "userId": "user-002", "submittedAt": "2026-03-16T12:00:00Z", "validations": 2, "isValid": true },
+  { "id": "price-109", "productId": "prod-016", "storeId": "store-003", "storeName": "Carrefour", "price": 5.79, "userId": "user-003", "submittedAt": "2026-03-15T16:00:00Z", "validations": 4, "isValid": true },
+
+  { "id": "price-110", "productId": "prod-023", "storeId": "store-002", "storeName": "Extra Hipermercado", "price": 3.49, "userId": "user-001", "submittedAt": "2026-03-16T14:00:00Z", "validations": 3, "isValid": true },
+  { "id": "price-111", "productId": "prod-023", "storeId": "store-003", "storeName": "Carrefour", "price": 3.99, "userId": "user-002", "submittedAt": "2026-03-15T10:00:00Z", "validations": 5, "isValid": true },
+
+  { "id": "price-112", "productId": "prod-024", "storeId": "store-004", "storeName": "Atacadão", "price": 14.99, "userId": "user-003", "submittedAt": "2026-03-16T11:00:00Z", "validations": 6, "isValid": true },
+  { "id": "price-113", "productId": "prod-024", "storeId": "store-010", "storeName": "Sam's Club", "price": 13.49, "userId": "user-001", "submittedAt": "2026-03-15T13:00:00Z", "validations": 8, "isValid": true },
+
+  { "id": "price-114", "productId": "prod-001", "storeId": "store-007", "storeName": "Supermercado BH", "price": 22.50, "userId": "user-002", "submittedAt": "2026-03-14T09:00:00Z", "validations": 3, "isValid": true },
+  { "id": "price-115", "productId": "prod-002", "storeId": "store-007", "storeName": "Supermercado BH", "price": 7.99, "userId": "user-003", "submittedAt": "2026-03-14T10:00:00Z", "validations": 4, "isValid": true },
+  { "id": "price-116", "productId": "prod-009", "storeId": "store-009", "storeName": "Mercado Extra", "price": 8.99, "userId": "user-001", "submittedAt": "2026-03-14T11:00:00Z", "validations": 2, "isValid": true },
+  { "id": "price-117", "productId": "prod-026", "storeId": "store-009", "storeName": "Mercado Extra", "price": 7.49, "userId": "user-002", "submittedAt": "2026-03-14T12:00:00Z", "validations": 3, "isValid": true },
+  { "id": "price-118", "productId": "prod-029", "storeId": "store-009", "storeName": "Mercado Extra", "price": 31.90, "userId": "user-003", "submittedAt": "2026-03-14T13:00:00Z", "validations": 2, "isValid": true },
+  { "id": "price-119", "productId": "prod-004", "storeId": "store-007", "storeName": "Supermercado BH", "price": 15.90, "userId": "user-001", "submittedAt": "2026-03-13T09:00:00Z", "validations": 4, "isValid": true },
+  { "id": "price-120", "productId": "prod-011", "storeId": "store-009", "storeName": "Mercado Extra", "price": 19.50, "userId": "user-002", "submittedAt": "2026-03-13T10:00:00Z", "validations": 3, "isValid": true }
+]

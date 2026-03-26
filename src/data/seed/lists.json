@@ -1,0 +1,213 @@
+[
+  {
+    "id": "list-001",
+    "name": "Compras da Semana",
+    "items": [
+      {
+        "id": "item-001",
+        "productId": "prod-001",
+        "productName": "Arroz Branco Tipo 1 Tio João",
+        "quantity": 1,
+        "unit": "5kg",
+        "estimatedPrice": 19.99,
+        "checked": false
+      },
+      {
+        "id": "item-002",
+        "productId": "prod-002",
+        "productName": "Feijão Carioca Kicaldo",
+        "quantity": 2,
+        "unit": "1kg",
+        "estimatedPrice": 6.49,
+        "checked": false
+      },
+      {
+        "id": "item-003",
+        "productId": "prod-005",
+        "productName": "Leite Integral Parmalat",
+        "quantity": 4,
+        "unit": "1L",
+        "estimatedPrice": 3.69,
+        "checked": true
+      },
+      {
+        "id": "item-004",
+        "productId": "prod-016",
+        "productName": "Pão de Forma Wickbold",
+        "quantity": 1,
+        "unit": "450g",
+        "estimatedPrice": 4.99,
+        "checked": false
+      },
+      {
+        "id": "item-005",
+        "productId": "prod-023",
+        "productName": "Detergente Líquido Ypê",
+        "quantity": 2,
+        "unit": "500ml",
+        "estimatedPrice": 2.99,
+        "checked": false
+      }
+    ],
+    "totalEstimate": 57.11,
+    "itemCount": 5,
+    "createdAt": "2026-03-20T08:00:00Z",
+    "updatedAt": "2026-03-22T10:30:00Z"
+  },
+  {
+    "id": "list-002",
+    "name": "Churrasco do Final de Semana",
+    "items": [
+      {
+        "id": "item-006",
+        "productId": "prod-012",
+        "productName": "Carne Moída Bovina",
+        "quantity": 2,
+        "unit": "500g",
+        "estimatedPrice": 14.50,
+        "checked": false
+      },
+      {
+        "id": "item-007",
+        "productId": "prod-009",
+        "productName": "Refrigerante Coca-Cola",
+        "quantity": 3,
+        "unit": "2L",
+        "estimatedPrice": 6.99,
+        "checked": false
+      },
+      {
+        "id": "item-008",
+        "productId": "prod-019",
+        "productName": "Banana Nanica",
+        "quantity": 1,
+        "unit": "kg",
+        "estimatedPrice": 3.29,
+        "checked": false
+      },
+      {
+        "id": "item-009",
+        "productId": "prod-003",
+        "productName": "Açúcar Cristal União",
+        "quantity": 1,
+        "unit": "1kg",
+        "estimatedPrice": 3.89,
+        "checked": true
+      }
+    ],
+    "totalEstimate": 58.15,
+    "itemCount": 4,
+    "createdAt": "2026-03-18T14:00:00Z",
+    "updatedAt": "2026-03-23T09:00:00Z"
+  },
+  {
+    "id": "list-003",
+    "name": "Itens do Mês",
+    "items": [
+      {
+        "id": "item-010",
+        "productId": "prod-024",
+        "productName": "Sabão em Pó OMO Multi Ação",
+        "quantity": 1,
+        "unit": "1kg",
+        "estimatedPrice": 15.99,
+        "checked": false
+      },
+      {
+        "id": "item-011",
+        "productId": "prod-025",
+        "productName": "Shampoo Pantene Hidratação",
+        "quantity": 1,
+        "unit": "400ml",
+        "estimatedPrice": 11.99,
+        "checked": false
+      },
+      {
+        "id": "item-012",
+        "productId": "prod-026",
+        "productName": "Papel Higiênico Neve",
+        "quantity": 3,
+        "unit": "4 rolos",
+        "estimatedPrice": 5.99,
+        "checked": false
+      },
+      {
+        "id": "item-013",
+        "productId": "prod-004",
+        "productName": "Café Pilão Torrado e Moído",
+        "quantity": 2,
+        "unit": "500g",
+        "estimatedPrice": 12.99,
+        "checked": false
+      },
+      {
+        "id": "item-014",
+        "productId": "prod-029",
+        "productName": "Azeite de Oliva Gallo Extra Virgem",
+        "quantity": 1,
+        "unit": "500ml",
+        "estimatedPrice": 24.99,
+        "checked": false
+      },
+      {
+        "id": "item-015",
+        "productId": "prod-006",
+        "productName": "Óleo de Soja Soya",
+        "quantity": 2,
+        "unit": "900ml",
+        "estimatedPrice": 7.49,
+        "checked": true
+      }
+    ],
+    "totalEstimate": 116.88,
+    "itemCount": 6,
+    "createdAt": "2026-03-15T10:00:00Z",
+    "updatedAt": "2026-03-24T11:00:00Z"
+  },
+  {
+    "id": "list-004",
+    "name": "Café da Manhã",
+    "items": [
+      {
+        "id": "item-016",
+        "productId": "prod-005",
+        "productName": "Leite Integral Parmalat",
+        "quantity": 6,
+        "unit": "1L",
+        "estimatedPrice": 3.69,
+        "checked": false
+      },
+      {
+        "id": "item-017",
+        "productId": "prod-004",
+        "productName": "Café Pilão Torrado e Moído",
+        "quantity": 1,
+        "unit": "500g",
+        "estimatedPrice": 12.99,
+        "checked": false
+      },
+      {
+        "id": "item-018",
+        "productId": "prod-016",
+        "productName": "Pão de Forma Wickbold",
+        "quantity": 2,
+        "unit": "450g",
+        "estimatedPrice": 4.99,
+        "checked": false
+      },
+      {
+        "id": "item-019",
+        "productId": "prod-015",
+        "productName": "Manteiga com Sal Aviação",
+        "quantity": 1,
+        "unit": "200g",
+        "estimatedPrice": 6.79,
+        "checked": false
+      }
+    ],
+    "totalEstimate": 49.91,
+    "itemCount": 4,
+    "createdAt": "2026-03-10T07:00:00Z",
+    "updatedAt": "2026-03-10T07:00:00Z"
+  }
+]

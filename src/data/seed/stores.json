@@ -1,0 +1,102 @@
+[
+  {
+    "id": "store-001",
+    "name": "Pão de Açúcar",
+    "address": "Av. Paulista, 1000",
+    "city": "São Paulo",
+    "state": "SP",
+    "latitude": -23.5631,
+    "longitude": -46.6544,
+    "type": "supermarket"
+  },
+  {
+    "id": "store-002",
+    "name": "Extra Hipermercado",
+    "address": "Av. das Nações Unidas, 3003",
+    "city": "São Paulo",
+    "state": "SP",
+    "latitude": -23.6277,
+    "longitude": -46.6989,
+    "type": "hypermarket"
+  },
+  {
+    "id": "store-003",
+    "name": "Carrefour",
+    "address": "Av. Brigadeiro Faria Lima, 2232",
+    "city": "São Paulo",
+    "state": "SP",
+    "latitude": -23.5678,
+    "longitude": -46.6923,
+    "type": "hypermarket"
+  },
+  {
+    "id": "store-004",
+    "name": "Atacadão",
+    "address": "Rua Vergueiro, 4500",
+    "city": "São Paulo",
+    "state": "SP",
+    "latitude": -23.5981,
+    "longitude": -46.6372,
+    "type": "wholesale"
+  },
+  {
+    "id": "store-005",
+    "name": "Dia%",
+    "address": "Rua Augusta, 2140",
+    "city": "São Paulo",
+    "state": "SP",
+    "latitude": -23.5561,
+    "longitude": -46.6588,
+    "type": "supermarket"
+  },
+  {
+    "id": "store-006",
+    "name": "Assaí Atacadista",
+    "address": "Av. do Estado, 2500",
+    "city": "São Paulo",
+    "state": "SP",
+    "latitude": -23.5495,
+    "longitude": -46.6274,
+    "type": "wholesale"
+  },
+  {
+    "id": "store-007",
+    "name": "Supermercado BH",
+    "address": "Av. Afonso Pena, 3000",
+    "city": "Belo Horizonte",
+    "state": "MG",
+    "latitude": -19.9233,
+    "longitude": -43.9384,
+    "type": "supermarket"
+  },
+  {
+    "id": "store-008",
+    "name": "GPA Minuto",
+    "address": "Rua Oscar Freire, 890",
+    "city": "São Paulo",
+    "state": "SP",
+    "latitude": -23.5610,
+    "longitude": -46.6720,
+    "type": "convenience"
+  },
+  {
+    "id": "store-009",
+    "name": "Mercado Extra",
+    "address": "Av. Atlântica, 500",
+    "city": "Rio de Janeiro",
+    "state": "RJ",
+    "latitude": -22.9642,
+    "longitude": -43.1752,
+    "type": "supermarket"
+  },
+  {
+    "id": "store-010",
+    "name": "Sam's Club",
+    "address": "Av. Morumbi, 7000",
+    "city": "São Paulo",
+    "state": "SP",
+    "latitude": -23.6219,
+    "longitude": -46.7193,
+    "type": "wholesale"
+  }
+]

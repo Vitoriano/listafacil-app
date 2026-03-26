@@ -1,0 +1,29 @@
+[
+  {
+    "id": "user-001",
+    "name": "Maria Silva",
+    "email": "maria.silva@email.com",
+    "avatarUrl": null,
+    "totalSubmissions": 47,
+    "totalSavings": 312.80,
+    "joinedAt": "2025-03-15T08:00:00Z"
+  },
+  {
+    "id": "user-002",
+    "name": "João Santos",
+    "email": "joao.santos@email.com",
+    "avatarUrl": null,
+    "totalSubmissions": 23,
+    "totalSavings": 158.50,
+    "joinedAt": "2025-06-22T14:30:00Z"
+  },
+  {
+    "id": "user-003",
+    "name": "Ana Oliveira",
+    "email": "ana.oliveira@email.com",
+    "avatarUrl": null,
+    "totalSubmissions": 89,
+    "totalSavings": 521.40,
+    "joinedAt": "2025-01-10T09:15:00Z"
+  }
+]
