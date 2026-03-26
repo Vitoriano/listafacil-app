@@ -11,6 +11,7 @@ import { useScanner } from '@/features/scanner/hooks/useScanner';
 import { useBarcodeResult } from '@/features/scanner/hooks/useBarcodeResult';
 import { ScannerOverlay } from '@/features/scanner/components/ScannerOverlay';
 import { ManualEntryModal } from '@/features/scanner/components/ManualEntryModal';
+import { useUpdateItem } from '@/features/lists/hooks/useUpdateItem';
 import { useCartStore } from '../stores/cartStore';
 import { PriceEntryModal } from './PriceEntryModal';
 import type { Product } from '@/features/products/types';
@@ -19,6 +20,11 @@ export function CartScannerScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const addItem = useCartStore((s) => s.addItem);
+  const cartItems = useCartStore((s) => s.items);
+  const cartItemCount = useCartStore((s) => s.itemCount);
+  const linkedListId = useCartStore((s) => s.linkedListId);
+  const linkedListItems = useCartStore((s) => s.linkedListItems);
+  const { mutate: updateListItem } = useUpdateItem();
 
   const {
     permissionGranted,
@@ -39,6 +45,11 @@ export function CartScannerScreen() {
   const [showNotFound, setShowNotFound] = useState(false);
   const [showPriceEntry, setShowPriceEntry] = useState(false);
   const [foundProduct, setFoundProduct] = useState<Product | null>(null);
+
+  // List progress
+  const linkedProductIds = new Set(linkedListItems.map((li) => li.productId));
+  const addedFromList = cartItems.filter((i) => linkedProductIds.has(i.productId)).length;
+  const remainingFromList = linkedListItems.length - addedFromList;
 
   useEffect(() => {
     if (!permissionDetermined || (!permissionGranted && canAskAgain)) {
@@ -73,6 +84,11 @@ export function CartScannerScreen() {
 
   function handleAddToCart(price: number, quantity: number) {
     if (!foundProduct) return;
+
+    const matchingListItem = linkedListId
+      ? linkedListItems.find((li) => li.productId === foundProduct.id && !li.checked)
+      : null;
+
     logger.info('CartScanner', 'Adding to cart', foundProduct.id, price, quantity);
     addItem({
       productId: foundProduct.id,
@@ -80,7 +96,18 @@ export function CartScannerScreen() {
       barcode: foundProduct.barcode,
       price,
       quantity,
+      fromListId: matchingListItem ? linkedListId! : undefined,
     });
+
+    // Auto-check linked list item
+    if (matchingListItem && linkedListId) {
+      updateListItem({
+        listId: linkedListId,
+        itemId: matchingListItem.id,
+        data: { checked: true },
+      });
+    }
+
     setShowPriceEntry(false);
     setFoundProduct(null);
     resumeScan();
@@ -146,11 +173,34 @@ export function CartScannerScreen() {
           activeOpacity={0.7}
         >
           <Ionicons name="cart" size={16} color={colors.white} />
-          <Text className="text-xs font-bold text-white">
-            {useCartStore.getState().itemCount}
-          </Text>
+          <Text className="text-xs font-bold text-white">{cartItemCount}</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Linked list remaining chip */}
+      {linkedListId && remainingFromList > 0 ? (
+        <View className="absolute left-0 right-0 top-28 items-center">
+          <View className="flex-row items-center gap-1.5 rounded-full bg-white/90 px-4 py-2">
+            <Ionicons name="list" size={14} color={colors.primary} />
+            <Text className="text-xs font-semibold text-typography-700">
+              {remainingFromList > 0
+                ? `Faltam ${remainingFromList} itens da lista`
+                : 'Todos os itens da lista adicionados!'}
+            </Text>
+          </View>
+        </View>
+      ) : null}
+
+      {linkedListId && remainingFromList === 0 && linkedListItems.length > 0 ? (
+        <View className="absolute left-0 right-0 top-28 items-center">
+          <View className="flex-row items-center gap-1.5 rounded-full bg-success-500/90 px-4 py-2">
+            <Ionicons name="checkmark-circle" size={14} color={colors.white} />
+            <Text className="text-xs font-bold text-white">
+              Lista completa!
+            </Text>
+          </View>
+        </View>
+      ) : null}
 
       {/* Instruction */}
       <View className="absolute bottom-36 left-0 right-0 items-center">

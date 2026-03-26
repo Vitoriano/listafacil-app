@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,19 +11,33 @@ import { useCartStore } from '../stores/cartStore';
 import { useCreatePurchase } from '../hooks/useCreatePurchase';
 import { CartItemCard } from './CartItemCard';
 import { CartSummaryBar } from './CartSummaryBar';
+import { LinkedListBanner } from './LinkedListBanner';
+import { LinkedListSelectModal } from './LinkedListSelectModal';
 import type { Purchase } from '../types';
+import type { ShoppingList } from '@/features/lists/types';
 
 export function CartScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const cart = useCartStore();
   const { mutate: createPurchase, isPending } = useCreatePurchase();
+  const [showListSelect, setShowListSelect] = useState(false);
 
   useEffect(() => {
     if (!cart.isActive) {
       router.replace('/cart/store-select');
     }
   }, [cart.isActive, router]);
+
+  const linkedProductIds = useMemo(
+    () => new Set(cart.linkedListItems.map((li) => li.productId)),
+    [cart.linkedListItems],
+  );
+
+  const addedFromListCount = useMemo(
+    () => cart.items.filter((i) => linkedProductIds.has(i.productId)).length,
+    [cart.items, linkedProductIds],
+  );
 
   if (!cart.isActive) {
     return <LoadingSpinner />;
@@ -64,6 +78,16 @@ export function CartScreen() {
     });
   }
 
+  function handleLinkList(list: ShoppingList) {
+    logger.info('Cart', 'Linking list', list.id);
+    cart.linkList(list.id, list.name, list.items);
+    setShowListSelect(false);
+  }
+
+  function handleViewLinkedList() {
+    router.push(`/lists/${cart.linkedListId}`);
+  }
+
   return (
     <View className="flex-1 bg-background-50">
       <AppHeader
@@ -84,13 +108,44 @@ export function CartScreen() {
         }
       />
 
+      {/* Linked list banner or link button */}
+      {cart.linkedListId ? (
+        <LinkedListBanner
+          listName={cart.linkedListName!}
+          addedCount={addedFromListCount}
+          totalCount={cart.linkedListItems.length}
+          onViewList={handleViewLinkedList}
+          onUnlink={cart.unlinkList}
+        />
+      ) : (
+        <TouchableOpacity
+          onPress={() => setShowListSelect(true)}
+          className="mx-5 mb-3 flex-row items-center gap-3 rounded-2xl border border-dashed border-outline-200 p-3.5"
+          activeOpacity={0.7}
+        >
+          <View className="h-9 w-9 items-center justify-center rounded-full bg-background-100">
+            <Ionicons name="link-outline" size={18} color={colors.textTertiary} />
+          </View>
+          <View className="flex-1">
+            <Text className="text-sm font-semibold text-typography-700">
+              Vincular lista de compras
+            </Text>
+            <Text className="text-xs text-typography-400">
+              Acompanhe o progresso da sua lista
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
+        </TouchableOpacity>
+      )}
+
       <FlatList
         data={cart.items}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 20, flexGrow: 1 }}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20, flexGrow: 1 }}
         renderItem={({ item }) => (
           <CartItemCard
             item={item}
+            isFromList={linkedProductIds.has(item.productId)}
             onUpdateQuantity={cart.updateItemQuantity}
             onRemove={cart.removeItem}
           />
@@ -113,6 +168,12 @@ export function CartScreen() {
           isPending={isPending}
         />
       ) : null}
+
+      <LinkedListSelectModal
+        visible={showListSelect}
+        onSelect={handleLinkList}
+        onClose={() => setShowListSelect(false)}
+      />
     </View>
   );
 }

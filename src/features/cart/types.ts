@@ -7,6 +7,7 @@ export interface PurchaseItem {
   barcode: string;
   price: number;
   quantity: number;
+  fromListId?: string;
 }
 
 export interface Purchase {

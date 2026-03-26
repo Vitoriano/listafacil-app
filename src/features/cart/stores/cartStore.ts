@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { PurchaseItem } from '../types';
+import type { ListItem } from '@/features/lists/types';
 
 interface CartState {
   isActive: boolean;
@@ -10,10 +11,16 @@ interface CartState {
   total: number;
   itemCount: number;
 
+  linkedListId: string | null;
+  linkedListName: string | null;
+  linkedListItems: ListItem[];
+
   startSession: (storeId: string, storeName: string) => void;
   addItem: (item: Omit<PurchaseItem, 'id'>) => void;
   removeItem: (itemId: string) => void;
   updateItemQuantity: (itemId: string, quantity: number) => void;
+  linkList: (listId: string, listName: string, items: ListItem[]) => void;
+  unlinkList: () => void;
   clearCart: () => void;
   reset: () => void;
 }
@@ -32,6 +39,9 @@ export const useCartStore = create<CartState>((set) => ({
   items: [],
   total: 0,
   itemCount: 0,
+  linkedListId: null,
+  linkedListName: null,
+  linkedListItems: [],
 
   startSession: (storeId, storeName) =>
     set({
@@ -42,6 +52,9 @@ export const useCartStore = create<CartState>((set) => ({
       items: [],
       total: 0,
       itemCount: 0,
+      linkedListId: null,
+      linkedListName: null,
+      linkedListItems: [],
     }),
 
   addItem: (item) =>
@@ -84,6 +97,12 @@ export const useCartStore = create<CartState>((set) => ({
       return { items: newItems, ...recalculate(newItems) };
     }),
 
+  linkList: (listId, listName, items) =>
+    set({ linkedListId: listId, linkedListName: listName, linkedListItems: items }),
+
+  unlinkList: () =>
+    set({ linkedListId: null, linkedListName: null, linkedListItems: [] }),
+
   clearCart: () =>
     set({ items: [], total: 0, itemCount: 0 }),
 
@@ -96,5 +115,8 @@ export const useCartStore = create<CartState>((set) => ({
       items: [],
       total: 0,
       itemCount: 0,
+      linkedListId: null,
+      linkedListName: null,
+      linkedListItems: [],
     }),
 }));

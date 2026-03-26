@@ -16,6 +16,8 @@ import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { logger } from '@/shared/utils/logger';
 import { productRepository } from '@/data/repositories';
+import { useCartStore } from '@/features/cart/stores/cartStore';
+import { ActiveCartBanner } from './ActiveCartBanner';
 import { useListEditorStore } from '../stores/listEditorStore';
 import { useListDetail } from '../hooks/useListDetail';
 import { useUpdateItem } from '../hooks/useUpdateItem';
@@ -33,6 +35,9 @@ export function ListDetailScreen() {
 
   const colors = useThemeColors();
   const { searchQuery, setSearchQuery, reset: resetEditor } = useListEditorStore();
+
+  const cart = useCartStore();
+  const isLinkedToCart = cart.isActive && cart.linkedListId === id;
 
   const { data: list, isLoading } = useListDetail(id ?? null);
   const { mutate: updateItem } = useUpdateItem();
@@ -134,6 +139,17 @@ export function ListDetailScreen() {
           </TouchableOpacity>
         }
       />
+
+      {isLinkedToCart ? (
+        <ActiveCartBanner
+          storeName={cart.storeName!}
+          addedCount={cart.items.filter((ci) =>
+            (list?.items ?? []).some((li) => li.productId === ci.productId),
+          ).length}
+          totalCount={list?.items.length ?? 0}
+          onGoToCart={() => router.push('/cart')}
+        />
+      ) : null}
 
       <FlatList
         data={list?.items ?? []}

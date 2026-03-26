@@ -7,11 +7,12 @@ import type { PurchaseItem } from '../types';
 
 interface CartItemCardProps {
   item: PurchaseItem;
+  isFromList?: boolean;
   onUpdateQuantity: (itemId: string, quantity: number) => void;
   onRemove: (itemId: string) => void;
 }
 
-export function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardProps) {
+export function CartItemCard({ item, isFromList, onUpdateQuantity, onRemove }: CartItemCardProps) {
   const colors = useThemeColors();
 
   return (
@@ -21,9 +22,17 @@ export function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardP
           <Text className="text-sm font-bold text-typography-900" numberOfLines={2}>
             {item.productName}
           </Text>
-          <Text className="mt-0.5 text-xs text-typography-400">
-            {formatCurrency(item.price)} / un
-          </Text>
+          <View className="mt-1 flex-row items-center gap-2">
+            <Text className="text-xs text-typography-400">
+              {formatCurrency(item.price)} / un
+            </Text>
+            {isFromList ? (
+              <View className="flex-row items-center gap-1 rounded-full bg-primary-50 px-2 py-0.5">
+                <Ionicons name="list" size={10} color={colors.primary} />
+                <Text className="text-xs font-semibold text-primary-600">Da lista</Text>
+              </View>
+            ) : null}
+          </View>
         </View>
         <TouchableOpacity
           onPress={() => onRemove(item.id)}
