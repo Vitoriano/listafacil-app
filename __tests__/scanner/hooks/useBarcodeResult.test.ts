@@ -7,14 +7,20 @@ jest.mock('@/config/mock', () => ({
   mockConfig: { enableDelays: false, minDelay: 0, maxDelay: 0 },
 }));
 
+let queryClient: QueryClient;
+
 function createWrapper() {
-  const client = new QueryClient({
-    defaultOptions: { queries: { retry: 0 } },
+  queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: 0, gcTime: 0 } },
   });
   return function Wrapper({ children }: { children: React.ReactNode }) {
-    return React.createElement(QueryClientProvider, { client }, children);
+    return React.createElement(QueryClientProvider, { client: queryClient }, children);
   };
 }
+
+afterEach(() => {
+  queryClient?.clear();
+});
 
 describe('useBarcodeResult', () => {
   it('query is disabled when barcode is null', () => {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import { AppProviders } from '@/providers/AppProviders';
+import { queryClient } from '@/config/queryClient';
 import { ScannerScreen } from '@/features/scanner/components/ScannerScreen';
 
 // ── Mocks ──────────────────────────────────────────────────────────────────
@@ -63,6 +64,10 @@ describe('ScannerScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPush.mockReset();
+  });
+
+  afterEach(() => {
+    queryClient.clear();
   });
 
   describe('permission denied', () => {
