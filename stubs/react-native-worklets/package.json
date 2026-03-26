@@ -1,0 +1,6 @@
+{
+  "name": "react-native-worklets",
+  "version": "0.0.0",
+  "description": "Stub for react-native-worklets required by react-native-css-interop/babel.js (Reanimated v4 compat). This project uses Reanimated v3.",
+  "main": "index.js"
+}
