@@ -51,3 +51,36 @@ export interface StoreBreakdown {
   itemsAvailable: number;
   itemsMissing: number;
 }
+
+// ── Sharing ──
+
+export type ShareRole = 'editor' | 'viewer';
+
+export interface SharedMember {
+  userId: string;
+  name: string;
+  email: string;
+  role: ShareRole;
+  joinedAt: string;
+}
+
+export interface ShareInvite {
+  id: string;
+  listId: string;
+  listName: string;
+  invitedBy: string;
+  role: ShareRole;
+  createdAt: string;
+  expiresAt: string;
+}
+
+export interface ShareByEmailData {
+  listId: string;
+  email: string;
+  role: ShareRole;
+}
+
+export interface ShareResult {
+  invite: ShareInvite;
+  shareUrl: string;
+}

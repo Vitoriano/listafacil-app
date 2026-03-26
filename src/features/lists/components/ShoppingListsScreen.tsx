@@ -21,6 +21,11 @@ export function ShoppingListsScreen() {
     router.push('/lists/create');
   }
 
+  function handleJoinList() {
+    logger.info('Lists', 'Navigating to join list');
+    router.push('/lists/join');
+  }
+
   function handleListPress(list: ShoppingList) {
     logger.info('Lists', 'Navigating to list detail', list.id);
     router.push(`/lists/${list.id}`);
@@ -45,16 +50,27 @@ export function ShoppingListsScreen() {
           <Text className="text-2xl font-bold text-typography-900">
             Minhas Listas
           </Text>
-          <TouchableOpacity
-            onPress={handleCreateList}
-            accessibilityRole="button"
-            accessibilityLabel="Criar Lista"
-            className="flex-row items-center gap-1.5 rounded-full bg-primary-500 px-4 py-2.5"
-            activeOpacity={0.8}
-          >
-            <Ionicons name="add" size={18} color="#FFFFFF" />
-            <Text className="text-xs font-bold text-white">Nova Lista</Text>
-          </TouchableOpacity>
+          <View className="flex-row items-center gap-2">
+            <TouchableOpacity
+              onPress={handleJoinList}
+              accessibilityRole="button"
+              accessibilityLabel="Entrar em uma lista"
+              className="h-10 w-10 items-center justify-center rounded-full bg-background-50"
+              activeOpacity={0.7}
+            >
+              <Ionicons name="qr-code-outline" size={20} color="#323232" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleCreateList}
+              accessibilityRole="button"
+              accessibilityLabel="Criar Lista"
+              className="flex-row items-center gap-1.5 rounded-full bg-primary-500 px-4 py-2.5"
+              activeOpacity={0.8}
+            >
+              <Ionicons name="add" size={18} color="#FFFFFF" />
+              <Text className="text-xs font-bold text-white">Nova Lista</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 

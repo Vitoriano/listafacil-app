@@ -1,5 +1,5 @@
-import { ScannerScreen } from '@/features/scanner/components/ScannerScreen';
+import { DashboardScreen } from '@/features/dashboard/components/DashboardScreen';
 
-export default function ScannerTab() {
-  return <ScannerScreen />;
+export default function DashboardTab() {
+  return <DashboardScreen />;
 }

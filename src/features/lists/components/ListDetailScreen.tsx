@@ -47,6 +47,11 @@ export function ListDetailScreen() {
     router.back();
   }
 
+  function handleShare() {
+    logger.info('Lists', 'Navigating to share', id);
+    router.push(`/lists/share?id=${id}`);
+  }
+
   function handleOptimize() {
     logger.info('Lists', 'Navigating to optimize', id);
     router.push(`/lists/optimize?listId=${id}`);
@@ -115,6 +120,17 @@ export function ListDetailScreen() {
             : undefined
         }
         onBack={handleBack}
+        rightAction={
+          <TouchableOpacity
+            onPress={handleShare}
+            className="h-10 w-10 items-center justify-center rounded-full bg-primary-50"
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel="Compartilhar lista"
+          >
+            <Ionicons name="share-outline" size={20} color="#EA1D2C" />
+          </TouchableOpacity>
+        }
       />
 
       <FlatList

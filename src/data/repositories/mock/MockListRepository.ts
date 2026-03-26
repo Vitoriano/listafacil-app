@@ -10,6 +10,10 @@ import type {
   UpdateListItem,
   OptimizationResult,
   StoreBreakdown,
+  SharedMember,
+  ShareInvite,
+  ShareResult,
+  ShareRole,
 } from '@/features/lists/types';
 import type { Store } from '@/shared/types';
 import seedLists from '@/data/seed/lists.json';
@@ -19,13 +23,42 @@ import seedProducts from '@/data/seed/products.json';
 import type { PriceEntry } from '@/features/prices/types';
 import type { Product } from '@/features/products/types';
 
+function uid(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
 export class MockListRepository implements IListRepository {
   private store: InMemoryStore<ShoppingList>;
+
+  // Sharing state
+  private members = new Map<string, SharedMember[]>(); // listId -> members
+  private invites = new Map<string, ShareInvite>();     // inviteId -> invite
 
   constructor() {
     this.store = new InMemoryStore<ShoppingList>(
       seedLists as unknown as ShoppingList[],
     );
+
+    // Seed some shared members for existing lists
+    const lists = this.store.getAll();
+    if (lists.length > 0) {
+      this.members.set(lists[0].id, [
+        {
+          userId: 'user-001',
+          name: 'Maria Silva',
+          email: 'maria@email.com',
+          role: 'editor',
+          joinedAt: '2026-01-15T10:00:00Z',
+        },
+        {
+          userId: 'user-002',
+          name: 'Joao Santos',
+          email: 'joao@email.com',
+          role: 'editor',
+          joinedAt: '2026-02-20T14:30:00Z',
+        },
+      ]);
+    }
   }
 
   async getAll(): Promise<ShoppingList[]> {
@@ -42,7 +75,7 @@ export class MockListRepository implements IListRepository {
     await simulateDelay();
     const now = new Date().toISOString();
     const newList: ShoppingList = {
-      id: `list-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      id: `list-${uid()}`,
       name: list.name,
       items: [],
       totalEstimate: 0,
@@ -68,6 +101,7 @@ export class MockListRepository implements IListRepository {
   async delete(id: string): Promise<void> {
     await simulateDelay();
     this.store.delete(id);
+    this.members.delete(id);
   }
 
   async addItem(listId: string, item: CreateListItem): Promise<ListItem> {
@@ -82,7 +116,7 @@ export class MockListRepository implements IListRepository {
     const product = products.find((p) => p.id === item.productId);
 
     const newItem: ListItem = {
-      id: `item-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      id: `item-${uid()}`,
       productId: item.productId,
       productName: product?.name ?? 'Produto',
       quantity: item.quantity,
@@ -189,7 +223,6 @@ export class MockListRepository implements IListRepository {
     }
 
     const storeMap = new Map<string, Store>(stores.map((s) => [s.id, s]));
-
     const storeIds = [...new Set(prices.map((p) => p.storeId))].slice(0, 5);
 
     const breakdowns: StoreBreakdown[] = storeIds
@@ -244,5 +277,124 @@ export class MockListRepository implements IListRepository {
       savings: Math.max(0, savings),
       storeBreakdown: breakdowns,
     };
+  }
+
+  // ── Sharing ─────────────────────────────────────────────
+
+  async getMembers(listId: string): Promise<SharedMember[]> {
+    await simulateDelay();
+    return this.members.get(listId) ?? [];
+  }
+
+  async shareByEmail(
+    listId: string,
+    email: string,
+    role: ShareRole,
+  ): Promise<ShareResult> {
+    await simulateDelay();
+
+    const list = this.store.getById(listId);
+    if (!list) throw new Error(`Lista com id "${listId}" não encontrada`);
+
+    // Create invite
+    const invite = this.createInviteInternal(listId, list.name, role);
+
+    // Simulate: add user immediately as member (as if they accepted)
+    const existing = this.members.get(listId) ?? [];
+    const alreadyMember = existing.some((m) => m.email === email);
+    if (!alreadyMember) {
+      existing.push({
+        userId: `user-${uid()}`,
+        name: email.split('@')[0],
+        email,
+        role,
+        joinedAt: new Date().toISOString(),
+      });
+      this.members.set(listId, existing);
+    }
+
+    return {
+      invite,
+      shareUrl: `listafacil://join/${invite.id}`,
+    };
+  }
+
+  async generateInvite(
+    listId: string,
+    role: ShareRole,
+  ): Promise<ShareResult> {
+    await simulateDelay();
+
+    const list = this.store.getById(listId);
+    if (!list) throw new Error(`Lista com id "${listId}" não encontrada`);
+
+    const invite = this.createInviteInternal(listId, list.name, role);
+
+    return {
+      invite,
+      shareUrl: `listafacil://join/${invite.id}`,
+    };
+  }
+
+  async joinByInvite(inviteId: string): Promise<ShoppingList> {
+    await simulateDelay();
+
+    const invite = this.invites.get(inviteId);
+    if (!invite) throw new Error('Convite invalido ou expirado');
+
+    const list = this.store.getById(invite.listId);
+    if (!list) throw new Error('Lista nao encontrada');
+
+    // Add current user as member
+    const existing = this.members.get(invite.listId) ?? [];
+    const mockUser: SharedMember = {
+      userId: `user-${uid()}`,
+      name: 'Voce',
+      email: 'voce@email.com',
+      role: invite.role,
+      joinedAt: new Date().toISOString(),
+    };
+    existing.push(mockUser);
+    this.members.set(invite.listId, existing);
+
+    return list;
+  }
+
+  async removeMember(listId: string, userId: string): Promise<void> {
+    await simulateDelay();
+
+    const existing = this.members.get(listId) ?? [];
+    this.members.set(
+      listId,
+      existing.filter((m) => m.userId !== userId),
+    );
+  }
+
+  async getInvite(inviteId: string): Promise<ShareInvite | null> {
+    await simulateDelay();
+    return this.invites.get(inviteId) ?? null;
+  }
+
+  private createInviteInternal(
+    listId: string,
+    listName: string,
+    role: ShareRole,
+  ): ShareInvite {
+    const id = `invite-${uid()}`;
+    const now = new Date();
+    const expires = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+    const invite: ShareInvite = {
+      id,
+      listId,
+      listName,
+      invitedBy: 'Maria Silva',
+      role,
+      createdAt: now.toISOString(),
+      expiresAt: expires.toISOString(),
+    };
+
+    this.invites.set(id, invite);
+    return invite;
   }
 }

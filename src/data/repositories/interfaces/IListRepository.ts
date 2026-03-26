@@ -6,6 +6,10 @@ import type {
   CreateListItem,
   UpdateListItem,
   OptimizationResult,
+  SharedMember,
+  ShareInvite,
+  ShareResult,
+  ShareRole,
 } from '@/features/lists/types';
 
 export interface IListRepository {
@@ -22,4 +26,12 @@ export interface IListRepository {
     data: UpdateListItem,
   ): Promise<ListItem>;
   optimize(listId: string): Promise<OptimizationResult>;
+
+  // Sharing
+  getMembers(listId: string): Promise<SharedMember[]>;
+  shareByEmail(listId: string, email: string, role: ShareRole): Promise<ShareResult>;
+  generateInvite(listId: string, role: ShareRole): Promise<ShareResult>;
+  joinByInvite(inviteId: string): Promise<ShoppingList>;
+  removeMember(listId: string, userId: string): Promise<void>;
+  getInvite(inviteId: string): Promise<ShareInvite | null>;
 }
