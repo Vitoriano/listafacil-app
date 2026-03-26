@@ -21,8 +21,13 @@ jest.mock('expo-haptics', () => ({
   ImpactFeedbackStyle: { Light: 'Light' },
 }));
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn(), back: jest.fn() }),
+  useRouter: () => ({ push: jest.fn(), back: jest.fn(), replace: jest.fn() }),
   useLocalSearchParams: () => ({}),
+}));
+jest.mock('expo-secure-store', () => ({
+  getItemAsync: jest.fn().mockResolvedValue(null),
+  setItemAsync: jest.fn().mockResolvedValue(undefined),
+  deleteItemAsync: jest.fn().mockResolvedValue(undefined),
 }));
 
 import { ScannerScreen } from '@/features/scanner/components/ScannerScreen';
@@ -79,9 +84,10 @@ describe('Navigation placeholder screens', () => {
     expect(getByText('Price History')).toBeTruthy();
   });
 
-  it('ShoppingListsScreen renders without crashing', () => {
+  it('ShoppingListsScreen renders without crashing', async () => {
     const { getByText } = renderWithProviders(<ShoppingListsScreen />);
-    expect(getByText('Shopping Lists')).toBeTruthy();
+    // ShoppingListsScreen shows header after TanStack Query resolves
+    await waitFor(() => expect(getByText('Shopping Lists')).toBeTruthy());
   });
 
   it('ListDetailScreen renders without crashing', () => {
@@ -90,24 +96,32 @@ describe('Navigation placeholder screens', () => {
   });
 
   it('CreateListScreen renders without crashing', () => {
-    const { getByText } = renderWithProviders(<CreateListScreen />);
-    expect(getByText('Create List')).toBeTruthy();
+    const { getAllByText } = renderWithProviders(<CreateListScreen />);
+    // "Create List" appears in both header and submit button
+    expect(getAllByText('Create List').length).toBeGreaterThan(0);
   });
 
   it('OptimizeScreen renders without crashing', () => {
     const { getByText } = renderWithProviders(<OptimizeScreen />);
-    expect(getByText('Optimize')).toBeTruthy();
+    // OptimizeScreen shows "Store Optimization" as the screen title
+    expect(getByText('Store Optimization')).toBeTruthy();
   });
 
-  it('ProfileScreen renders without crashing', () => {
+  it('ProfileScreen renders without crashing', async () => {
     const { getByText } = renderWithProviders(<ProfileScreen />);
-    expect(getByText('Profile')).toBeTruthy();
-  });
+    // ProfileScreen renders user data after TanStack Query resolves
+    await waitFor(() => expect(getByText('Maria Silva')).toBeTruthy(), {
+      timeout: 8000,
+    });
+  }, 10000);
 
-  it('SavingsScreen renders without crashing', () => {
+  it('SavingsScreen renders without crashing', async () => {
     const { getByText } = renderWithProviders(<SavingsScreen />);
-    expect(getByText('Savings')).toBeTruthy();
-  });
+    // SavingsScreen renders AppHeader with title after data loads
+    await waitFor(() => expect(getByText('Savings')).toBeTruthy(), {
+      timeout: 8000,
+    });
+  }, 10000);
 
   it('SettingsScreen renders without crashing', () => {
     const { getByText } = renderWithProviders(<SettingsScreen />);
@@ -116,11 +130,13 @@ describe('Navigation placeholder screens', () => {
 
   it('LoginScreen renders without crashing', () => {
     const { getByText } = renderWithProviders(<LoginScreen />);
-    expect(getByText('Login')).toBeTruthy();
+    // LoginScreen shows "Lista Fácil" title and "Sign in to your account" subtitle
+    expect(getByText('Lista Fácil')).toBeTruthy();
   });
 
   it('RegisterScreen renders without crashing', () => {
-    const { getByText } = renderWithProviders(<RegisterScreen />);
-    expect(getByText('Register')).toBeTruthy();
+    const { getAllByText } = renderWithProviders(<RegisterScreen />);
+    // RegisterScreen shows "Create Account" in both title and button
+    expect(getAllByText('Create Account').length).toBeGreaterThan(0);
   });
 });
