@@ -2,6 +2,23 @@ import React from 'react';
 import { render } from '@testing-library/react-native';
 import { AppProviders } from '@/providers/AppProviders';
 
+// Mock expo-camera for ScannerScreen (permission denied so it renders the fallback UI)
+jest.mock('expo-camera', () => ({
+  CameraView: ({ children }: { children?: React.ReactNode }) =>
+    require('react-native').createElement('View', { testID: 'camera-view' }, children),
+  useCameraPermissions: jest.fn(() => [
+    { granted: false, status: 'denied' },
+    jest.fn().mockResolvedValue({ granted: false, status: 'denied' }),
+  ]),
+}));
+jest.mock('expo-haptics', () => ({
+  impactAsync: jest.fn().mockResolvedValue(undefined),
+  ImpactFeedbackStyle: { Light: 'Light' },
+}));
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ push: jest.fn() }),
+}));
+
 import { ScannerScreen } from '@/features/scanner/components/ScannerScreen';
 import { ProductListScreen } from '@/features/products/components/ProductListScreen';
 import { ProductDetailScreen } from '@/features/products/components/ProductDetailScreen';
@@ -25,7 +42,8 @@ function renderWithProviders(ui: React.ReactElement) {
 describe('Navigation placeholder screens', () => {
   it('ScannerScreen renders without crashing', () => {
     const { getByText } = renderWithProviders(<ScannerScreen />);
-    expect(getByText('Scanner')).toBeTruthy();
+    // ScannerScreen shows the permission fallback when camera permission is denied
+    expect(getByText('Camera Permission Required')).toBeTruthy();
   });
 
   it('ProductListScreen renders without crashing', () => {
