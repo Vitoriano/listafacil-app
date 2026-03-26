@@ -37,7 +37,9 @@
         {
           "cameraPermission": "Allow Lista Fácil to access your camera for barcode scanning."
         }
-      ]
+      ],
+      "expo-font",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
