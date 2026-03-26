@@ -75,7 +75,7 @@ describe('ProfileScreen', () => {
     const { getByRole } = renderScreen();
 
     await waitFor(
-      () => expect(getByRole('button', { name: 'View Savings' })).toBeTruthy(),
+      () => expect(getByRole('button', { name: 'Ver Economia' })).toBeTruthy(),
       { timeout: 8000 },
     );
   }, 10000);
@@ -85,7 +85,7 @@ describe('ProfileScreen', () => {
 
     await waitFor(
       () =>
-        expect(getByRole('button', { name: 'Go to Settings' })).toBeTruthy(),
+        expect(getByRole('button', { name: 'Configuracoes' })).toBeTruthy(),
       { timeout: 8000 },
     );
   }, 10000);
@@ -94,10 +94,10 @@ describe('ProfileScreen', () => {
     const { getByRole } = renderScreen();
 
     await waitFor(
-      () => expect(getByRole('button', { name: 'View Savings' })).toBeTruthy(),
+      () => expect(getByRole('button', { name: 'Ver Economia' })).toBeTruthy(),
       { timeout: 8000 },
     );
-    fireEvent.press(getByRole('button', { name: 'View Savings' }));
+    fireEvent.press(getByRole('button', { name: 'Ver Economia' }));
     expect(mockPush).toHaveBeenCalledWith('/(tabs)/profile/savings');
   }, 10000);
 });

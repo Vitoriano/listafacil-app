@@ -1,35 +1,44 @@
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
-import { HStack } from '../../../components/ui/hstack';
-import { VStack } from '../../../components/ui/vstack';
+import { Platform, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 interface AppHeaderProps {
   title?: string;
   subtitle?: string;
   onBack?: () => void;
+  rightAction?: React.ReactNode;
 }
 
-export function AppHeader({ title, subtitle, onBack }: AppHeaderProps) {
+export function AppHeader({ title, subtitle, onBack, rightAction }: AppHeaderProps) {
+  const androidPadding = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0;
+
   return (
-    <HStack className="bg-background-50 px-4 py-3">
-      {onBack ? (
-        <TouchableOpacity
-          className="mr-3 p-1"
-          onPress={onBack}
-          accessibilityRole="button"
-          accessibilityLabel="Voltar"
-        >
-          <Text className="text-2xl text-primary-500">{'‹'}</Text>
-        </TouchableOpacity>
-      ) : null}
-      <VStack className="flex-1">
-        {title ? (
-          <Text className="text-lg font-bold text-typography-900">{title}</Text>
+    <View
+      className="bg-background-0 border-b border-outline-100"
+      style={{ paddingTop: androidPadding }}
+    >
+      <View className="flex-row items-center px-4 py-3">
+        {onBack ? (
+          <TouchableOpacity
+            className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-background-50"
+            onPress={onBack}
+            accessibilityRole="button"
+            accessibilityLabel="Voltar"
+            activeOpacity={0.7}
+          >
+            <Ionicons name="chevron-back" size={22} color="#323232" />
+          </TouchableOpacity>
         ) : null}
-        {subtitle ? (
-          <Text className="text-sm text-typography-500">{subtitle}</Text>
-        ) : null}
-      </VStack>
-    </HStack>
+        <View className="flex-1">
+          {title ? (
+            <Text className="text-lg font-bold text-typography-900">{title}</Text>
+          ) : null}
+          {subtitle ? (
+            <Text className="mt-0.5 text-xs text-typography-500">{subtitle}</Text>
+          ) : null}
+        </View>
+        {rightAction ?? null}
+      </View>
+    </View>
   );
 }

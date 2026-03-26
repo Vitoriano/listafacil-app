@@ -52,7 +52,7 @@ describe('ShoppingListsScreen', () => {
     // The seed data always has lists, so we test the EmptyState message text
     // We can verify the EmptyState component renders with a list by inspecting accessibility
     const { getByText } = renderScreen();
-    await waitFor(() => expect(getByText('Shopping Lists')).toBeTruthy());
+    await waitFor(() => expect(getByText('Minhas Listas')).toBeTruthy());
     // Since seed data always has lists, just check lists render
     expect(getByText('Compras da Semana')).toBeTruthy();
   });
@@ -61,12 +61,12 @@ describe('ShoppingListsScreen', () => {
     const { getAllByRole } = renderScreen();
     await waitFor(() => {
       const listCards = getAllByRole('button').filter((b) =>
-        b.props.accessibilityLabel?.startsWith('Open list'),
+        b.props.accessibilityLabel?.startsWith('Abrir lista'),
       );
       expect(listCards.length).toBeGreaterThan(0);
     });
     const listCards = getAllByRole('button').filter((b) =>
-      b.props.accessibilityLabel?.startsWith('Open list'),
+      b.props.accessibilityLabel?.startsWith('Abrir lista'),
     );
     fireEvent.press(listCards[0]);
     expect(mockPush).toHaveBeenCalledWith(expect.stringMatching(/^\/lists\//));
@@ -75,10 +75,10 @@ describe('ShoppingListsScreen', () => {
   it('"Create List" button navigates to /lists/create', async () => {
     const { getByRole } = renderScreen();
     await waitFor(() => {
-      const createBtn = getByRole('button', { name: 'Create List' });
+      const createBtn = getByRole('button', { name: 'Criar Lista' });
       expect(createBtn).toBeTruthy();
     });
-    fireEvent.press(getByRole('button', { name: 'Create List' }));
+    fireEvent.press(getByRole('button', { name: 'Criar Lista' }));
     expect(mockPush).toHaveBeenCalledWith('/lists/create');
   });
 
@@ -86,7 +86,7 @@ describe('ShoppingListsScreen', () => {
     const { getAllByRole } = renderScreen();
     await waitFor(() => {
       const deleteButtons = getAllByRole('button').filter((b) =>
-        b.props.accessibilityLabel?.startsWith('Delete list'),
+        b.props.accessibilityLabel?.startsWith('Excluir lista'),
       );
       expect(deleteButtons.length).toBeGreaterThan(0);
     });
@@ -96,12 +96,12 @@ describe('ShoppingListsScreen', () => {
     const { getAllByRole } = renderScreen();
     await waitFor(() => {
       const deleteButtons = getAllByRole('button').filter((b) =>
-        b.props.accessibilityLabel?.startsWith('Delete list'),
+        b.props.accessibilityLabel?.startsWith('Excluir lista'),
       );
       expect(deleteButtons.length).toBeGreaterThan(0);
     });
     const deleteButtons = getAllByRole('button').filter((b) =>
-      b.props.accessibilityLabel?.startsWith('Delete list'),
+      b.props.accessibilityLabel?.startsWith('Excluir lista'),
     );
     fireEvent.press(deleteButtons[0]);
     // After deletion, the list should eventually be re-fetched

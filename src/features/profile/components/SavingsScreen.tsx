@@ -1,9 +1,7 @@
 import React from 'react';
-import { ScrollView, Text } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Box } from '../../../../components/ui/box';
-import { VStack } from '../../../../components/ui/vstack';
-import { HStack } from '../../../../components/ui/hstack';
+import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { AppHeader } from '@/shared/components/AppHeader';
 import { EmptyState } from '@/shared/components/EmptyState';
@@ -31,90 +29,97 @@ export function SavingsScreen() {
   const hasData = monthlySavings.length > 0 || recentPurchases.length > 0;
 
   return (
-    <VStack className="flex-1 bg-background-50">
-      <AppHeader title="Savings" onBack={handleBack} />
+    <View className="flex-1 bg-background-50">
+      <AppHeader title="Economia" onBack={handleBack} />
 
       {!hasData ? (
         <EmptyState
-          title="No Savings Yet"
-          message="Start submitting prices to track your savings."
+          title="Sem Economia"
+          message="Comece a enviar precos para acompanhar sua economia."
+          icon="trending-up"
         />
       ) : (
         <ScrollView contentContainerStyle={{ padding: 16, gap: 12 }}>
           {/* Total savings */}
-          <Box className="mb-3 rounded-xl bg-primary-500 p-4 shadow-sm">
-            <Text className="text-sm font-medium text-white opacity-80">
-              Total Savings
-            </Text>
-            <Text className="mt-1 text-3xl font-bold text-white">
+          <View className="mb-1 rounded-2xl bg-primary-500 p-5">
+            <View className="flex-row items-center gap-2">
+              <Ionicons name="wallet-outline" size={18} color="rgba(255,255,255,0.8)" />
+              <Text className="text-xs font-semibold text-white opacity-80">
+                Economia Total
+              </Text>
+            </View>
+            <Text className="mt-2 text-3xl font-bold text-white">
               {formatCurrency(savings?.totalSavings ?? 0)}
             </Text>
-          </Box>
+          </View>
 
           {/* Monthly savings */}
           {monthlySavings.length > 0 ? (
-            <Box className="mb-3 rounded-xl bg-background-0 p-4 shadow-sm">
-              <Text className="mb-3 text-base font-semibold text-typography-900">
-                Monthly Savings
+            <View className="mb-1 rounded-2xl bg-background-0 p-4">
+              <Text className="mb-3 text-sm font-bold text-typography-900">
+                Economia Mensal
               </Text>
-              <VStack className="gap-2">
+              <View className="gap-3">
                 {monthlySavings.map((item: MonthlySaving) => (
-                  <HStack
+                  <View
                     key={item.month}
-                    className="items-center justify-between"
+                    className="flex-row items-center justify-between"
                     accessibilityLabel={`${item.month}: ${formatCurrency(item.amount)}`}
                   >
                     <Text className="text-sm text-typography-600">
                       {item.month}
                     </Text>
-                    <Text className="text-sm font-semibold text-primary-600">
+                    <Text className="text-sm font-bold text-success-600">
                       {formatCurrency(item.amount)}
                     </Text>
-                  </HStack>
+                  </View>
                 ))}
-              </VStack>
-            </Box>
+              </View>
+            </View>
           ) : null}
 
           {/* Recent purchases */}
           {recentPurchases.length > 0 ? (
-            <VStack className="gap-3">
-              <Text className="text-base font-semibold text-typography-900">
-                Recent Purchases
+            <View className="gap-3">
+              <Text className="text-sm font-bold text-typography-900">
+                Compras Recentes
               </Text>
               {recentPurchases.map((item: RecentPurchase, index: number) => (
-                <Box
+                <View
                   key={`${item.listName}-${index}`}
-                  className="rounded-xl bg-background-0 p-4 shadow-sm"
-                  accessibilityLabel={`Purchase at ${item.storeName} on ${formatDate(item.date)}`}
+                  className="rounded-2xl bg-background-0 p-4"
+                  accessibilityLabel={`Compra em ${item.storeName} em ${formatDate(item.date)}`}
                 >
-                  <HStack className="items-start justify-between">
-                    <VStack className="flex-1 gap-0.5">
-                      <Text className="text-base font-semibold text-typography-900">
+                  <View className="flex-row items-start justify-between">
+                    <View className="flex-1 gap-0.5">
+                      <Text className="text-sm font-bold text-typography-900">
                         {item.listName}
                       </Text>
-                      <Text className="text-sm text-typography-500">
+                      <Text className="text-xs text-typography-500">
                         {item.storeName}
                       </Text>
                       <Text className="text-xs text-typography-400">
                         {formatDate(item.date)}
                       </Text>
-                    </VStack>
-                    <VStack className="items-end gap-0.5">
-                      <Text className="text-base font-bold text-typography-900">
+                    </View>
+                    <View className="items-end gap-0.5">
+                      <Text className="text-sm font-bold text-typography-900">
                         {formatCurrency(item.total)}
                       </Text>
-                      <Text className="text-sm font-medium text-primary-600">
-                        -{formatCurrency(item.savings)}
-                      </Text>
-                    </VStack>
-                  </HStack>
-                </Box>
+                      <View className="flex-row items-center gap-1">
+                        <Ionicons name="trending-down" size={12} color="#05966A" />
+                        <Text className="text-xs font-bold text-success-600">
+                          -{formatCurrency(item.savings)}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
               ))}
-            </VStack>
+            </View>
           ) : null}
         </ScrollView>
       )}
-    </VStack>
+    </View>
   );
 }

@@ -3,6 +3,7 @@
 # dependencies
 node_modules/
 coverage/
+coverage-auth-profile/
 # Expo
 .expo/
 dist/

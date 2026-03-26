@@ -1,6 +1,6 @@
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
-import { VStack } from '../../../components/ui/vstack';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 interface EmptyStateAction {
   label: string;
@@ -10,25 +10,30 @@ interface EmptyStateAction {
 interface EmptyStateProps {
   message: string;
   title?: string;
+  icon?: keyof typeof Ionicons.glyphMap;
   action?: EmptyStateAction;
 }
 
-export function EmptyState({ message, title, action }: EmptyStateProps) {
+export function EmptyState({ message, title, icon = 'file-tray-outline', action }: EmptyStateProps) {
   return (
-    <VStack className="flex-1 items-center justify-center px-8 py-12">
+    <View className="flex-1 items-center justify-center px-8 py-16">
+      <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-background-100">
+        <Ionicons name={icon} size={28} color="#7D7D7D" />
+      </View>
       {title ? (
-        <Text className="mb-2 text-xl font-bold text-typography-900">{title}</Text>
+        <Text className="mb-1 text-lg font-bold text-typography-900">{title}</Text>
       ) : null}
-      <Text className="text-center text-base text-typography-500">{message}</Text>
+      <Text className="text-center text-sm leading-5 text-typography-500">{message}</Text>
       {action ? (
         <TouchableOpacity
-          className="mt-6 rounded-lg bg-primary-500 px-6 py-3"
+          className="mt-6 rounded-full bg-primary-500 px-8 py-3"
           onPress={action.onPress}
           accessibilityRole="button"
+          activeOpacity={0.8}
         >
-          <Text className="text-base font-semibold text-white">{action.label}</Text>
+          <Text className="text-sm font-bold text-white">{action.label}</Text>
         </TouchableOpacity>
       ) : null}
-    </VStack>
+    </View>
   );
 }

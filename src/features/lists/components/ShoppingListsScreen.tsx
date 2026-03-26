@@ -1,9 +1,7 @@
 import React from 'react';
-import { FlatList, Text, TouchableOpacity } from 'react-native';
+import { FlatList, Platform, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Box } from '../../../../components/ui/box';
-import { VStack } from '../../../../components/ui/vstack';
-import { HStack } from '../../../../components/ui/hstack';
+import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
@@ -33,82 +31,93 @@ export function ShoppingListsScreen() {
     deleteList(list.id);
   }
 
+  const androidPadding = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0;
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
 
   return (
-    <VStack className="flex-1 bg-background-50">
+    <View className="flex-1 bg-background-50" style={{ paddingTop: androidPadding }}>
       {/* Header */}
-      <Box className="bg-background-0 px-4 pb-3 pt-4 shadow-sm">
-        <HStack className="items-center justify-between">
+      <View className="bg-background-0 border-b border-outline-100 px-4 pb-3 pt-4">
+        <View className="flex-row items-center justify-between">
           <Text className="text-2xl font-bold text-typography-900">
-            Shopping Lists
+            Minhas Listas
           </Text>
           <TouchableOpacity
             onPress={handleCreateList}
             accessibilityRole="button"
-            accessibilityLabel="Create List"
-            className="rounded-lg bg-primary-500 px-4 py-2"
+            accessibilityLabel="Criar Lista"
+            className="flex-row items-center gap-1.5 rounded-full bg-primary-500 px-4 py-2.5"
+            activeOpacity={0.8}
           >
-            <Text className="text-sm font-semibold text-white">+ Create</Text>
+            <Ionicons name="add" size={18} color="#FFFFFF" />
+            <Text className="text-xs font-bold text-white">Nova Lista</Text>
           </TouchableOpacity>
-        </HStack>
-      </Box>
+        </View>
+      </View>
 
       {/* Lists */}
       <FlatList
         data={lists ?? []}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 12, flexGrow: 1 }}
+        contentContainerStyle={{ padding: 16, flexGrow: 1 }}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => handleListPress(item)}
             accessibilityRole="button"
-            accessibilityLabel={`Open list ${item.name}`}
+            accessibilityLabel={`Abrir lista ${item.name}`}
             className="mb-3"
+            activeOpacity={0.7}
           >
-            <Box className="rounded-xl bg-background-0 p-4 shadow-sm">
-              <HStack className="items-start justify-between">
-                <VStack className="flex-1">
-                  <Text className="text-base font-semibold text-typography-900">
+            <View className="rounded-2xl bg-background-0 p-4">
+              <View className="flex-row items-start justify-between">
+                <View className="flex-1">
+                  <Text className="text-base font-bold text-typography-900">
                     {item.name}
                   </Text>
-                  <Text className="mt-1 text-sm text-typography-500">
-                    {item.itemCount}{' '}
-                    {item.itemCount === 1 ? 'item' : 'items'}
-                  </Text>
+                  <View className="mt-1 flex-row items-center gap-1">
+                    <Ionicons name="cart-outline" size={13} color="#7D7D7D" />
+                    <Text className="text-xs text-typography-500">
+                      {item.itemCount}{' '}
+                      {item.itemCount === 1 ? 'item' : 'itens'}
+                    </Text>
+                  </View>
                   <Text className="mt-0.5 text-xs text-typography-400">
                     {formatDate(item.createdAt)}
                   </Text>
-                </VStack>
-                <VStack className="items-end">
-                  <Text className="text-lg font-bold text-primary-600">
+                </View>
+                <View className="items-end">
+                  <Text className="text-lg font-bold text-primary-500">
                     {formatCurrency(item.totalEstimate)}
                   </Text>
                   <TouchableOpacity
                     onPress={() => handleDeleteList(item)}
                     accessibilityRole="button"
-                    accessibilityLabel={`Delete list ${item.name}`}
-                    className="mt-2 rounded-lg bg-error-100 px-3 py-1.5"
+                    accessibilityLabel={`Excluir lista ${item.name}`}
+                    className="mt-2 flex-row items-center gap-1 rounded-full bg-error-50 px-3 py-1.5"
+                    activeOpacity={0.7}
                   >
-                    <Text className="text-xs font-medium text-error-600">
-                      Delete
+                    <Ionicons name="trash-outline" size={12} color="#C41C1C" />
+                    <Text className="text-xs font-semibold text-error-600">
+                      Excluir
                     </Text>
                   </TouchableOpacity>
-                </VStack>
-              </HStack>
-            </Box>
+                </View>
+              </View>
+            </View>
           </TouchableOpacity>
         )}
         ListEmptyComponent={
           <EmptyState
-            title="No Shopping Lists"
-            message="Create your first shopping list to get started."
-            action={{ label: 'Create List', onPress: handleCreateList }}
+            title="Nenhuma Lista"
+            message="Crie sua primeira lista de compras para comecar."
+            icon="list-outline"
+            action={{ label: 'Criar Lista', onPress: handleCreateList }}
           />
         }
       />
-    </VStack>
+    </View>
   );
 }

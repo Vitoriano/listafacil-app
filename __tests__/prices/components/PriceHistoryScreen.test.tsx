@@ -42,7 +42,7 @@ describe('PriceHistoryScreen', () => {
 
     it('renders history list for a known productId', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('Price History')).toBeTruthy());
+      await waitFor(() => expect(getByText('Historico de Precos')).toBeTruthy());
       // prod-001 has prices at Atacadão, Pão de Açúcar, etc.
       await waitFor(() => expect(getByText('Atacadão')).toBeTruthy());
     });
@@ -56,10 +56,12 @@ describe('PriceHistoryScreen', () => {
     });
 
     it('renders "Go Back" button', async () => {
-      const { getByRole } = renderScreen();
+      const { getAllByRole } = renderScreen();
       await waitFor(() => {
-        const backButton = getByRole('button', { name: 'Go Back' });
-        expect(backButton).toBeTruthy();
+        const backButtons = getAllByRole('button').filter(
+          (b) => b.props.accessibilityLabel === 'Voltar',
+        );
+        expect(backButtons.length).toBeGreaterThan(0);
       });
     });
 
@@ -86,8 +88,8 @@ describe('PriceHistoryScreen', () => {
 
     it('renders EmptyState when history is empty', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('No History Found')).toBeTruthy());
-      expect(getByText('No price history found for this product.')).toBeTruthy();
+      await waitFor(() => expect(getByText('Sem Historico')).toBeTruthy());
+      expect(getByText('Nenhum historico de precos encontrado para este produto.')).toBeTruthy();
     });
   });
 
@@ -101,8 +103,8 @@ describe('PriceHistoryScreen', () => {
 
     it('shows "Filtered by store" subtitle when storeId is provided', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('Price History')).toBeTruthy());
-      expect(getByText('Filtered by store')).toBeTruthy();
+      await waitFor(() => expect(getByText('Historico de Precos')).toBeTruthy());
+      expect(getByText('Filtrado por loja')).toBeTruthy();
     });
 
     it('renders entries only for the specified store', async () => {

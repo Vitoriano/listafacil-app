@@ -43,17 +43,17 @@ describe('LoginScreen', () => {
 
   it('renders email input, password input, and submit button', () => {
     const { getByLabelText, getByRole } = renderScreen();
-    expect(getByLabelText('Email input')).toBeTruthy();
-    expect(getByLabelText('Password input')).toBeTruthy();
-    expect(getByRole('button', { name: 'Sign In' })).toBeTruthy();
+    expect(getByLabelText('Campo de email')).toBeTruthy();
+    expect(getByLabelText('Campo de senha')).toBeTruthy();
+    expect(getByRole('button', { name: 'Entrar' })).toBeTruthy();
   });
 
   it('shows validation error for invalid email on submit attempt', async () => {
     const { getByLabelText, getByRole, findByText } = renderScreen();
 
-    fireEvent.changeText(getByLabelText('Email input'), 'not-an-email');
-    fireEvent.changeText(getByLabelText('Password input'), 'password123');
-    fireEvent.press(getByRole('button', { name: 'Sign In' }));
+    fireEvent.changeText(getByLabelText('Campo de email'), 'not-an-email');
+    fireEvent.changeText(getByLabelText('Campo de senha'), 'password123');
+    fireEvent.press(getByRole('button', { name: 'Entrar' }));
 
     await findByText('Invalid email');
   });
@@ -61,9 +61,9 @@ describe('LoginScreen', () => {
   it('shows validation error for short password on submit attempt', async () => {
     const { getByLabelText, getByRole, findByText } = renderScreen();
 
-    fireEvent.changeText(getByLabelText('Email input'), 'user@example.com');
-    fireEvent.changeText(getByLabelText('Password input'), 'abc');
-    fireEvent.press(getByRole('button', { name: 'Sign In' }));
+    fireEvent.changeText(getByLabelText('Campo de email'), 'user@example.com');
+    fireEvent.changeText(getByLabelText('Campo de senha'), 'abc');
+    fireEvent.press(getByRole('button', { name: 'Entrar' }));
 
     await findByText('Password must be at least 6 characters');
   });
@@ -72,11 +72,11 @@ describe('LoginScreen', () => {
     const { getByLabelText, getByRole } = renderScreen();
 
     fireEvent.changeText(
-      getByLabelText('Email input'),
+      getByLabelText('Campo de email'),
       'maria.silva@email.com',
     );
-    fireEvent.changeText(getByLabelText('Password input'), 'password123');
-    fireEvent.press(getByRole('button', { name: 'Sign In' }));
+    fireEvent.changeText(getByLabelText('Campo de senha'), 'password123');
+    fireEvent.press(getByRole('button', { name: 'Entrar' }));
 
     await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('/(tabs)'), {
       timeout: 3000,
@@ -85,12 +85,12 @@ describe('LoginScreen', () => {
 
   it('navigation link to RegisterScreen is present', () => {
     const { getByRole } = renderScreen();
-    expect(getByRole('button', { name: 'Go to Register' })).toBeTruthy();
+    expect(getByRole('button', { name: 'Criar conta' })).toBeTruthy();
   });
 
   it('tapping register link navigates to /auth/register', () => {
     const { getByRole } = renderScreen();
-    fireEvent.press(getByRole('button', { name: 'Go to Register' }));
+    fireEvent.press(getByRole('button', { name: 'Criar conta' }));
     expect(mockPush).toHaveBeenCalledWith('/auth/register');
   });
 });

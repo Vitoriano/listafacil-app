@@ -43,24 +43,24 @@ describe('RegisterScreen', () => {
 
   it('renders name, email, password, confirmPassword inputs and submit button', () => {
     const { getByLabelText, getByRole } = renderScreen();
-    expect(getByLabelText('Name input')).toBeTruthy();
-    expect(getByLabelText('Email input')).toBeTruthy();
-    expect(getByLabelText('Password input')).toBeTruthy();
-    expect(getByLabelText('Confirm Password input')).toBeTruthy();
-    expect(getByRole('button', { name: 'Create Account' })).toBeTruthy();
+    expect(getByLabelText('Campo de nome')).toBeTruthy();
+    expect(getByLabelText('Campo de email')).toBeTruthy();
+    expect(getByLabelText('Campo de senha')).toBeTruthy();
+    expect(getByLabelText('Campo de confirmar senha')).toBeTruthy();
+    expect(getByRole('button', { name: 'Criar Conta' })).toBeTruthy();
   });
 
   it('shows validation error when passwords do not match', async () => {
     const { getByLabelText, getByRole, findByText } = renderScreen();
 
-    fireEvent.changeText(getByLabelText('Name input'), 'João Silva');
-    fireEvent.changeText(getByLabelText('Email input'), 'joao@example.com');
-    fireEvent.changeText(getByLabelText('Password input'), 'password123');
+    fireEvent.changeText(getByLabelText('Campo de nome'), 'João Silva');
+    fireEvent.changeText(getByLabelText('Campo de email'), 'joao@example.com');
+    fireEvent.changeText(getByLabelText('Campo de senha'), 'password123');
     fireEvent.changeText(
-      getByLabelText('Confirm Password input'),
+      getByLabelText('Campo de confirmar senha'),
       'differentpass',
     );
-    fireEvent.press(getByRole('button', { name: 'Create Account' }));
+    fireEvent.press(getByRole('button', { name: 'Criar Conta' }));
 
     await findByText('Passwords do not match');
   });
@@ -68,14 +68,14 @@ describe('RegisterScreen', () => {
   it('shows validation error for short name on submit', async () => {
     const { getByLabelText, getByRole, findByText } = renderScreen();
 
-    fireEvent.changeText(getByLabelText('Name input'), 'A');
-    fireEvent.changeText(getByLabelText('Email input'), 'a@example.com');
-    fireEvent.changeText(getByLabelText('Password input'), 'password123');
+    fireEvent.changeText(getByLabelText('Campo de nome'), 'A');
+    fireEvent.changeText(getByLabelText('Campo de email'), 'a@example.com');
+    fireEvent.changeText(getByLabelText('Campo de senha'), 'password123');
     fireEvent.changeText(
-      getByLabelText('Confirm Password input'),
+      getByLabelText('Campo de confirmar senha'),
       'password123',
     );
-    fireEvent.press(getByRole('button', { name: 'Create Account' }));
+    fireEvent.press(getByRole('button', { name: 'Criar Conta' }));
 
     await findByText('Name must be at least 2 characters');
   });
@@ -83,14 +83,14 @@ describe('RegisterScreen', () => {
   it('successful registration navigates away from auth flow', async () => {
     const { getByLabelText, getByRole } = renderScreen();
 
-    fireEvent.changeText(getByLabelText('Name input'), 'Maria Nova');
-    fireEvent.changeText(getByLabelText('Email input'), 'maria.nova@example.com');
-    fireEvent.changeText(getByLabelText('Password input'), 'securepass123');
+    fireEvent.changeText(getByLabelText('Campo de nome'), 'Maria Nova');
+    fireEvent.changeText(getByLabelText('Campo de email'), 'maria.nova@example.com');
+    fireEvent.changeText(getByLabelText('Campo de senha'), 'securepass123');
     fireEvent.changeText(
-      getByLabelText('Confirm Password input'),
+      getByLabelText('Campo de confirmar senha'),
       'securepass123',
     );
-    fireEvent.press(getByRole('button', { name: 'Create Account' }));
+    fireEvent.press(getByRole('button', { name: 'Criar Conta' }));
 
     await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('/(tabs)'), {
       timeout: 3000,
@@ -99,12 +99,12 @@ describe('RegisterScreen', () => {
 
   it('navigation link to LoginScreen is present', () => {
     const { getByRole } = renderScreen();
-    expect(getByRole('button', { name: 'Go to Login' })).toBeTruthy();
+    expect(getByRole('button', { name: 'Ir para login' })).toBeTruthy();
   });
 
   it('tapping login link navigates to /auth/login', () => {
     const { getByRole } = renderScreen();
-    fireEvent.press(getByRole('button', { name: 'Go to Login' }));
+    fireEvent.press(getByRole('button', { name: 'Ir para login' }));
     expect(mockPush).toHaveBeenCalledWith('/auth/login');
   });
 });

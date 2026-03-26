@@ -45,7 +45,7 @@ describe('SavingsScreen', () => {
     const { getByText } = renderScreen();
 
     // MockUserRepository returns 6 monthly savings entries
-    await waitFor(() => expect(getByText('Monthly Savings')).toBeTruthy(), {
+    await waitFor(() => expect(getByText('Economia Mensal')).toBeTruthy(), {
       timeout: 8000,
     });
     expect(getByText('2025-10')).toBeTruthy();
@@ -70,17 +70,17 @@ describe('SavingsScreen', () => {
   it('renders total savings amount', async () => {
     const { getByText } = renderScreen();
 
-    await waitFor(() => expect(getByText('Total Savings')).toBeTruthy(), {
+    await waitFor(() => expect(getByText('Economia Total')).toBeTruthy(), {
       timeout: 8000,
     });
     // Total savings from MockUserRepository seed user-001
-    expect(getByText('Total Savings')).toBeTruthy();
+    expect(getByText('Economia Total')).toBeTruthy();
   }, 10000);
 
   it('renders header with AppHeader back button', async () => {
     const { getByText } = renderScreen();
 
-    await waitFor(() => expect(getByText('Savings')).toBeTruthy(), {
+    await waitFor(() => expect(getByText('Economia')).toBeTruthy(), {
       timeout: 8000,
     });
   }, 10000);
@@ -88,9 +88,9 @@ describe('SavingsScreen', () => {
   it('renders EmptyState when no data is available (edge case)', async () => {
     // Since seed data always returns data, this test verifies the screen renders correctly
     const { getByText } = renderScreen();
-    await waitFor(() => expect(getByText('Total Savings')).toBeTruthy(), {
+    await waitFor(() => expect(getByText('Economia Total')).toBeTruthy(), {
       timeout: 8000,
     });
-    expect(getByText('Total Savings')).toBeTruthy();
+    expect(getByText('Economia Total')).toBeTruthy();
   }, 10000);
 });

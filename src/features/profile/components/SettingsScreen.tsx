@@ -1,9 +1,7 @@
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Platform, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Box } from '../../../../components/ui/box';
-import { VStack } from '../../../../components/ui/vstack';
-import { HStack } from '../../../../components/ui/hstack';
+import { Ionicons } from '@expo/vector-icons';
 import { logger } from '@/shared/utils/logger';
 import { useAuthStore } from '@/features/auth/stores/authStore';
 
@@ -12,6 +10,8 @@ export function SettingsScreen() {
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const user = useAuthStore((state) => state.user);
 
+  const androidPadding = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0;
+
   function handleLogout() {
     logger.info('Auth', 'User logging out');
     clearAuth();
@@ -19,45 +19,51 @@ export function SettingsScreen() {
   }
 
   return (
-    <VStack className="flex-1 bg-background-50">
+    <View className="flex-1 bg-background-50" style={{ paddingTop: androidPadding }}>
       {/* Header */}
-      <Box className="bg-background-0 px-4 pb-3 pt-4 shadow-sm">
-        <Text className="text-2xl font-bold text-typography-900">Settings</Text>
-      </Box>
+      <View className="bg-background-0 border-b border-outline-100 px-4 pb-3 pt-4">
+        <Text className="text-2xl font-bold text-typography-900">Configuracoes</Text>
+      </View>
 
-      <VStack className="mx-4 mt-4 gap-3">
+      <View className="mx-4 mt-4 gap-3">
         {/* Account info */}
         {user ? (
-          <Box className="rounded-xl bg-background-0 p-4 shadow-sm">
-            <Text className="mb-1 text-xs font-medium uppercase tracking-wide text-typography-400">
-              Account
-            </Text>
-            <VStack className="mt-2 gap-1">
-              <Text className="text-base font-semibold text-typography-900">
-                {user.name}
-              </Text>
-              <Text className="text-sm text-typography-500">{user.email}</Text>
-            </VStack>
-          </Box>
+          <View className="rounded-2xl bg-background-0 p-4">
+            <View className="flex-row items-center gap-3">
+              <View className="h-12 w-12 items-center justify-center rounded-full bg-primary-500">
+                <Text className="text-lg font-bold text-white">
+                  {user.name.charAt(0).toUpperCase()}
+                </Text>
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm font-bold text-typography-900">
+                  {user.name}
+                </Text>
+                <Text className="mt-0.5 text-xs text-typography-500">{user.email}</Text>
+              </View>
+            </View>
+          </View>
         ) : null}
 
         {/* Logout */}
-        <Box className="rounded-xl bg-background-0 shadow-sm">
-          <TouchableOpacity
-            onPress={handleLogout}
-            accessibilityRole="button"
-            accessibilityLabel="Log Out"
-            className="p-4"
-          >
-            <HStack className="items-center justify-between">
-              <Text className="text-base font-semibold text-error-600">
-                Log Out
-              </Text>
-              <Text className="text-xl text-error-400">›</Text>
-            </HStack>
-          </TouchableOpacity>
-        </Box>
-      </VStack>
-    </VStack>
+        <TouchableOpacity
+          onPress={handleLogout}
+          accessibilityRole="button"
+          accessibilityLabel="Sair"
+          className="rounded-2xl bg-background-0 p-4"
+          activeOpacity={0.7}
+        >
+          <View className="flex-row items-center gap-3">
+            <View className="h-10 w-10 items-center justify-center rounded-full bg-error-50">
+              <Ionicons name="log-out-outline" size={20} color="#C41C1C" />
+            </View>
+            <Text className="flex-1 text-sm font-bold text-error-600">
+              Sair da Conta
+            </Text>
+            <Ionicons name="chevron-forward" size={18} color="#C8C8C8" />
+          </View>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }

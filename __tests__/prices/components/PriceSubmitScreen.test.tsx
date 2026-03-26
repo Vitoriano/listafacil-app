@@ -38,9 +38,9 @@ describe('PriceSubmitScreen', () => {
 
   it('renders store selector and price input fields after stores load', async () => {
     const { getByText, getByLabelText } = renderScreen();
-    await waitFor(() => expect(getByText('Select Store')).toBeTruthy());
-    expect(getByText('Price (R$)')).toBeTruthy();
-    expect(getByLabelText('Price input')).toBeTruthy();
+    await waitFor(() => expect(getByText('Selecionar Loja')).toBeTruthy());
+    expect(getByText('Preco (R$)')).toBeTruthy();
+    expect(getByLabelText('Campo de preco')).toBeTruthy();
   });
 
   it('renders store options from repository', async () => {
@@ -53,20 +53,20 @@ describe('PriceSubmitScreen', () => {
   it('Submit button is present and accessible', async () => {
     const { getByRole } = renderScreen();
     await waitFor(() => {
-      const submitButton = getByRole('button', { name: 'Submit Price' });
+      const submitButton = getByRole('button', { name: 'Enviar Preco' });
       expect(submitButton).toBeTruthy();
     });
   });
 
   it('shows validation error for missing store when submitting without selecting', async () => {
     const { getByRole, getByLabelText, getByText, findByText } = renderScreen();
-    await waitFor(() => expect(getByText('Select Store')).toBeTruthy());
+    await waitFor(() => expect(getByText('Selecionar Loja')).toBeTruthy());
 
     // Fill price but no store
-    const priceInput = getByLabelText('Price input');
+    const priceInput = getByLabelText('Campo de preco');
     fireEvent.changeText(priceInput, '19.99');
 
-    const submitButton = getByRole('button', { name: 'Submit Price' });
+    const submitButton = getByRole('button', { name: 'Enviar Preco' });
     fireEvent.press(submitButton);
 
     await findByText('Store is required');
@@ -74,14 +74,14 @@ describe('PriceSubmitScreen', () => {
 
   it('shows validation error when price is empty on submit', async () => {
     const { getByRole, getByText, findByText } = renderScreen();
-    await waitFor(() => expect(getByText('Select Store')).toBeTruthy());
+    await waitFor(() => expect(getByText('Selecionar Loja')).toBeTruthy());
 
     // Select a store
-    const storeButton = getByRole('button', { name: 'Select Pão de Açúcar' });
+    const storeButton = getByRole('button', { name: 'Selecionar Pão de Açúcar' });
     fireEvent.press(storeButton);
 
     // Submit without price (price is undefined → Zod required error)
-    const submitButton = getByRole('button', { name: 'Submit Price' });
+    const submitButton = getByRole('button', { name: 'Enviar Preco' });
     fireEvent.press(submitButton);
 
     // Zod v3 maps undefined number to "Required"
@@ -90,32 +90,32 @@ describe('PriceSubmitScreen', () => {
 
   it('shows validation error when price is zero', async () => {
     const { getByRole, getByText, getByLabelText, findByText } = renderScreen();
-    await waitFor(() => expect(getByText('Select Store')).toBeTruthy());
+    await waitFor(() => expect(getByText('Selecionar Loja')).toBeTruthy());
 
     // Select a store
-    fireEvent.press(getByRole('button', { name: 'Select Pão de Açúcar' }));
+    fireEvent.press(getByRole('button', { name: 'Selecionar Pão de Açúcar' }));
 
     // Enter zero price
-    fireEvent.changeText(getByLabelText('Price input'), '0');
+    fireEvent.changeText(getByLabelText('Campo de preco'), '0');
 
     // Submit
-    fireEvent.press(getByRole('button', { name: 'Submit Price' }));
+    fireEvent.press(getByRole('button', { name: 'Enviar Preco' }));
 
     await findByText('Price must be positive');
   });
 
   it('successful form submission navigates back after mutation completes', async () => {
     const { getByRole, getByText, getByLabelText } = renderScreen();
-    await waitFor(() => expect(getByText('Select Store')).toBeTruthy());
+    await waitFor(() => expect(getByText('Selecionar Loja')).toBeTruthy());
 
     // Select a store
-    fireEvent.press(getByRole('button', { name: 'Select Atacadão' }));
+    fireEvent.press(getByRole('button', { name: 'Selecionar Atacadão' }));
 
     // Enter a valid price
-    fireEvent.changeText(getByLabelText('Price input'), '19.99');
+    fireEvent.changeText(getByLabelText('Campo de preco'), '19.99');
 
     // Submit
-    fireEvent.press(getByRole('button', { name: 'Submit Price' }));
+    fireEvent.press(getByRole('button', { name: 'Enviar Preco' }));
 
     await waitFor(() => expect(mockBack).toHaveBeenCalledTimes(1), { timeout: 3000 });
   });

@@ -48,18 +48,18 @@ describe('OptimizeScreen', () => {
 
     it('renders best store name after optimization loads', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('Best Store')).toBeTruthy());
+      await waitFor(() => expect(getByText('Melhor Loja')).toBeTruthy());
       // Best store name should appear in the screen
-      expect(getByText('Best Store')).toBeTruthy();
+      expect(getByText('Melhor Loja')).toBeTruthy();
     });
 
     it('renders store breakdown rows for all stores in the result', async () => {
       const { getByText } = renderScreen();
       await waitFor(() =>
-        expect(getByText('All Stores Comparison')).toBeTruthy(),
+        expect(getByText('Comparacao entre Lojas')).toBeTruthy(),
       );
       // At least one store breakdown row
-      expect(getByText('All Stores Comparison')).toBeTruthy();
+      expect(getByText('Comparacao entre Lojas')).toBeTruthy();
     });
 
     it('back button calls router.back()', async () => {
@@ -86,11 +86,11 @@ describe('OptimizeScreen', () => {
     it('renders EmptyState when optimization returns 0 total cost', async () => {
       const { getByText } = renderScreen();
       await waitFor(() =>
-        expect(getByText('No Optimization Available')).toBeTruthy(),
+        expect(getByText('Sem Otimizacao')).toBeTruthy(),
       );
       expect(
         getByText(
-          'Add items to your list first to get store recommendations.',
+          'Adicione itens a sua lista para receber recomendacoes.',
         ),
       ).toBeTruthy();
     });

@@ -58,7 +58,7 @@ describe('ProductCard', () => {
 
   it('renders price count', () => {
     const { getByText } = renderCard();
-    expect(getByText(/8 prices/)).toBeTruthy();
+    expect(getByText(/8 precos/)).toBeTruthy();
   });
 
   it('calls onPress when card is pressed', () => {
@@ -68,13 +68,13 @@ describe('ProductCard', () => {
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
-  it('renders singular "price" for priceCount = 1', () => {
+  it('renders singular "preco" for priceCount = 1', () => {
     const productWithOnePrice: Product = { ...mockProduct, priceCount: 1 };
     const { getByText } = render(
       <AppProviders>
         <ProductCard product={productWithOnePrice} onPress={jest.fn()} />
       </AppProviders>,
     );
-    expect(getByText(/1 price/)).toBeTruthy();
+    expect(getByText(/1 preco/)).toBeTruthy();
   });
 });

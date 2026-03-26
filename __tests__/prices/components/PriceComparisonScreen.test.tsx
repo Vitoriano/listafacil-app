@@ -55,16 +55,16 @@ describe('PriceComparisonScreen', () => {
 
     it('renders summary row showing price summary section', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('Price Summary')).toBeTruthy());
-      expect(getByText('Lowest')).toBeTruthy();
-      expect(getByText('Average')).toBeTruthy();
-      expect(getByText('Highest')).toBeTruthy();
+      await waitFor(() => expect(getByText('Resumo de Precos')).toBeTruthy());
+      expect(getByText('Menor')).toBeTruthy();
+      expect(getByText('Medio')).toBeTruthy();
+      expect(getByText('Maior')).toBeTruthy();
     });
 
     it('"Submit Price" CTA navigates to /products/prices/submit with productId', async () => {
       const { getAllByText } = renderScreen();
-      await waitFor(() => expect(getAllByText('Submit Price').length).toBeGreaterThan(0));
-      fireEvent.press(getAllByText('Submit Price')[0]);
+      await waitFor(() => expect(getAllByText('Enviar Preco').length).toBeGreaterThan(0));
+      fireEvent.press(getAllByText('Enviar Preco')[0]);
       expect(mockPush).toHaveBeenCalledWith(
         '/products/prices/submit?productId=prod-001',
       );
@@ -72,8 +72,8 @@ describe('PriceComparisonScreen', () => {
 
     it('"View History" CTA navigates to /products/prices/history with productId', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('View History')).toBeTruthy());
-      fireEvent.press(getByText('View History'));
+      await waitFor(() => expect(getByText('Ver Historico')).toBeTruthy());
+      fireEvent.press(getByText('Ver Historico'));
       expect(mockPush).toHaveBeenCalledWith(
         '/products/prices/history?productId=prod-001',
       );
@@ -84,7 +84,7 @@ describe('PriceComparisonScreen', () => {
       await waitFor(() => {
         const buttons = getAllByRole('button');
         const thumbsUpButtons = buttons.filter(
-          (b) => b.props.accessibilityLabel?.startsWith('Validate price as correct'),
+          (b) => b.props.accessibilityLabel?.startsWith('Validar preco como correto em'),
         );
         expect(thumbsUpButtons.length).toBeGreaterThan(0);
       });
@@ -95,7 +95,7 @@ describe('PriceComparisonScreen', () => {
       await waitFor(() => {
         const buttons = getAllByRole('button');
         const thumbsDownButtons = buttons.filter(
-          (b) => b.props.accessibilityLabel?.startsWith('Validate price as incorrect'),
+          (b) => b.props.accessibilityLabel?.startsWith('Validar preco como incorreto em'),
         );
         expect(thumbsDownButtons.length).toBeGreaterThan(0);
       });
@@ -109,9 +109,9 @@ describe('PriceComparisonScreen', () => {
 
     it('renders EmptyState when comparison returns zero entries', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('No Prices Found')).toBeTruthy());
+      await waitFor(() => expect(getByText('Nenhum Preco')).toBeTruthy());
       expect(
-        getByText('No price submissions found for this product. Be the first to submit!'),
+        getByText('Nenhum preco encontrado. Seja o primeiro a enviar!'),
       ).toBeTruthy();
     });
   });

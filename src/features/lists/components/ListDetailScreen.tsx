@@ -8,9 +8,7 @@ import {
   View,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Box } from '../../../../components/ui/box';
-import { VStack } from '../../../../components/ui/vstack';
-import { HStack } from '../../../../components/ui/hstack';
+import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { AppHeader } from '@/shared/components/AppHeader';
@@ -110,10 +108,10 @@ export function ListDetailScreen() {
   return (
     <View className="flex-1 bg-background-50">
       <AppHeader
-        title={list?.name ?? 'List Detail'}
+        title={list?.name ?? 'Detalhe da Lista'}
         subtitle={
           list
-            ? `${list.itemCount} ${list.itemCount === 1 ? 'item' : 'items'} · ${formatCurrency(list.totalEstimate)}`
+            ? `${list.itemCount} ${list.itemCount === 1 ? 'item' : 'itens'} · ${formatCurrency(list.totalEstimate)}`
             : undefined
         }
         onBack={handleBack}
@@ -122,64 +120,70 @@ export function ListDetailScreen() {
       <FlatList
         data={list?.items ?? []}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 12, flexGrow: 1 }}
+        contentContainerStyle={{ padding: 16, flexGrow: 1 }}
         ListEmptyComponent={
           <EmptyState
-            title="No Items Yet"
-            message="Add items to your shopping list."
-            action={{ label: 'Add Item', onPress: handleOpenAddItem }}
+            title="Lista Vazia"
+            message="Adicione itens a sua lista de compras."
+            icon="cart-outline"
+            action={{ label: 'Adicionar Item', onPress: handleOpenAddItem }}
           />
         }
         ListFooterComponent={
           list && list.items.length > 0 ? (
-            <VStack className="mt-4 gap-3">
+            <View className="mt-4 gap-3">
               <TouchableOpacity
                 onPress={handleOpenAddItem}
                 accessibilityRole="button"
-                accessibilityLabel="Add Item"
-                className="items-center rounded-xl border border-primary-500 py-3"
+                accessibilityLabel="Adicionar Item"
+                className="flex-row items-center justify-center gap-2 rounded-full border-2 border-primary-500 py-3.5"
+                activeOpacity={0.7}
               >
-                <Text className="text-base font-semibold text-primary-500">
-                  + Add Item
+                <Ionicons name="add-circle-outline" size={20} color="#EA1D2C" />
+                <Text className="text-sm font-bold text-primary-500">
+                  Adicionar Item
                 </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={handleOptimize}
                 accessibilityRole="button"
-                accessibilityLabel="Optimize"
-                className="items-center rounded-xl bg-primary-500 py-4"
+                accessibilityLabel="Otimizar"
+                className="flex-row items-center justify-center gap-2 rounded-full bg-primary-500 py-4"
+                activeOpacity={0.8}
               >
-                <Text className="text-base font-semibold text-white">
-                  Optimize
+                <Ionicons name="flash" size={20} color="#FFFFFF" />
+                <Text className="text-sm font-bold text-white">
+                  Otimizar Compras
                 </Text>
               </TouchableOpacity>
-            </VStack>
+            </View>
           ) : null
         }
         renderItem={({ item }) => (
-          <Box className="mb-3 rounded-xl bg-background-0 p-4 shadow-sm">
-            <HStack className="items-start justify-between">
-              <HStack className="flex-1 items-start gap-3">
+          <View className="mb-3 rounded-2xl bg-background-0 p-4">
+            <View className="flex-row items-start justify-between">
+              <View className="flex-1 flex-row items-start gap-3">
                 <TouchableOpacity
                   onPress={() => handleToggleCheck(item)}
                   accessibilityRole="checkbox"
-                  accessibilityLabel={`Toggle ${item.productName}`}
+                  accessibilityLabel={`Marcar ${item.productName}`}
                   accessibilityState={{ checked: item.checked }}
-                  className={`mt-0.5 h-5 w-5 items-center justify-center rounded border ${
+                  className={`mt-0.5 h-6 w-6 items-center justify-center rounded-full border-2 ${
                     item.checked
                       ? 'border-primary-500 bg-primary-500'
                       : 'border-outline-300 bg-background-0'
                   }`}
+                  activeOpacity={0.7}
                 >
                   {item.checked ? (
-                    <Text className="text-xs text-white">✓</Text>
+                    <Ionicons name="checkmark" size={14} color="#FFFFFF" />
                   ) : null}
                 </TouchableOpacity>
 
-                <VStack className="flex-1">
+                <View className="flex-1">
                   <Text
-                    className={`text-base font-semibold ${
+                    className={`text-sm font-bold ${
                       item.checked
                         ? 'text-typography-400 line-through'
                         : 'text-typography-900'
@@ -187,27 +191,28 @@ export function ListDetailScreen() {
                   >
                     {item.productName}
                   </Text>
-                  <Text className="mt-0.5 text-sm text-typography-500">
-                    {item.quantity} × {item.unit}
+                  <Text className="mt-0.5 text-xs text-typography-500">
+                    {item.quantity} x {item.unit}
                   </Text>
-                </VStack>
-              </HStack>
+                </View>
+              </View>
 
-              <VStack className="items-end">
-                <Text className="text-base font-bold text-primary-600">
+              <View className="items-end">
+                <Text className="text-sm font-bold text-primary-500">
                   {formatCurrency(item.estimatedPrice * item.quantity)}
                 </Text>
                 <TouchableOpacity
                   onPress={() => handleRemoveItem(item)}
                   accessibilityRole="button"
-                  accessibilityLabel={`Remove ${item.productName}`}
-                  className="mt-2 rounded-lg bg-error-100 px-2 py-1"
+                  accessibilityLabel={`Remover ${item.productName}`}
+                  className="mt-2 h-7 w-7 items-center justify-center rounded-full bg-error-50"
+                  activeOpacity={0.7}
                 >
-                  <Text className="text-xs text-error-600">Remove</Text>
+                  <Ionicons name="trash-outline" size={14} color="#C41C1C" />
                 </TouchableOpacity>
-              </VStack>
-            </HStack>
-          </Box>
+              </View>
+            </View>
+          </View>
         )}
       />
 
@@ -219,19 +224,22 @@ export function ListDetailScreen() {
         onRequestClose={handleCloseAddItem}
       >
         <View className="flex-1 bg-background-50">
-          <AppHeader title="Add Item" onBack={handleCloseAddItem} />
+          <AppHeader title="Adicionar Item" onBack={handleCloseAddItem} />
 
-          <Box className="px-4 py-3">
-            <TextInput
-              className="rounded-lg border border-outline-200 bg-background-0 px-3 py-2 text-base text-typography-900"
-              placeholder="Search products..."
-              placeholderTextColor="#9CA3AF"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              accessibilityLabel="Search products"
-              autoFocus
-            />
-          </Box>
+          <View className="px-4 py-3">
+            <View className="flex-row items-center rounded-xl bg-background-100 px-3">
+              <Ionicons name="search" size={18} color="#A8A8A8" />
+              <TextInput
+                className="ml-2 flex-1 py-3 text-sm text-typography-900"
+                placeholder="Buscar produtos..."
+                placeholderTextColor="#A8A8A8"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                accessibilityLabel="Buscar produtos"
+                autoFocus
+              />
+            </View>
+          </View>
 
           {loadingProducts || isAddingItem ? (
             <LoadingSpinner />
@@ -239,35 +247,42 @@ export function ListDetailScreen() {
             <FlatList
               data={filteredProducts}
               keyExtractor={(item) => item.id}
-              contentContainerStyle={{ padding: 12, flexGrow: 1 }}
+              contentContainerStyle={{ padding: 16, flexGrow: 1 }}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => handleSelectProduct(item)}
                   accessibilityRole="button"
-                  accessibilityLabel={`Add ${item.name}`}
+                  accessibilityLabel={`Adicionar ${item.name}`}
                   className="mb-2"
+                  activeOpacity={0.7}
                 >
-                  <Box className="rounded-xl bg-background-0 p-3 shadow-sm">
-                    <HStack className="items-center justify-between">
-                      <VStack className="flex-1">
-                        <Text className="text-sm font-semibold text-typography-900">
+                  <View className="rounded-2xl bg-background-0 p-3.5">
+                    <View className="flex-row items-center justify-between">
+                      <View className="flex-1">
+                        <Text className="text-sm font-bold text-typography-900">
                           {item.name}
                         </Text>
-                        <Text className="text-xs text-typography-500">
+                        <Text className="mt-0.5 text-xs text-typography-500">
                           {item.brand} · {item.unit}
                         </Text>
-                      </VStack>
-                      <Text className="text-sm font-bold text-primary-600">
-                        {formatCurrency(item.lowestPrice)}
-                      </Text>
-                    </HStack>
-                  </Box>
+                      </View>
+                      <View className="flex-row items-center gap-2">
+                        <Text className="text-sm font-bold text-primary-500">
+                          {formatCurrency(item.lowestPrice)}
+                        </Text>
+                        <View className="h-7 w-7 items-center justify-center rounded-full bg-primary-500">
+                          <Ionicons name="add" size={16} color="#FFFFFF" />
+                        </View>
+                      </View>
+                    </View>
+                  </View>
                 </TouchableOpacity>
               )}
               ListEmptyComponent={
                 <EmptyState
-                  title="No Products Found"
-                  message="Try a different search term."
+                  title="Nenhum Produto"
+                  message="Tente um termo de busca diferente."
+                  icon="search-outline"
                 />
               }
             />

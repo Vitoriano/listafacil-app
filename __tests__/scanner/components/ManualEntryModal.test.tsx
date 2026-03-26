@@ -20,13 +20,13 @@ function renderModal(props: {
 describe('ManualEntryModal', () => {
   it('renders an input field and submit button when visible', () => {
     const { getByLabelText, getByText } = renderModal({ visible: true });
-    expect(getByLabelText('Barcode input')).toBeTruthy();
-    expect(getByText('Search Product')).toBeTruthy();
+    expect(getByLabelText('Campo de codigo de barras')).toBeTruthy();
+    expect(getByText('Buscar Produto')).toBeTruthy();
   });
 
   it('does not render content when not visible', () => {
     const { queryByLabelText } = renderModal({ visible: false });
-    expect(queryByLabelText('Barcode input')).toBeNull();
+    expect(queryByLabelText('Campo de codigo de barras')).toBeNull();
   });
 
   it('calls onSubmit with the entered barcode on form submission', () => {
@@ -37,9 +37,9 @@ describe('ManualEntryModal', () => {
       </AppProviders>,
     );
 
-    const input = getByLabelText('Barcode input');
+    const input = getByLabelText('Campo de codigo de barras');
     fireEvent.changeText(input, '7891093010014');
-    fireEvent.press(getByText('Search Product'));
+    fireEvent.press(getByText('Buscar Produto'));
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
     expect(onSubmit).toHaveBeenCalledWith('7891093010014');
@@ -53,7 +53,7 @@ describe('ManualEntryModal', () => {
       </AppProviders>,
     );
 
-    fireEvent.press(getByText('Search Product'));
+    fireEvent.press(getByText('Buscar Produto'));
 
     expect(onSubmit).not.toHaveBeenCalled();
   });
@@ -66,22 +66,22 @@ describe('ManualEntryModal', () => {
       </AppProviders>,
     );
 
-    const input = getByLabelText('Barcode input');
+    const input = getByLabelText('Campo de codigo de barras');
     fireEvent.changeText(input, '   ');
-    fireEvent.press(getByText('Search Product'));
+    fireEvent.press(getByText('Buscar Produto'));
 
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it('calls onClose when Cancel is pressed', () => {
+  it('calls onClose when close button is pressed', () => {
     const onClose = jest.fn();
-    const { getByText } = render(
+    const { getByLabelText } = render(
       <AppProviders>
         <ManualEntryModal visible onClose={onClose} onSubmit={jest.fn()} />
       </AppProviders>,
     );
 
-    fireEvent.press(getByText('Cancel'));
+    fireEvent.press(getByLabelText('Fechar'));
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
@@ -94,9 +94,9 @@ describe('ManualEntryModal', () => {
       </AppProviders>,
     );
 
-    const input = getByLabelText('Barcode input');
+    const input = getByLabelText('Campo de codigo de barras');
     fireEvent.changeText(input, '  7891093010014  ');
-    fireEvent.press(getByText('Search Product'));
+    fireEvent.press(getByText('Buscar Produto'));
 
     expect(onSubmit).toHaveBeenCalledWith('7891093010014');
   });

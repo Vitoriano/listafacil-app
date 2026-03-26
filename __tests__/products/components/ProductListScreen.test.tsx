@@ -45,7 +45,7 @@ describe('ProductListScreen', () => {
 
   it('renders product list after data loads', async () => {
     const { getByText } = renderScreen();
-    await waitFor(() => expect(getByText('Products')).toBeTruthy());
+    await waitFor(() => expect(getByText('Produtos')).toBeTruthy());
     // Seed data contains 'Arroz Branco Tipo 1 Tio João'
     await waitFor(() =>
       expect(getByText('Arroz Branco Tipo 1 Tio João')).toBeTruthy(),
@@ -54,7 +54,7 @@ describe('ProductListScreen', () => {
 
   it('renders list of ProductCard items when data is returned', async () => {
     const { getByText, getAllByRole } = renderScreen();
-    await waitFor(() => expect(getByText('Products')).toBeTruthy());
+    await waitFor(() => expect(getByText('Produtos')).toBeTruthy());
     // Each ProductCard has accessibilityRole="button"
     const cards = getAllByRole('button');
     expect(cards.length).toBeGreaterThan(0);
@@ -62,23 +62,23 @@ describe('ProductListScreen', () => {
 
   it('renders empty state when search has no matches', async () => {
     const { getByPlaceholderText, getByText } = renderScreen();
-    await waitFor(() => expect(getByText('Products')).toBeTruthy());
+    await waitFor(() => expect(getByText('Produtos')).toBeTruthy());
 
     // Type a search that matches nothing in seed data
-    const input = getByPlaceholderText('Search by name or brand...');
+    const input = getByPlaceholderText('Buscar por nome ou marca...');
     fireEvent.changeText(input, 'zzz-nonexistent-product-xyz-999');
 
-    await waitFor(() => expect(getByText('No products found')).toBeTruthy());
+    await waitFor(() => expect(getByText('Nenhum produto encontrado')).toBeTruthy());
   });
 
   it('search input updates filter state and triggers new query', async () => {
     const { getByPlaceholderText, getByText, queryByText } = renderScreen();
-    await waitFor(() => expect(getByText('Products')).toBeTruthy());
+    await waitFor(() => expect(getByText('Produtos')).toBeTruthy());
     // Seed data has arroz
     await waitFor(() => expect(getByText('Arroz Branco Tipo 1 Tio João')).toBeTruthy());
 
     // Type in search
-    const input = getByPlaceholderText('Search by name or brand...');
+    const input = getByPlaceholderText('Buscar por nome ou marca...');
     fireEvent.changeText(input, 'Arroz');
 
     // After search, should still show arroz products
@@ -89,11 +89,11 @@ describe('ProductListScreen', () => {
 
   it('search input filters out non-matching products', async () => {
     const { getByPlaceholderText, getByText, queryByText } = renderScreen();
-    await waitFor(() => expect(getByText('Products')).toBeTruthy());
+    await waitFor(() => expect(getByText('Produtos')).toBeTruthy());
     await waitFor(() => expect(getByText('Arroz Branco Tipo 1 Tio João')).toBeTruthy());
 
     // Search for only arroz
-    const input = getByPlaceholderText('Search by name or brand...');
+    const input = getByPlaceholderText('Buscar por nome ou marca...');
     fireEvent.changeText(input, 'Arroz');
 
     await waitFor(() =>
@@ -103,18 +103,18 @@ describe('ProductListScreen', () => {
 
   it('category filter button is rendered', async () => {
     const { getByText } = renderScreen();
-    await waitFor(() => expect(getByText('Products')).toBeTruthy());
-    // Category filter tabs should include 'All', 'Fruits', etc.
-    expect(getByText('All')).toBeTruthy();
-    expect(getByText('Fruits')).toBeTruthy();
+    await waitFor(() => expect(getByText('Produtos')).toBeTruthy());
+    // Category filter tabs should include 'Todos', 'Frutas', etc.
+    expect(getByText('Todos')).toBeTruthy();
+    expect(getByText('Frutas')).toBeTruthy();
   });
 
   it('pressing a category tab updates filter state', async () => {
     const { getByText } = renderScreen();
-    await waitFor(() => expect(getByText('Products')).toBeTruthy());
+    await waitFor(() => expect(getByText('Produtos')).toBeTruthy());
 
-    // Press on 'Grains' category
-    fireEvent.press(getByText('Grains'));
+    // Press on 'Graos' category
+    fireEvent.press(getByText('Graos'));
 
     // After filtering by grains, should show grain products
     await waitFor(() =>
@@ -124,10 +124,10 @@ describe('ProductListScreen', () => {
 
   it('sort controls are rendered', async () => {
     const { getByText } = renderScreen();
-    await waitFor(() => expect(getByText('Products')).toBeTruthy());
-    expect(getByText('Name')).toBeTruthy();
-    expect(getByText('Price')).toBeTruthy();
-    expect(getByText('Recent')).toBeTruthy();
+    await waitFor(() => expect(getByText('Produtos')).toBeTruthy());
+    expect(getByText('Nome')).toBeTruthy();
+    expect(getByText('Preco')).toBeTruthy();
+    expect(getByText('Recentes')).toBeTruthy();
   });
 
   it('pressing a product card navigates to product detail', async () => {
@@ -138,7 +138,7 @@ describe('ProductListScreen', () => {
     const cards = getAllByRole('button');
     const productCard = cards.find((card) => {
       const label = card.props.accessibilityLabel;
-      return label && label.startsWith('Product ');
+      return label && label.startsWith('Produto ');
     });
     if (productCard) {
       fireEvent.press(productCard);

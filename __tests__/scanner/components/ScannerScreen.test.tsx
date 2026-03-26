@@ -75,15 +75,15 @@ describe('ScannerScreen', () => {
 
     it('renders camera permission fallback when permission is denied', () => {
       const { getByText } = renderScanner();
-      expect(getByText('Camera Permission Required')).toBeTruthy();
-      expect(getByText('Grant Permission')).toBeTruthy();
-      expect(getByText('Enter Barcode Manually')).toBeTruthy();
+      expect(getByText('Permissao de Camera')).toBeTruthy();
+      expect(getByText('Permitir Acesso')).toBeTruthy();
+      expect(getByText('Digitar Codigo de Barras')).toBeTruthy();
     });
 
     it('opens ManualEntryModal from the permission fallback screen', () => {
       const { getByText, getByLabelText } = renderScanner();
-      fireEvent.press(getByText('Enter Barcode Manually'));
-      expect(getByLabelText('Barcode input')).toBeTruthy();
+      fireEvent.press(getByText('Digitar Codigo de Barras'));
+      expect(getByLabelText('Campo de codigo de barras')).toBeTruthy();
     });
   });
 
@@ -97,49 +97,49 @@ describe('ScannerScreen', () => {
 
     it('shows the manual entry button while camera is active', async () => {
       const { getByText } = renderScanner();
-      await waitFor(() => expect(getByText('Enter Barcode Manually')).toBeTruthy());
+      await waitFor(() => expect(getByText('Digitar Codigo')).toBeTruthy());
     });
 
     it('shows the instruction label while camera is active', async () => {
       const { getByText } = renderScanner();
       await waitFor(() =>
-        expect(getByText('Point camera at a barcode to scan')).toBeTruthy(),
+        expect(getByText('Aponte a camera para o codigo de barras')).toBeTruthy(),
       );
     });
 
     it('opens ManualEntryModal when the manual entry button is pressed', async () => {
       const { getByText, getByLabelText } = renderScanner();
-      await waitFor(() => expect(getByText('Enter Barcode Manually')).toBeTruthy());
-      fireEvent.press(getByText('Enter Barcode Manually'));
-      expect(getByLabelText('Barcode input')).toBeTruthy();
+      await waitFor(() => expect(getByText('Digitar Codigo')).toBeTruthy());
+      fireEvent.press(getByText('Digitar Codigo'));
+      expect(getByLabelText('Campo de codigo de barras')).toBeTruthy();
     });
 
     it('shows product-not-found sheet after manual entry of unknown barcode', async () => {
       const { getByText, getByLabelText } = renderScanner();
-      await waitFor(() => expect(getByText('Enter Barcode Manually')).toBeTruthy());
+      await waitFor(() => expect(getByText('Digitar Codigo')).toBeTruthy());
 
       // Open modal
-      fireEvent.press(getByText('Enter Barcode Manually'));
-      const input = getByLabelText('Barcode input');
+      fireEvent.press(getByText('Digitar Codigo'));
+      const input = getByLabelText('Campo de codigo de barras');
       fireEvent.changeText(input, '0000000000000');
-      fireEvent.press(getByText('Search Product'));
+      fireEvent.press(getByText('Buscar Produto'));
 
       // Wait for query to resolve and not-found sheet to appear
-      await waitFor(() => expect(getByText('Product Not Found')).toBeTruthy(), {
+      await waitFor(() => expect(getByText('Produto Nao Encontrado')).toBeTruthy(), {
         timeout: 3000,
       });
-      expect(getByText('Scan Again')).toBeTruthy();
+      expect(getByText('Escanear Novamente')).toBeTruthy();
     });
 
     it('navigates to product detail after manual entry of known barcode', async () => {
       const { getByText, getByLabelText } = renderScanner();
-      await waitFor(() => expect(getByText('Enter Barcode Manually')).toBeTruthy());
+      await waitFor(() => expect(getByText('Digitar Codigo')).toBeTruthy());
 
       // Open modal and submit a known barcode
-      fireEvent.press(getByText('Enter Barcode Manually'));
-      const input = getByLabelText('Barcode input');
+      fireEvent.press(getByText('Digitar Codigo'));
+      const input = getByLabelText('Campo de codigo de barras');
       fireEvent.changeText(input, '7891093010014');
-      fireEvent.press(getByText('Search Product'));
+      fireEvent.press(getByText('Buscar Produto'));
 
       await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/products/prod-001'), {
         timeout: 3000,
@@ -148,23 +148,23 @@ describe('ScannerScreen', () => {
 
     it('dismisses the not-found sheet and resumes scan on "Scan Again"', async () => {
       const { getByText, getByLabelText, queryByText } = renderScanner();
-      await waitFor(() => expect(getByText('Enter Barcode Manually')).toBeTruthy());
+      await waitFor(() => expect(getByText('Digitar Codigo')).toBeTruthy());
 
       // Trigger not-found state
-      fireEvent.press(getByText('Enter Barcode Manually'));
-      const input = getByLabelText('Barcode input');
+      fireEvent.press(getByText('Digitar Codigo'));
+      const input = getByLabelText('Campo de codigo de barras');
       fireEvent.changeText(input, '0000000000000');
-      fireEvent.press(getByText('Search Product'));
+      fireEvent.press(getByText('Buscar Produto'));
 
-      await waitFor(() => expect(getByText('Product Not Found')).toBeTruthy(), {
+      await waitFor(() => expect(getByText('Produto Nao Encontrado')).toBeTruthy(), {
         timeout: 3000,
       });
 
       act(() => {
-        fireEvent.press(getByText('Scan Again'));
+        fireEvent.press(getByText('Escanear Novamente'));
       });
 
-      expect(queryByText('Product Not Found')).toBeNull();
+      expect(queryByText('Produto Nao Encontrado')).toBeNull();
     });
   });
 });

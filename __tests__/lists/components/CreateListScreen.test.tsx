@@ -36,30 +36,30 @@ describe('CreateListScreen', () => {
 
   it('renders the name input field', () => {
     const { getByLabelText } = renderScreen();
-    expect(getByLabelText('List name input')).toBeTruthy();
+    expect(getByLabelText('Campo nome da lista')).toBeTruthy();
   });
 
   it('shows inline validation error when submitting with empty name', async () => {
     const { getByRole, findByText } = renderScreen();
-    const submitButton = getByRole('button', { name: 'Create List' });
+    const submitButton = getByRole('button', { name: 'Criar Lista' });
     fireEvent.press(submitButton);
     await findByText('List name is required');
   });
 
   it('shows inline validation error when name exceeds 100 characters', async () => {
     const { getByRole, getByLabelText, findByText } = renderScreen();
-    const input = getByLabelText('List name input');
+    const input = getByLabelText('Campo nome da lista');
     fireEvent.changeText(input, 'A'.repeat(101));
-    const submitButton = getByRole('button', { name: 'Create List' });
+    const submitButton = getByRole('button', { name: 'Criar Lista' });
     fireEvent.press(submitButton);
     await findByText('Name too long');
   });
 
   it('successful form submit calls useCreateList and calls router.back()', async () => {
     const { getByRole, getByLabelText } = renderScreen();
-    const input = getByLabelText('List name input');
+    const input = getByLabelText('Campo nome da lista');
     fireEvent.changeText(input, 'My New List');
-    const submitButton = getByRole('button', { name: 'Create List' });
+    const submitButton = getByRole('button', { name: 'Criar Lista' });
     fireEvent.press(submitButton);
     await waitFor(() => expect(mockBack).toHaveBeenCalledTimes(1), {
       timeout: 3000,
@@ -68,7 +68,7 @@ describe('CreateListScreen', () => {
 
   it('submit button is accessible', () => {
     const { getByRole } = renderScreen();
-    const button = getByRole('button', { name: 'Create List' });
+    const button = getByRole('button', { name: 'Criar Lista' });
     expect(button).toBeTruthy();
   });
 

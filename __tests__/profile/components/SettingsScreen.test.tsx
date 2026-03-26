@@ -46,7 +46,7 @@ describe('SettingsScreen', () => {
 
   it('logout button is present and accessible', () => {
     const { getByRole } = renderScreen();
-    expect(getByRole('button', { name: 'Log Out' })).toBeTruthy();
+    expect(getByRole('button', { name: 'Sair da Conta' })).toBeTruthy();
   });
 
   it('pressing logout clears authStore and navigates to /auth/login', () => {
@@ -65,7 +65,7 @@ describe('SettingsScreen', () => {
     });
 
     const { getByRole } = renderScreen();
-    fireEvent.press(getByRole('button', { name: 'Log Out' }));
+    fireEvent.press(getByRole('button', { name: 'Sair da Conta' }));
 
     // Auth store should be cleared
     const { user, token } = useAuthStore.getState();
@@ -78,7 +78,7 @@ describe('SettingsScreen', () => {
 
   it('renders Settings title', () => {
     const { getByText } = renderScreen();
-    expect(getByText('Settings')).toBeTruthy();
+    expect(getByText('Configuracoes')).toBeTruthy();
   });
 
   it('shows account info when user is logged in', () => {

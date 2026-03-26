@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 interface ManualEntryModalProps {
   visible: boolean;
@@ -42,42 +43,52 @@ export function ManualEntryModal({ visible, onClose, onSubmit }: ManualEntryModa
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1 justify-end"
       >
-        <View className="rounded-t-2xl bg-background-50 px-6 pb-10 pt-6">
+        <TouchableOpacity
+          className="flex-1"
+          activeOpacity={1}
+          onPress={handleClose}
+        />
+        <View className="rounded-t-3xl bg-background-0 px-6 pb-10 pt-4">
+          <View className="mb-4 self-center h-1 w-10 rounded-full bg-outline-200" />
+
           <View className="mb-4 flex-row items-center justify-between">
-            <Text className="text-xl font-bold text-typography-900">Enter Barcode</Text>
+            <Text className="text-lg font-bold text-typography-900">Digitar Codigo de Barras</Text>
             <TouchableOpacity
               onPress={handleClose}
               accessibilityRole="button"
-              accessibilityLabel="Close"
+              accessibilityLabel="Fechar"
+              className="h-8 w-8 items-center justify-center rounded-full bg-background-50"
             >
-              <Text className="text-base text-typography-500">Cancel</Text>
+              <Ionicons name="close" size={18} color="#7D7D7D" />
             </TouchableOpacity>
           </View>
 
-          <Text className="mb-3 text-sm text-typography-500">
-            Type the barcode number manually to search for a product.
+          <Text className="mb-4 text-sm text-typography-500">
+            Digite o numero do codigo de barras para buscar o produto.
           </Text>
 
           <TextInput
-            className="mb-4 rounded-lg border border-outline-300 bg-background-0 px-4 py-3 text-base text-typography-900"
-            placeholder="e.g. 7891093010014"
-            placeholderTextColor="#9ca3af"
+            className="mb-4 rounded-xl border border-outline-200 bg-background-50 px-4 py-3.5 text-base text-typography-900"
+            placeholder="Ex: 7891093010014"
+            placeholderTextColor="#A8A8A8"
             value={inputValue}
             onChangeText={setInputValue}
             keyboardType="numeric"
             returnKeyType="search"
             onSubmitEditing={handleSubmit}
             autoFocus
-            accessibilityLabel="Barcode input"
+            accessibilityLabel="Campo de codigo de barras"
           />
 
           <TouchableOpacity
-            className="items-center rounded-lg bg-primary-500 py-3"
+            className="flex-row items-center justify-center gap-2 rounded-full bg-primary-500 py-3.5"
             onPress={handleSubmit}
             accessibilityRole="button"
-            accessibilityLabel="Search product"
+            accessibilityLabel="Buscar produto"
+            activeOpacity={0.8}
           >
-            <Text className="text-base font-semibold text-white">Search Product</Text>
+            <Ionicons name="search" size={18} color="#FFFFFF" />
+            <Text className="text-sm font-bold text-white">Buscar Produto</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

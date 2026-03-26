@@ -54,57 +54,57 @@ describe('Navigation placeholder screens', () => {
   it('ScannerScreen renders without crashing', () => {
     const { getByText } = renderWithProviders(<ScannerScreen />);
     // ScannerScreen shows the permission fallback when camera permission is denied
-    expect(getByText('Camera Permission Required')).toBeTruthy();
+    expect(getByText('Permissao de Camera')).toBeTruthy();
   });
 
   it('ProductListScreen renders without crashing', async () => {
     const { getByText } = renderWithProviders(<ProductListScreen />);
-    await waitFor(() => expect(getByText('Products')).toBeTruthy());
+    await waitFor(() => expect(getByText('Produtos')).toBeTruthy());
   });
 
   it('ProductDetailScreen renders without crashing (no id → shows not found)', () => {
     const { getByText } = renderWithProviders(<ProductDetailScreen />);
     // No id provided via useLocalSearchParams → shows "Product Detail" header + not found state
-    expect(getByText('Product Detail')).toBeTruthy();
+    expect(getByText('Detalhe do Produto')).toBeTruthy();
   });
 
   it('PriceComparisonScreen renders without crashing', () => {
     const { getByText } = renderWithProviders(<PriceComparisonScreen />);
-    expect(getByText('Price Comparison')).toBeTruthy();
+    expect(getByText('Comparar Precos')).toBeTruthy();
   });
 
   it('PriceSubmitScreen renders without crashing', async () => {
     const { getAllByText } = renderWithProviders(<PriceSubmitScreen />);
     // PriceSubmitScreen loads stores first, then shows the form with 'Submit Price' button
-    await waitFor(() => expect(getAllByText('Submit Price').length).toBeGreaterThan(0));
+    await waitFor(() => expect(getAllByText('Enviar Preco').length).toBeGreaterThan(0));
   });
 
   it('PriceHistoryScreen renders without crashing', () => {
     const { getByText } = renderWithProviders(<PriceHistoryScreen />);
-    expect(getByText('Price History')).toBeTruthy();
+    expect(getByText('Historico de Precos')).toBeTruthy();
   });
 
   it('ShoppingListsScreen renders without crashing', async () => {
     const { getByText } = renderWithProviders(<ShoppingListsScreen />);
     // ShoppingListsScreen shows header after TanStack Query resolves
-    await waitFor(() => expect(getByText('Shopping Lists')).toBeTruthy());
+    await waitFor(() => expect(getByText('Minhas Listas')).toBeTruthy());
   });
 
   it('ListDetailScreen renders without crashing', () => {
     const { getByText } = renderWithProviders(<ListDetailScreen />);
-    expect(getByText('List Detail')).toBeTruthy();
+    expect(getByText('Detalhe da Lista')).toBeTruthy();
   });
 
   it('CreateListScreen renders without crashing', () => {
     const { getAllByText } = renderWithProviders(<CreateListScreen />);
     // "Create List" appears in both header and submit button
-    expect(getAllByText('Create List').length).toBeGreaterThan(0);
+    expect(getAllByText('Criar Lista').length).toBeGreaterThan(0);
   });
 
   it('OptimizeScreen renders without crashing', () => {
     const { getByText } = renderWithProviders(<OptimizeScreen />);
     // OptimizeScreen shows "Store Optimization" as the screen title
-    expect(getByText('Store Optimization')).toBeTruthy();
+    expect(getByText('Otimizacao')).toBeTruthy();
   });
 
   it('ProfileScreen renders without crashing', async () => {
@@ -118,25 +118,25 @@ describe('Navigation placeholder screens', () => {
   it('SavingsScreen renders without crashing', async () => {
     const { getByText } = renderWithProviders(<SavingsScreen />);
     // SavingsScreen renders AppHeader with title after data loads
-    await waitFor(() => expect(getByText('Savings')).toBeTruthy(), {
+    await waitFor(() => expect(getByText('Economia')).toBeTruthy(), {
       timeout: 8000,
     });
   }, 10000);
 
   it('SettingsScreen renders without crashing', () => {
     const { getByText } = renderWithProviders(<SettingsScreen />);
-    expect(getByText('Settings')).toBeTruthy();
+    expect(getByText('Configuracoes')).toBeTruthy();
   });
 
   it('LoginScreen renders without crashing', () => {
     const { getByText } = renderWithProviders(<LoginScreen />);
     // LoginScreen shows "Lista Fácil" title and "Sign in to your account" subtitle
-    expect(getByText('Lista Fácil')).toBeTruthy();
+    expect(getByText('Lista Facil')).toBeTruthy();
   });
 
   it('RegisterScreen renders without crashing', () => {
     const { getAllByText } = renderWithProviders(<RegisterScreen />);
     // RegisterScreen shows "Create Account" in both title and button
-    expect(getAllByText('Create Account').length).toBeGreaterThan(0);
+    expect(getAllByText('Criar Conta').length).toBeGreaterThan(0);
   });
 });

@@ -1,9 +1,7 @@
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Box } from '../../../../components/ui/box';
-import { VStack } from '../../../../components/ui/vstack';
-import { HStack } from '../../../../components/ui/hstack';
+import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { AppHeader } from '@/shared/components/AppHeader';
@@ -33,12 +31,12 @@ export function PriceHistoryScreen() {
     return <LoadingSpinner />;
   }
 
-  const subtitle = storeId ? 'Filtered by store' : 'All stores';
+  const subtitle = storeId ? 'Filtrado por loja' : 'Todas as lojas';
 
   return (
     <View className="flex-1 bg-background-50">
       <AppHeader
-        title="Price History"
+        title="Historico de Precos"
         subtitle={subtitle}
         onBack={handleBack}
       />
@@ -46,43 +44,46 @@ export function PriceHistoryScreen() {
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         {!history || history.length === 0 ? (
           <EmptyState
-            title="No History Found"
-            message="No price history found for this product."
-            action={{ label: 'Go Back', onPress: handleBack }}
+            title="Sem Historico"
+            message="Nenhum historico de precos encontrado para este produto."
+            icon="time-outline"
+            action={{ label: 'Voltar', onPress: handleBack }}
           />
         ) : (
-          <VStack className="gap-3">
+          <View className="gap-3">
             {history.map((point, index) => (
-              <Box
+              <View
                 key={`${point.storeId}-${point.date}-${index}`}
-                className="rounded-xl bg-background-0 p-4 shadow-sm"
+                className="rounded-2xl bg-background-0 p-4"
               >
-                <HStack className="items-center justify-between">
-                  <VStack className="flex-1">
-                    <Text className="text-base font-semibold text-typography-900">
+                <View className="flex-row items-center justify-between">
+                  <View className="flex-1">
+                    <Text className="text-sm font-bold text-typography-900">
                       {point.storeName}
                     </Text>
-                    <Text className="mt-0.5 text-sm text-typography-400">
+                    <Text className="mt-0.5 text-xs text-typography-400">
                       {formatDate(point.date)}
                     </Text>
-                  </VStack>
-                  <Text className="text-xl font-bold text-primary-600">
+                  </View>
+                  <Text className="text-lg font-bold text-primary-500">
                     {formatCurrency(point.price)}
                   </Text>
-                </HStack>
-              </Box>
+                </View>
+              </View>
             ))}
-          </VStack>
+          </View>
         )}
 
         <TouchableOpacity
-          className="mt-4 items-center rounded-xl border border-primary-500 py-4"
+          className="mt-4 flex-row items-center justify-center gap-2 rounded-full border-2 border-primary-500 py-4"
           onPress={handleBack}
           accessibilityRole="button"
-          accessibilityLabel="Go Back"
+          accessibilityLabel="Voltar"
+          activeOpacity={0.7}
         >
-          <Text className="text-base font-semibold text-primary-500">
-            Go Back
+          <Ionicons name="arrow-back" size={18} color="#EA1D2C" />
+          <Text className="text-sm font-bold text-primary-500">
+            Voltar
           </Text>
         </TouchableOpacity>
       </ScrollView>

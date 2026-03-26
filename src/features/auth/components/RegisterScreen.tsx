@@ -3,15 +3,16 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StatusBar,
   Text,
   TextInput,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Box } from '../../../../components/ui/box';
-import { VStack } from '../../../../components/ui/vstack';
+import { Ionicons } from '@expo/vector-icons';
 import { logger } from '@/shared/utils/logger';
 import { useAuth } from '../hooks/useAuth';
 import { registerSchema, type RegisterFormData } from '../schemas/registerSchema';
@@ -47,184 +48,106 @@ export function RegisterScreen() {
     );
   }
 
+  const androidPadding = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0;
+
+  const fields = [
+    { name: 'name' as const, label: 'Nome', placeholder: 'Seu nome', autoComplete: 'name' as const, autoCapitalize: 'words' as const },
+    { name: 'email' as const, label: 'Email', placeholder: 'seu@email.com', autoComplete: 'email' as const, autoCapitalize: 'none' as const, keyboardType: 'email-address' as const },
+    { name: 'password' as const, label: 'Senha', placeholder: '******', autoComplete: 'new-password' as const, secure: true },
+    { name: 'confirmPassword' as const, label: 'Confirmar Senha', placeholder: '******', autoComplete: 'new-password' as const, secure: true },
+  ];
+
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-background-50"
+      className="flex-1 bg-background-0"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ paddingTop: androidPadding }}
     >
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 24 }}
         keyboardShouldPersistTaps="handled"
       >
-        <VStack className="gap-6">
+        <View className="gap-8">
           {/* Title */}
-          <VStack className="items-center gap-2">
+          <View className="items-center gap-3">
+            <View className="h-16 w-16 items-center justify-center rounded-2xl bg-primary-500">
+              <Ionicons name="person-add" size={32} color="#FFFFFF" />
+            </View>
             <Text className="text-3xl font-bold text-typography-900">
-              Create Account
+              Criar Conta
             </Text>
-            <Text className="text-base text-typography-500">
-              Join Lista Fácil today
+            <Text className="text-sm text-typography-500">
+              Junte-se ao Lista Facil
             </Text>
-          </VStack>
+          </View>
 
           {/* Form */}
-          <Box className="rounded-2xl bg-background-0 p-6 shadow-sm">
-            <VStack className="gap-4">
-              {/* Name */}
-              <VStack className="gap-1">
-                <Text className="text-sm font-medium text-typography-700">
-                  Name
+          <View className="gap-4">
+            {fields.map((field) => (
+              <View key={field.name} className="gap-1.5">
+                <Text className="text-xs font-bold uppercase tracking-wide text-typography-500">
+                  {field.label}
                 </Text>
                 <Controller
                   control={control}
-                  name="name"
+                  name={field.name}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      className={`rounded-lg border p-3 text-base text-typography-900 ${
-                        errors.name ? 'border-error-500' : 'border-outline-200'
+                      className={`rounded-xl border bg-background-50 px-4 py-3.5 text-sm text-typography-900 ${
+                        errors[field.name] ? 'border-error-500' : 'border-outline-200'
                       }`}
-                      placeholder="Your name"
-                      autoCapitalize="words"
-                      autoComplete="name"
+                      placeholder={field.placeholder}
+                      placeholderTextColor="#A8A8A8"
+                      keyboardType={field.keyboardType}
+                      autoCapitalize={field.autoCapitalize}
+                      autoComplete={field.autoComplete}
+                      secureTextEntry={field.secure}
                       onBlur={onBlur}
                       onChangeText={onChange}
                       value={value}
-                      accessibilityLabel="Name input"
+                      accessibilityLabel={`Campo de ${field.label.toLowerCase()}`}
                     />
                   )}
                 />
-                {errors.name ? (
-                  <Text className="text-sm text-error-600">
-                    {errors.name.message}
+                {errors[field.name] ? (
+                  <Text className="text-xs text-error-500">
+                    {errors[field.name]?.message}
                   </Text>
                 ) : null}
-              </VStack>
+              </View>
+            ))}
 
-              {/* Email */}
-              <VStack className="gap-1">
-                <Text className="text-sm font-medium text-typography-700">
-                  Email
-                </Text>
-                <Controller
-                  control={control}
-                  name="email"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      className={`rounded-lg border p-3 text-base text-typography-900 ${
-                        errors.email ? 'border-error-500' : 'border-outline-200'
-                      }`}
-                      placeholder="your@email.com"
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      autoComplete="email"
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      value={value}
-                      accessibilityLabel="Email input"
-                    />
-                  )}
-                />
-                {errors.email ? (
-                  <Text className="text-sm text-error-600">
-                    {errors.email.message}
-                  </Text>
-                ) : null}
-              </VStack>
-
-              {/* Password */}
-              <VStack className="gap-1">
-                <Text className="text-sm font-medium text-typography-700">
-                  Password
-                </Text>
-                <Controller
-                  control={control}
-                  name="password"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      className={`rounded-lg border p-3 text-base text-typography-900 ${
-                        errors.password
-                          ? 'border-error-500'
-                          : 'border-outline-200'
-                      }`}
-                      placeholder="••••••"
-                      secureTextEntry
-                      autoComplete="new-password"
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      value={value}
-                      accessibilityLabel="Password input"
-                    />
-                  )}
-                />
-                {errors.password ? (
-                  <Text className="text-sm text-error-600">
-                    {errors.password.message}
-                  </Text>
-                ) : null}
-              </VStack>
-
-              {/* Confirm Password */}
-              <VStack className="gap-1">
-                <Text className="text-sm font-medium text-typography-700">
-                  Confirm Password
-                </Text>
-                <Controller
-                  control={control}
-                  name="confirmPassword"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      className={`rounded-lg border p-3 text-base text-typography-900 ${
-                        errors.confirmPassword
-                          ? 'border-error-500'
-                          : 'border-outline-200'
-                      }`}
-                      placeholder="••••••"
-                      secureTextEntry
-                      autoComplete="new-password"
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      value={value}
-                      accessibilityLabel="Confirm Password input"
-                    />
-                  )}
-                />
-                {errors.confirmPassword ? (
-                  <Text className="text-sm text-error-600">
-                    {errors.confirmPassword.message}
-                  </Text>
-                ) : null}
-              </VStack>
-
-              {/* Submit */}
-              <TouchableOpacity
-                className={`mt-2 items-center rounded-xl py-4 ${
-                  register.isPending ? 'bg-primary-300' : 'bg-primary-500'
-                }`}
-                onPress={handleSubmit(onSubmit)}
-                disabled={register.isPending}
-                accessibilityRole="button"
-                accessibilityLabel="Create Account"
-              >
-                <Text className="text-base font-semibold text-white">
-                  {register.isPending ? 'Creating account...' : 'Create Account'}
-                </Text>
-              </TouchableOpacity>
-            </VStack>
-          </Box>
+            {/* Submit */}
+            <TouchableOpacity
+              className={`mt-2 items-center rounded-full py-4 ${
+                register.isPending ? 'bg-primary-300' : 'bg-primary-500'
+              }`}
+              onPress={handleSubmit(onSubmit)}
+              disabled={register.isPending}
+              accessibilityRole="button"
+              accessibilityLabel="Criar Conta"
+              activeOpacity={0.8}
+            >
+              <Text className="text-sm font-bold text-white">
+                {register.isPending ? 'Criando conta...' : 'Criar Conta'}
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           {/* Login link */}
           <TouchableOpacity
             onPress={() => router.push('/auth/login')}
             accessibilityRole="button"
-            accessibilityLabel="Go to Login"
+            accessibilityLabel="Ir para login"
             className="items-center py-2"
+            activeOpacity={0.7}
           >
             <Text className="text-sm text-typography-500">
-              Already have an account?{' '}
-              <Text className="font-semibold text-primary-500">Sign in</Text>
+              Ja tem uma conta?{' '}
+              <Text className="font-bold text-primary-500">Entrar</Text>
             </Text>
           </TouchableOpacity>
-        </VStack>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );

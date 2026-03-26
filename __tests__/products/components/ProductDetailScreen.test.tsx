@@ -42,8 +42,8 @@ describe('ProductDetailScreen', () => {
 
     it('renders all product fields for a known product id', async () => {
       const { getByText, getAllByText } = renderScreen();
-      // Wait for product data by checking for Price Summary (unique to loaded state)
-      await waitFor(() => expect(getByText('Price Summary')).toBeTruthy());
+      // Wait for product data by checking for Resumo de Precos (unique to loaded state)
+      await waitFor(() => expect(getByText('Resumo de Precos')).toBeTruthy());
       // Product name appears in header AND body — expect at least 1 instance
       expect(getAllByText('Arroz Branco Tipo 1 Tio João').length).toBeGreaterThan(0);
       expect(getByText('Tio João')).toBeTruthy();
@@ -53,36 +53,36 @@ describe('ProductDetailScreen', () => {
       // Barcode
       expect(getByText('7891093010014')).toBeTruthy();
       // Price section
-      expect(getByText('Price Summary')).toBeTruthy();
-      expect(getByText('Lowest Price')).toBeTruthy();
-      expect(getByText('Average Price')).toBeTruthy();
+      expect(getByText('Resumo de Precos')).toBeTruthy();
+      expect(getByText('Menor Preco')).toBeTruthy();
+      expect(getByText('Preco Medio')).toBeTruthy();
       // Submissions count
-      expect(getByText(/8 submissions/)).toBeTruthy();
+      expect(getByText(/8 contribuicoes/)).toBeTruthy();
     });
 
-    it('renders Compare Prices button', async () => {
+    it('renders Comparar Precos button', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('Price Summary')).toBeTruthy());
-      expect(getByText('Compare Prices')).toBeTruthy();
+      await waitFor(() => expect(getByText('Resumo de Precos')).toBeTruthy());
+      expect(getByText('Comparar Precos')).toBeTruthy();
     });
 
-    it('renders Submit Price button', async () => {
+    it('renders Enviar Preco button', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('Price Summary')).toBeTruthy());
-      expect(getByText('Submit Price')).toBeTruthy();
+      await waitFor(() => expect(getByText('Resumo de Precos')).toBeTruthy());
+      expect(getByText('Enviar Preco')).toBeTruthy();
     });
 
-    it('"Compare Prices" button navigates to prices comparison screen with correct productId param', async () => {
+    it('"Comparar Precos" button navigates to prices comparison screen with correct productId param', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('Compare Prices')).toBeTruthy());
-      fireEvent.press(getByText('Compare Prices'));
+      await waitFor(() => expect(getByText('Comparar Precos')).toBeTruthy());
+      fireEvent.press(getByText('Comparar Precos'));
       expect(mockPush).toHaveBeenCalledWith('/products/prices?productId=prod-001');
     });
 
-    it('"Submit Price" button navigates to price submission screen with correct productId param', async () => {
+    it('"Enviar Preco" button navigates to price submission screen with correct productId param', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('Submit Price')).toBeTruthy());
-      fireEvent.press(getByText('Submit Price'));
+      await waitFor(() => expect(getByText('Enviar Preco')).toBeTruthy());
+      fireEvent.press(getByText('Enviar Preco'));
       expect(mockPush).toHaveBeenCalledWith('/products/prices/submit?productId=prod-001');
     });
 
@@ -101,19 +101,19 @@ describe('ProductDetailScreen', () => {
 
     it('renders empty state when product id is not found (null result)', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('Product Not Found')).toBeTruthy());
-      expect(getByText('The product you are looking for does not exist.')).toBeTruthy();
+      await waitFor(() => expect(getByText('Produto Nao Encontrado')).toBeTruthy());
+      expect(getByText('O produto que voce procura nao existe.')).toBeTruthy();
     });
 
-    it('renders Go Back button in not-found state', async () => {
+    it('renders Voltar button in not-found state', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('Go Back')).toBeTruthy());
+      await waitFor(() => expect(getByText('Voltar')).toBeTruthy());
     });
 
-    it('pressing Go Back calls router.back()', async () => {
+    it('pressing Voltar calls router.back()', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('Go Back')).toBeTruthy());
-      fireEvent.press(getByText('Go Back'));
+      await waitFor(() => expect(getByText('Voltar')).toBeTruthy());
+      fireEvent.press(getByText('Voltar'));
       expect(mockBack).toHaveBeenCalledTimes(1);
     });
   });
@@ -123,10 +123,10 @@ describe('ProductDetailScreen', () => {
       mockUseLocalSearchParams.mockReturnValue({});
     });
 
-    it('renders Product Detail header when id is missing', () => {
+    it('renders Detalhe do Produto header when id is missing', () => {
       const { getByText } = renderScreen();
       // When no id, query is disabled → product is undefined → shows not-found state
-      expect(getByText('Product Detail')).toBeTruthy();
+      expect(getByText('Detalhe do Produto')).toBeTruthy();
     });
   });
 });

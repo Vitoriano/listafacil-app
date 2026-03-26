@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Platform, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { CameraView } from 'expo-camera';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { logger } from '@/shared/utils/logger';
@@ -38,7 +39,6 @@ export function ScannerScreen() {
         logger.info('Scanner', 'Product found, navigating', product.id);
         setShowNotFound(false);
         router.push(`/products/${product.id}`);
-        // Resume scan after navigation so the user can scan again
         resumeScan();
       } else {
         logger.info('Scanner', 'Product not found for barcode', scannedBarcode);
@@ -58,26 +58,31 @@ export function ScannerScreen() {
     resumeScan();
   }
 
+  const androidPadding = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0;
+
   // Camera permission not yet determined or denied — show fallback
   if (!permissionGranted) {
     return (
-      <View className="flex-1 bg-background-50">
+      <View className="flex-1 bg-background-50" style={{ paddingTop: androidPadding }}>
         <EmptyState
-          title="Camera Permission Required"
-          message="Lista Fácil needs camera access to scan barcodes."
+          title="Permissao de Camera"
+          message="Lista Facil precisa de acesso a camera para escanear codigos de barras."
+          icon="camera-outline"
           action={{
-            label: 'Grant Permission',
+            label: 'Permitir Acesso',
             onPress: requestPermission,
           }}
         />
         <View className="px-6 pb-8">
           <TouchableOpacity
-            className="items-center rounded-lg border border-outline-300 py-3"
+            className="flex-row items-center justify-center gap-2 rounded-full border border-outline-200 py-3.5"
             onPress={() => setShowManualEntry(true)}
             accessibilityRole="button"
+            activeOpacity={0.7}
           >
-            <Text className="text-base font-medium text-primary-500">
-              Enter Barcode Manually
+            <Ionicons name="keypad-outline" size={18} color="#EA1D2C" />
+            <Text className="text-sm font-semibold text-primary-500">
+              Digitar Codigo de Barras
             </Text>
           </TouchableOpacity>
         </View>
@@ -105,10 +110,10 @@ export function ScannerScreen() {
       <ScannerOverlay />
 
       {/* Instruction label */}
-      <View className="absolute bottom-40 left-0 right-0 items-center">
-        <View className="rounded-full bg-black/60 px-4 py-2">
-          <Text className="text-sm text-white">
-            Point camera at a barcode to scan
+      <View className="absolute bottom-36 left-0 right-0 items-center">
+        <View className="rounded-full bg-black/50 px-5 py-2.5">
+          <Text className="text-sm font-medium text-white">
+            Aponte a camera para o codigo de barras
           </Text>
         </View>
       </View>
@@ -116,52 +121,64 @@ export function ScannerScreen() {
       {/* Manual entry button */}
       <View className="absolute bottom-10 left-0 right-0 items-center">
         <TouchableOpacity
-          className="rounded-full bg-white/20 px-6 py-3"
+          className="flex-row items-center gap-2 rounded-full bg-white/20 px-6 py-3.5"
           onPress={() => setShowManualEntry(true)}
           accessibilityRole="button"
+          activeOpacity={0.7}
         >
-          <Text className="text-base font-medium text-white">
-            Enter Barcode Manually
+          <Ionicons name="keypad-outline" size={18} color="#FFFFFF" />
+          <Text className="text-sm font-semibold text-white">
+            Digitar Codigo
           </Text>
         </TouchableOpacity>
       </View>
 
       {/* Loading overlay during product lookup */}
       {isLoading && scannedBarcode ? (
-        <View className="absolute inset-0 items-center justify-center bg-black/70">
-          <LoadingSpinner />
+        <View className="absolute inset-0 items-center justify-center bg-black/60">
+          <View className="rounded-2xl bg-white p-6">
+            <LoadingSpinner size="large" />
+            <Text className="mt-3 text-sm font-medium text-typography-700">
+              Buscando produto...
+            </Text>
+          </View>
         </View>
       ) : null}
 
       {/* Product not found bottom sheet */}
       {showNotFound ? (
-        <View className="absolute bottom-0 left-0 right-0 rounded-t-2xl bg-background-50 px-6 pb-10 pt-6">
+        <View className="absolute bottom-0 left-0 right-0 rounded-t-3xl bg-background-0 px-6 pb-10 pt-6">
+          <View className="mb-4 self-center h-1 w-10 rounded-full bg-outline-200" />
           <Text className="mb-2 text-xl font-bold text-typography-900">
-            Product Not Found
+            Produto Nao Encontrado
           </Text>
-          <Text className="mb-6 text-base text-typography-500">
-            No product matched barcode{' '}
-            <Text className="font-mono text-typography-900">{scannedBarcode}</Text>.
+          <Text className="mb-6 text-sm text-typography-500">
+            Nenhum produto encontrado para o codigo{' '}
+            <Text className="font-mono font-semibold text-typography-900">{scannedBarcode}</Text>.
           </Text>
           <TouchableOpacity
-            className="mb-3 items-center rounded-lg bg-primary-500 py-3"
+            className="mb-3 flex-row items-center justify-center gap-2 rounded-full bg-primary-500 py-3.5"
             onPress={() => {
               setShowNotFound(false);
               setShowManualEntry(true);
             }}
             accessibilityRole="button"
+            activeOpacity={0.8}
           >
-            <Text className="text-base font-semibold text-white">
-              Enter Barcode Manually
+            <Ionicons name="keypad-outline" size={18} color="#FFFFFF" />
+            <Text className="text-sm font-bold text-white">
+              Digitar Codigo Manualmente
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className="items-center rounded-lg border border-outline-300 py-3"
+            className="flex-row items-center justify-center gap-2 rounded-full border border-outline-200 py-3.5"
             onPress={handleDismissNotFound}
             accessibilityRole="button"
+            activeOpacity={0.7}
           >
-            <Text className="text-base font-medium text-typography-700">
-              Scan Again
+            <Ionicons name="scan-outline" size={18} color="#323232" />
+            <Text className="text-sm font-semibold text-typography-700">
+              Escanear Novamente
             </Text>
           </TouchableOpacity>
         </View>

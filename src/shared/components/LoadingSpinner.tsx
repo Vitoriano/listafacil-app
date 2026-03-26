@@ -1,6 +1,5 @@
 import React from 'react';
-import { Box } from '../../../components/ui/box';
-import { Spinner } from '../../../components/ui/spinner';
+import { ActivityIndicator, View } from 'react-native';
 
 interface LoadingSpinnerProps {
   size?: 'small' | 'large';
@@ -8,8 +7,8 @@ interface LoadingSpinnerProps {
 
 export function LoadingSpinner({ size = 'large' }: LoadingSpinnerProps) {
   return (
-    <Box className="flex-1 items-center justify-center">
-      <Spinner size={size} className="text-primary-500" />
-    </Box>
+    <View className="flex-1 items-center justify-center">
+      <ActivityIndicator size={size} color="#EA1D2C" />
+    </View>
   );
 }

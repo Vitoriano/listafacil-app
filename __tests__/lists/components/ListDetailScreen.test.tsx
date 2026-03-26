@@ -72,7 +72,7 @@ describe('ListDetailScreen', () => {
       const { getAllByRole } = renderScreen();
       await waitFor(() => {
         const removeButtons = getAllByRole('button').filter((b) =>
-          b.props.accessibilityLabel?.startsWith('Remove'),
+          b.props.accessibilityLabel?.startsWith('Remover'),
         );
         expect(removeButtons.length).toBeGreaterThan(0);
       });
@@ -82,12 +82,12 @@ describe('ListDetailScreen', () => {
       const { getAllByRole } = renderScreen();
       await waitFor(() => {
         const removeButtons = getAllByRole('button').filter((b) =>
-          b.props.accessibilityLabel?.startsWith('Remove'),
+          b.props.accessibilityLabel?.startsWith('Remover'),
         );
         expect(removeButtons.length).toBeGreaterThan(0);
       });
       const removeButtons = getAllByRole('button').filter((b) =>
-        b.props.accessibilityLabel?.startsWith('Remove'),
+        b.props.accessibilityLabel?.startsWith('Remover'),
       );
       fireEvent.press(removeButtons[0]);
       // Verify no crash
@@ -97,21 +97,23 @@ describe('ListDetailScreen', () => {
     it('"Optimize" button navigates to /lists/optimize?listId=list-001', async () => {
       const { getByRole } = renderScreen();
       await waitFor(() => {
-        const optimizeBtn = getByRole('button', { name: 'Optimize' });
+        const optimizeBtn = getByRole('button', { name: 'Otimizar Compras' });
         expect(optimizeBtn).toBeTruthy();
       });
-      fireEvent.press(getByRole('button', { name: 'Optimize' }));
+      fireEvent.press(getByRole('button', { name: 'Otimizar Compras' }));
       expect(mockPush).toHaveBeenCalledWith('/lists/optimize?listId=list-001');
     });
 
     it('"Add Item" button opens product search modal', async () => {
-      const { getByRole, findByText } = renderScreen();
+      const { getByRole, findAllByText } = renderScreen();
       await waitFor(() => {
-        const addBtn = getByRole('button', { name: 'Add Item' });
+        const addBtn = getByRole('button', { name: 'Adicionar Item' });
         expect(addBtn).toBeTruthy();
       });
-      fireEvent.press(getByRole('button', { name: 'Add Item' }));
-      await findByText('Add Item');
+      fireEvent.press(getByRole('button', { name: 'Adicionar Item' }));
+      const matches = await findAllByText('Adicionar Item');
+      // Modal header + footer button both show "Adicionar Item"
+      expect(matches.length).toBeGreaterThanOrEqual(2);
     });
 
     it('back button calls router.back()', async () => {
@@ -137,8 +139,8 @@ describe('ListDetailScreen', () => {
 
     it('renders EmptyState when list has no items', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('No Items Yet')).toBeTruthy());
-      expect(getByText('Add items to your shopping list.')).toBeTruthy();
+      await waitFor(() => expect(getByText('Lista Vazia')).toBeTruthy());
+      expect(getByText('Adicione itens a sua lista de compras.')).toBeTruthy();
     });
   });
 });
