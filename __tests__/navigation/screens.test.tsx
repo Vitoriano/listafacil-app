@@ -1,6 +1,11 @@
 import React from 'react';
-import { render } from '@testing-library/react-native';
+import { render, waitFor } from '@testing-library/react-native';
 import { AppProviders } from '@/providers/AppProviders';
+
+// Disable mock delays so TanStack Query resolves synchronously in tests
+jest.mock('@/config/mock', () => ({
+  mockConfig: { enableDelays: false, minDelay: 0, maxDelay: 0 },
+}));
 
 // Mock expo-camera for ScannerScreen (permission denied so it renders the fallback UI)
 jest.mock('expo-camera', () => ({
@@ -16,7 +21,8 @@ jest.mock('expo-haptics', () => ({
   ImpactFeedbackStyle: { Light: 'Light' },
 }));
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn() }),
+  useRouter: () => ({ push: jest.fn(), back: jest.fn() }),
+  useLocalSearchParams: () => ({}),
 }));
 
 import { ScannerScreen } from '@/features/scanner/components/ScannerScreen';
@@ -46,13 +52,14 @@ describe('Navigation placeholder screens', () => {
     expect(getByText('Camera Permission Required')).toBeTruthy();
   });
 
-  it('ProductListScreen renders without crashing', () => {
+  it('ProductListScreen renders without crashing', async () => {
     const { getByText } = renderWithProviders(<ProductListScreen />);
-    expect(getByText('Products')).toBeTruthy();
+    await waitFor(() => expect(getByText('Products')).toBeTruthy());
   });
 
-  it('ProductDetailScreen renders without crashing', () => {
+  it('ProductDetailScreen renders without crashing (no id → shows not found)', () => {
     const { getByText } = renderWithProviders(<ProductDetailScreen />);
+    // No id provided via useLocalSearchParams → shows "Product Detail" header + not found state
     expect(getByText('Product Detail')).toBeTruthy();
   });
 
