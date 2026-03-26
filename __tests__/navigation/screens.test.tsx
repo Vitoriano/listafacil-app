@@ -68,9 +68,10 @@ describe('Navigation placeholder screens', () => {
     expect(getByText('Price Comparison')).toBeTruthy();
   });
 
-  it('PriceSubmitScreen renders without crashing', () => {
-    const { getByText } = renderWithProviders(<PriceSubmitScreen />);
-    expect(getByText('Submit Price')).toBeTruthy();
+  it('PriceSubmitScreen renders without crashing', async () => {
+    const { getAllByText } = renderWithProviders(<PriceSubmitScreen />);
+    // PriceSubmitScreen loads stores first, then shows the form with 'Submit Price' button
+    await waitFor(() => expect(getAllByText('Submit Price').length).toBeGreaterThan(0));
   });
 
   it('PriceHistoryScreen renders without crashing', () => {
