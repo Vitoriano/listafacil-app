@@ -1,5 +1,5 @@
 import type {
-  User,
+  UserWithStats,
   LoginCredentials,
   RegisterData,
   UpdateProfile,
@@ -8,9 +8,9 @@ import type {
 } from '@/features/auth/types';
 
 export interface IUserRepository {
-  getCurrentUser(): Promise<User | null>;
+  getCurrentUser(): Promise<UserWithStats | null>;
   login(credentials: LoginCredentials): Promise<AuthResult>;
   register(data: RegisterData): Promise<AuthResult>;
-  updateProfile(data: UpdateProfile): Promise<User>;
+  updateProfile(data: UpdateProfile): Promise<UserWithStats>;
   getSavings(): Promise<SavingsData>;
 }

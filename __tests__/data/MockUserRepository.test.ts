@@ -21,9 +21,9 @@ describe('MockUserRepository', () => {
       expect(result).toBeDefined();
       expect(result.user).toBeDefined();
       expect(result.user.id).toBeDefined();
-      expect(result.token).toBeDefined();
-      expect(typeof result.token).toBe('string');
-      expect(result.token.length).toBeGreaterThan(0);
+      expect(result.accessToken).toBeDefined();
+      expect(typeof result.accessToken).toBe('string');
+      expect(result.accessToken.length).toBeGreaterThan(0);
     });
 
     it('returns an AuthResult for unknown email (falls back to first user)', async () => {
@@ -33,7 +33,7 @@ describe('MockUserRepository', () => {
       });
 
       expect(result.user).toBeDefined();
-      expect(result.token).toBeDefined();
+      expect(result.accessToken).toBeDefined();
     });
   });
 
@@ -56,8 +56,7 @@ describe('MockUserRepository', () => {
       expect(result.user).toBeDefined();
       expect(result.user.name).toBe('Carlos Pereira');
       expect(result.user.email).toBe('carlos@email.com');
-      expect(result.user.totalSubmissions).toBe(0);
-      expect(result.token).toBeDefined();
+      expect(result.accessToken).toBeDefined();
     });
   });
 

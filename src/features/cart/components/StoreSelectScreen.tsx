@@ -22,15 +22,20 @@ export function StoreSelectScreen() {
   const colors = useThemeColors();
   const { data: stores, isLoading } = useStores();
   const startSession = useCartStore((s) => s.startSession);
+  const isStarting = useCartStore((s) => s.isStarting);
 
   function handleBack() {
     router.back();
   }
 
-  function handleSelectStore(store: Store) {
+  async function handleSelectStore(store: Store) {
     logger.info('Cart', 'Store selected', store.id);
-    startSession(store.id, store.name);
-    router.replace('/cart');
+    try {
+      await startSession(store.id, store.name);
+      router.replace('/cart');
+    } catch (error) {
+      logger.error('Cart', 'Failed to start session', error);
+    }
   }
 
   if (isLoading) {

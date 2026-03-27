@@ -1,23 +1,21 @@
-export type ProductCategory =
-  | 'fruits'
-  | 'vegetables'
-  | 'dairy'
-  | 'meat'
-  | 'bakery'
-  | 'beverages'
-  | 'cleaning'
-  | 'hygiene'
-  | 'snacks'
-  | 'grains'
-  | 'frozen'
-  | 'other';
+export interface Category {
+  id: number;
+  name: string;
+}
+
+export interface SubCategory {
+  id: number;
+  name: string;
+  categoryId: number;
+}
 
 export interface Product {
   id: string;
   name: string;
   brand: string;
   barcode: string;
-  category: ProductCategory;
+  categoryId: number | null;
+  subCategoryId: number | null;
   unit: string;
   imageUrl: string | null;
   averagePrice: number;
@@ -27,9 +25,9 @@ export interface Product {
 }
 
 export interface ProductQueryParams {
-  search?: string;
-  category?: ProductCategory;
+  q?: string;
+  categoryId?: number;
+  subCategoryId?: number;
   page?: number;
   limit?: number;
-  sortBy?: 'name' | 'price' | 'recent';
 }

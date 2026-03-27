@@ -35,7 +35,7 @@ export function ProductCard({ product, onPress }: ProductCardProps) {
             <View className="mt-2.5 flex-row gap-2">
               <View className="rounded-full bg-primary-50 px-2.5 py-1">
                 <Text className="text-xs font-semibold text-primary-600">
-                  {product.category}
+                  {product.categoryId ?? '—'}
                 </Text>
               </View>
               <View className="rounded-full bg-background-100 px-2.5 py-1">

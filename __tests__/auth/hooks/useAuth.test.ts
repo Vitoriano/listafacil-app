@@ -29,11 +29,11 @@ function createWrapper() {
 describe('useAuth', () => {
   beforeEach(() => {
     // Reset authStore state before each test
-    useAuthStore.setState({ user: null, token: null });
+    useAuthStore.setState({ user: null, accessToken: null, refreshToken: null });
   });
 
   describe('login mutation', () => {
-    it('returns AuthResult with user and token', async () => {
+    it('returns AuthResult with user and accessToken', async () => {
       const { Wrapper } = createWrapper();
       const { result } = renderHook(() => useAuth(), { wrapper: Wrapper });
 
@@ -48,11 +48,11 @@ describe('useAuth', () => {
 
       expect(result.current.login.data).toBeDefined();
       expect(result.current.login.data?.user).toBeDefined();
-      expect(result.current.login.data?.token).toBeDefined();
-      expect(typeof result.current.login.data?.token).toBe('string');
+      expect(result.current.login.data?.accessToken).toBeDefined();
+      expect(typeof result.current.login.data?.accessToken).toBe('string');
     });
 
-    it('updates authStore on success (user and token stored)', async () => {
+    it('updates authStore on success (user and accessToken stored)', async () => {
       const { Wrapper } = createWrapper();
       const { result } = renderHook(() => useAuth(), { wrapper: Wrapper });
 
@@ -65,10 +65,10 @@ describe('useAuth', () => {
 
       await waitFor(() => expect(result.current.login.isSuccess).toBe(true));
 
-      const { user, token } = useAuthStore.getState();
+      const { user, accessToken } = useAuthStore.getState();
       expect(user).not.toBeNull();
-      expect(token).not.toBeNull();
-      expect(typeof token).toBe('string');
+      expect(accessToken).not.toBeNull();
+      expect(typeof accessToken).toBe('string');
     });
   });
 
@@ -92,7 +92,7 @@ describe('useAuth', () => {
       expect(result.current.register.data?.user.email).toBe(
         'joao.novo@email.com',
       );
-      expect(result.current.register.data?.token).toBeDefined();
+      expect(result.current.register.data?.accessToken).toBeDefined();
     });
 
     it('updates authStore on success', async () => {
@@ -109,10 +109,10 @@ describe('useAuth', () => {
 
       await waitFor(() => expect(result.current.register.isSuccess).toBe(true));
 
-      const { user, token } = useAuthStore.getState();
+      const { user, accessToken } = useAuthStore.getState();
       expect(user).not.toBeNull();
       expect(user?.name).toBe('Ana Costa');
-      expect(token).not.toBeNull();
+      expect(accessToken).not.toBeNull();
     });
   });
 });

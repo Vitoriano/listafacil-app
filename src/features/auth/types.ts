@@ -3,9 +3,12 @@ export interface User {
   name: string;
   email: string;
   avatarUrl: string | null;
+  joinedAt: string;
+}
+
+export interface UserWithStats extends User {
   totalSubmissions: number;
   totalSavings: number;
-  joinedAt: string;
 }
 
 export interface LoginCredentials {
@@ -21,13 +24,13 @@ export interface RegisterData {
 
 export interface UpdateProfile {
   name?: string;
-  email?: string;
   avatarUrl?: string | null;
 }
 
 export interface AuthResult {
   user: User;
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 }
 
 export interface SavingsData {

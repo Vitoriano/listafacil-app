@@ -41,7 +41,7 @@ describe('SettingsScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     // Reset authStore
-    useAuthStore.setState({ user: null, token: null });
+    useAuthStore.setState({ user: null, accessToken: null, refreshToken: null });
   });
 
   it('logout button is present and accessible', () => {
@@ -57,20 +57,19 @@ describe('SettingsScreen', () => {
         name: 'Maria Silva',
         email: 'maria.silva@email.com',
         avatarUrl: null,
-        totalSubmissions: 47,
-        totalSavings: 312.8,
         joinedAt: '2025-01-15T10:00:00Z',
       },
-      token: 'mock-token-123',
+      accessToken: 'mock-token-123',
+      refreshToken: 'mock-refresh-123',
     });
 
     const { getByRole } = renderScreen();
     fireEvent.press(getByRole('button', { name: 'Sair da Conta' }));
 
     // Auth store should be cleared
-    const { user, token } = useAuthStore.getState();
+    const { user, accessToken } = useAuthStore.getState();
     expect(user).toBeNull();
-    expect(token).toBeNull();
+    expect(accessToken).toBeNull();
 
     // Navigation should redirect to auth/login
     expect(mockReplace).toHaveBeenCalledWith('/auth/login');
@@ -88,11 +87,10 @@ describe('SettingsScreen', () => {
         name: 'Maria Silva',
         email: 'maria.silva@email.com',
         avatarUrl: null,
-        totalSubmissions: 47,
-        totalSavings: 312.8,
         joinedAt: '2025-01-15T10:00:00Z',
       },
-      token: 'mock-token-123',
+      accessToken: 'mock-token-123',
+      refreshToken: 'mock-refresh-123',
     });
 
     const { getByText } = renderScreen();

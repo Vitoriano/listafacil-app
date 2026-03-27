@@ -46,15 +46,10 @@ describe('MockProductRepository', () => {
       expect(result.hasMore).toBe(false);
     });
 
-    it('filters by category when category param is provided', async () => {
-      const result = await repo.getAll({ category: 'dairy' });
+    it('filters by categoryId when categoryId param is provided', async () => {
+      const result = await repo.getAll({ categoryId: 3 });
       expect(result.data.length).toBeGreaterThan(0);
-      result.data.forEach((p) => expect(p.category).toBe('dairy'));
-    });
-
-    it('returns empty data for a category with no products', async () => {
-      const result = await repo.getAll({ category: 'meat', limit: 50 });
-      result.data.forEach((p) => expect(p.category).toBe('meat'));
+      result.data.forEach((p) => expect(p.categoryId).toBe(3));
     });
   });
 

@@ -8,37 +8,16 @@ import { useDebounce } from '@/shared/hooks/useDebounce';
 import { logger } from '@/shared/utils/logger';
 import { PAGINATION_LIMIT } from '@/config/constants';
 import { useProducts } from '../hooks/useProducts';
+import { useCategories } from '../hooks/useCategories';
 import { useProductFilterStore } from '../stores/productFilterStore';
 import { ProductCard } from './ProductCard';
-import type { Product, ProductCategory } from '../types';
+import type { Product } from '../types';
 import { useRouter } from 'expo-router';
-
-const CATEGORIES: { label: string; value: ProductCategory | undefined }[] = [
-  { label: 'Todos', value: undefined },
-  { label: 'Frutas', value: 'fruits' },
-  { label: 'Verduras', value: 'vegetables' },
-  { label: 'Laticinios', value: 'dairy' },
-  { label: 'Carnes', value: 'meat' },
-  { label: 'Padaria', value: 'bakery' },
-  { label: 'Bebidas', value: 'beverages' },
-  { label: 'Graos', value: 'grains' },
-  { label: 'Snacks', value: 'snacks' },
-  { label: 'Congelados', value: 'frozen' },
-  { label: 'Limpeza', value: 'cleaning' },
-  { label: 'Higiene', value: 'hygiene' },
-  { label: 'Outros', value: 'other' },
-];
-
-const SORT_OPTIONS: { label: string; value: 'name' | 'price' | 'recent'; icon: keyof typeof Ionicons.glyphMap }[] = [
-  { label: 'Nome', value: 'name', icon: 'text-outline' },
-  { label: 'Preco', value: 'price', icon: 'pricetag-outline' },
-  { label: 'Recentes', value: 'recent', icon: 'time-outline' },
-];
 
 export function ProductListScreen() {
   const router = useRouter();
   const colors = useThemeColors();
-  const { search, category, sortBy, setSearch, setCategory, setSortBy } =
+  const { search, categoryId, setSearch, setCategoryId } =
     useProductFilterStore();
 
   const [inputValue, setInputValue] = useState(search);
@@ -46,10 +25,11 @@ export function ProductListScreen() {
 
   const debouncedSearch = useDebounce(inputValue, 300);
 
+  const { data: categories } = useCategories();
+
   const { data, isLoading } = useProducts({
-    search: debouncedSearch || undefined,
-    category,
-    sortBy,
+    q: debouncedSearch || undefined,
+    categoryId,
     page,
     limit: PAGINATION_LIMIT,
   });
@@ -61,16 +41,10 @@ export function ProductListScreen() {
     logger.info('Products', 'Search changed', text);
   }
 
-  function handleCategorySelect(cat: ProductCategory | undefined) {
-    setCategory(cat);
+  function handleCategorySelect(catId: number | undefined) {
+    setCategoryId(catId);
     setPage(1);
-    logger.info('Products', 'Category selected', cat);
-  }
-
-  function handleSortSelect(sort: 'name' | 'price' | 'recent') {
-    setSortBy(sort);
-    setPage(1);
-    logger.info('Products', 'Sort changed', sort);
+    logger.info('Products', 'Category selected', String(catId));
   }
 
   function handleLoadMore() {
@@ -88,6 +62,11 @@ export function ProductListScreen() {
   if (isLoading && page === 1) {
     return <LoadingSpinner />;
   }
+
+  const categoryOptions = [
+    { id: undefined, name: 'Todos' },
+    ...(categories ?? []).map((c) => ({ id: c.id as number | undefined, name: c.name })),
+  ];
 
   return (
     <View className="flex-1 bg-background-50" style={{ paddingTop: androidPadding }}>
@@ -113,72 +92,38 @@ export function ProductListScreen() {
             </TouchableOpacity>
           ) : null}
         </View>
-
-        {/* Sort controls */}
-        <View className="mt-3 flex-row gap-2">
-          {SORT_OPTIONS.map((opt) => (
-            <TouchableOpacity
-              key={opt.value}
-              onPress={() => handleSortSelect(opt.value)}
-              accessibilityRole="button"
-              accessibilityLabel={`Ordenar por ${opt.label}`}
-              activeOpacity={0.7}
-            >
-              <View
-                className={`flex-row items-center gap-1.5 rounded-full px-3.5 py-2 ${
-                  sortBy === opt.value
-                    ? 'bg-primary-500'
-                    : 'bg-background-50'
-                }`}
-              >
-                <Ionicons
-                  name={opt.icon}
-                  size={14}
-                  color={sortBy === opt.value ? colors.white : colors.textSecondary}
-                />
-                <Text
-                  className={`text-xs font-semibold ${
-                    sortBy === opt.value ? 'text-white' : 'text-typography-600'
-                  }`}
-                >
-                  {opt.label}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
       </View>
 
       {/* Category filter */}
       <View className="bg-background-0 pb-3">
         <FlatList
           horizontal
-          data={CATEGORIES}
-          keyExtractor={(item) => item.value ?? 'all'}
+          data={categoryOptions}
+          keyExtractor={(item) => String(item.id ?? 'all')}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, gap: 8 }}
           renderItem={({ item }) => (
             <TouchableOpacity
-              onPress={() => handleCategorySelect(item.value)}
+              onPress={() => handleCategorySelect(item.id)}
               accessibilityRole="button"
-              accessibilityLabel={`Filtrar por ${item.label}`}
+              accessibilityLabel={`Filtrar por ${item.name}`}
               activeOpacity={0.7}
             >
               <View
                 className={`rounded-full px-4 py-2 ${
-                  category === item.value
+                  categoryId === item.id
                     ? 'bg-primary-500'
                     : 'bg-background-50'
                 }`}
               >
                 <Text
                   className={`text-xs font-semibold ${
-                    category === item.value
+                    categoryId === item.id
                       ? 'text-white'
                       : 'text-typography-600'
                   }`}
                 >
-                  {item.label}
+                  {item.name}
                 </Text>
               </View>
             </TouchableOpacity>

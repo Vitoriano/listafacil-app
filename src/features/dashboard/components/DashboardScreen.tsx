@@ -34,7 +34,6 @@ export function DashboardScreen() {
   const { data: savings, isLoading: loadingSavings } = useSavings();
   const { data: lists, isLoading: loadingLists } = useLists();
   const { data: products, isLoading: loadingProducts } = useProducts({
-    sortBy: 'price',
     limit: 6,
   });
   const { data: recentPurchases } = useRecentPurchases(3);

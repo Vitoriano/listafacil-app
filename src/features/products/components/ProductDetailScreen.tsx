@@ -83,7 +83,7 @@ export function ProductDetailScreen() {
           <View className="mt-3 flex-row gap-2">
             <View className="rounded-full bg-primary-50 px-3 py-1.5">
               <Text className="text-xs font-semibold text-primary-600">
-                {product.category}
+                {product.categoryId ?? '—'}
               </Text>
             </View>
             <View className="rounded-full bg-background-100 px-3 py-1.5">
@@ -142,7 +142,7 @@ export function ProductDetailScreen() {
 
             <View className="flex-row items-center justify-between">
               <Text className="text-sm text-typography-500">Categoria</Text>
-              <Text className="text-sm font-medium text-typography-900">{product.category}</Text>
+              <Text className="text-sm font-medium text-typography-900">{product.categoryId ?? '—'}</Text>
             </View>
 
             <View className="h-px bg-outline-100" />

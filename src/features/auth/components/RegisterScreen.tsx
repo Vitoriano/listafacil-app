@@ -13,10 +13,18 @@ import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Ionicons } from '@expo/vector-icons';
+import { AxiosError } from 'axios';
 import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { logger } from '@/shared/utils/logger';
 import { useAuth } from '../hooks/useAuth';
 import { registerSchema, type RegisterFormData } from '../schemas/registerSchema';
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof AxiosError) {
+    return error.response?.data?.message ?? 'Erro ao conectar com o servidor';
+  }
+  return 'Ocorreu um erro inesperado';
+}
 
 export function RegisterScreen() {
   const router = useRouter();
@@ -118,6 +126,15 @@ export function RegisterScreen() {
                 ) : null}
               </View>
             ))}
+
+            {/* API Error */}
+            {register.isError ? (
+              <View className="rounded-xl bg-error-50 px-4 py-3">
+                <Text className="text-sm text-error-600">
+                  {getErrorMessage(register.error)}
+                </Text>
+              </View>
+            ) : null}
 
             {/* Submit */}
             <TouchableOpacity

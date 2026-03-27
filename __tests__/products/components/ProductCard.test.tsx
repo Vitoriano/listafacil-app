@@ -9,7 +9,8 @@ const mockProduct: Product = {
   name: 'Arroz Branco Tipo 1 Tio João',
   brand: 'Tio João',
   barcode: '7891093010014',
-  category: 'grains',
+  categoryId: 10,
+  subCategoryId: null,
   unit: '5kg',
   imageUrl: null,
   averagePrice: 22.90,
@@ -46,9 +47,9 @@ describe('ProductCard', () => {
     expect(priceText.props.children).toMatch(/19/);
   });
 
-  it('renders category', () => {
+  it('renders categoryId', () => {
     const { getByText } = renderCard();
-    expect(getByText('grains')).toBeTruthy();
+    expect(getByText('10')).toBeTruthy();
   });
 
   it('renders unit', () => {

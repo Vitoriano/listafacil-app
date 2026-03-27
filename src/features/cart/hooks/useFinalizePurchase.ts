@@ -1,12 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { purchaseRepository } from '@/data/repositories';
-import type { CreatePurchasePayload } from '../types';
 
-export function useCreatePurchase() {
+export function useFinalizePurchase() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: CreatePurchasePayload) =>
-      purchaseRepository.create(payload),
+    mutationFn: (purchaseId: string) =>
+      purchaseRepository.update(purchaseId, { status: 'completed' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['purchases'] });
     },

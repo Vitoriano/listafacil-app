@@ -29,7 +29,7 @@ describe('useProducts', () => {
   it('passes search query param to repository when provided', async () => {
     const wrapper = createWrapper();
     const { result } = renderHook(
-      () => useProducts({ search: 'Arroz' }),
+      () => useProducts({ q: 'Arroz' }),
       { wrapper },
     );
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -37,44 +37,16 @@ describe('useProducts', () => {
     expect(products.every((p) => p.name.toLowerCase().includes('arroz') || p.brand.toLowerCase().includes('arroz'))).toBe(true);
   });
 
-  it('passes category filter param to repository when provided', async () => {
+  it('passes categoryId filter param to repository when provided', async () => {
     const wrapper = createWrapper();
     const { result } = renderHook(
-      () => useProducts({ category: 'grains' }),
+      () => useProducts({ categoryId: 10 }),
       { wrapper },
     );
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     const products = result.current.data!.data;
     expect(products.length).toBeGreaterThan(0);
-    expect(products.every((p) => p.category === 'grains')).toBe(true);
-  });
-
-  it('passes sortBy param to repository when provided — name sort', async () => {
-    const wrapper = createWrapper();
-    const { result } = renderHook(
-      () => useProducts({ sortBy: 'name' }),
-      { wrapper },
-    );
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    const products = result.current.data!.data;
-    expect(products.length).toBeGreaterThan(1);
-    for (let i = 1; i < products.length; i++) {
-      expect(products[i - 1].name.localeCompare(products[i].name)).toBeLessThanOrEqual(0);
-    }
-  });
-
-  it('passes sortBy param to repository when provided — price sort', async () => {
-    const wrapper = createWrapper();
-    const { result } = renderHook(
-      () => useProducts({ sortBy: 'price' }),
-      { wrapper },
-    );
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    const products = result.current.data!.data;
-    expect(products.length).toBeGreaterThan(1);
-    for (let i = 1; i < products.length; i++) {
-      expect(products[i - 1].lowestPrice).toBeLessThanOrEqual(products[i].lowestPrice);
-    }
+    expect(products.every((p) => p.categoryId === 10)).toBe(true);
   });
 
   it('returns loading state before data arrives', () => {
@@ -91,7 +63,7 @@ describe('useProducts', () => {
     const wrapper = ({ children }: { children: React.ReactNode }) =>
       React.createElement(QueryClientProvider, { client }, children);
 
-    const params = { search: 'test', category: 'grains' as const };
+    const params = { q: 'test', categoryId: 10 };
     const { result } = renderHook(() => useProducts(params), { wrapper });
     await waitFor(() => expect(result.current.isFetched).toBe(true));
 

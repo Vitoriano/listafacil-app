@@ -18,8 +18,8 @@ export class MockProductRepository implements IProductRepository {
 
     let items = this.store.getAll();
 
-    if (params.search) {
-      const query = params.search.toLowerCase();
+    if (params.q) {
+      const query = params.q.toLowerCase();
       items = items.filter(
         (p) =>
           p.name.toLowerCase().includes(query) ||
@@ -27,21 +27,8 @@ export class MockProductRepository implements IProductRepository {
       );
     }
 
-    if (params.category) {
-      items = items.filter((p) => p.category === params.category);
-    }
-
-    if (params.sortBy === 'name') {
-      items = items.slice().sort((a, b) => a.name.localeCompare(b.name));
-    } else if (params.sortBy === 'price') {
-      items = items.slice().sort((a, b) => a.lowestPrice - b.lowestPrice);
-    } else if (params.sortBy === 'recent') {
-      items = items
-        .slice()
-        .sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        );
+    if (params.categoryId) {
+      items = items.filter((p) => p.categoryId === params.categoryId);
     }
 
     const page = params.page ?? 1;
@@ -75,7 +62,8 @@ export class MockProductRepository implements IProductRepository {
       name: `Produto ${barcode.slice(-4)}`,
       brand: 'Marca Genérica',
       barcode,
-      category: 'other',
+      categoryId: null,
+      subCategoryId: null,
       unit: 'un',
       imageUrl: null,
       averagePrice: 9.9 + Math.random() * 20,

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { purchaseRepository } from '@/data/repositories';
 import type { PurchaseItem } from '../types';
 import type { ListItem } from '@/features/lists/types';
 
@@ -15,7 +16,8 @@ interface CartState {
   linkedListName: string | null;
   linkedListItems: ListItem[];
 
-  startSession: (storeId: string, storeName: string) => void;
+  isStarting: boolean;
+  startSession: (storeId: string, storeName: string) => Promise<void>;
   addItem: (item: Omit<PurchaseItem, 'id'>) => void;
   removeItem: (itemId: string) => void;
   updateItemQuantity: (itemId: string, quantity: number) => void;
@@ -42,20 +44,30 @@ export const useCartStore = create<CartState>((set) => ({
   linkedListId: null,
   linkedListName: null,
   linkedListItems: [],
+  isStarting: false,
 
-  startSession: (storeId, storeName) =>
-    set({
-      isActive: true,
-      purchaseId: `purchase-${Date.now()}`,
-      storeId,
-      storeName,
-      items: [],
-      total: 0,
-      itemCount: 0,
-      linkedListId: null,
-      linkedListName: null,
-      linkedListItems: [],
-    }),
+  startSession: async (storeId, storeName) => {
+    set({ isStarting: true });
+    try {
+      const purchase = await purchaseRepository.create({ storeId });
+      set({
+        isActive: true,
+        purchaseId: purchase.id,
+        storeId,
+        storeName,
+        items: [],
+        total: 0,
+        itemCount: 0,
+        linkedListId: null,
+        linkedListName: null,
+        linkedListItems: [],
+        isStarting: false,
+      });
+    } catch {
+      set({ isStarting: false });
+      throw new Error('Falha ao iniciar sessao de compra');
+    }
+  },
 
   addItem: (item) =>
     set((state) => {
@@ -118,5 +130,6 @@ export const useCartStore = create<CartState>((set) => ({
       linkedListId: null,
       linkedListName: null,
       linkedListItems: [],
+      isStarting: false,
     }),
 }));

@@ -2,7 +2,7 @@ import { InMemoryStore } from '@/data/helpers/InMemoryStore';
 import { simulateDelay } from '@/data/helpers/delay';
 import type { IUserRepository } from '../interfaces/IUserRepository';
 import type {
-  User,
+  UserWithStats,
   LoginCredentials,
   RegisterData,
   UpdateProfile,
@@ -14,15 +14,15 @@ import seedUsers from '@/data/seed/users.json';
 const MOCK_TOKEN_PREFIX = 'mock-jwt-token';
 
 export class MockUserRepository implements IUserRepository {
-  private store: InMemoryStore<User>;
+  private store: InMemoryStore<UserWithStats>;
   private currentUserId: string | null;
 
   constructor() {
-    this.store = new InMemoryStore<User>(seedUsers as User[]);
+    this.store = new InMemoryStore<UserWithStats>(seedUsers as UserWithStats[]);
     this.currentUserId = 'user-001';
   }
 
-  async getCurrentUser(): Promise<User | null> {
+  async getCurrentUser(): Promise<UserWithStats | null> {
     await simulateDelay();
     if (!this.currentUserId) return null;
     return this.store.getById(this.currentUserId);
@@ -39,14 +39,15 @@ export class MockUserRepository implements IUserRepository {
 
     return {
       user,
-      token: `${MOCK_TOKEN_PREFIX}-${user.id}-${Date.now()}`,
+      accessToken: `${MOCK_TOKEN_PREFIX}-${user.id}-${Date.now()}`,
+      refreshToken: `${MOCK_TOKEN_PREFIX}-refresh-${user.id}-${Date.now()}`,
     };
   }
 
   async register(data: RegisterData): Promise<AuthResult> {
     await simulateDelay();
 
-    const newUser: User = {
+    const newUser: UserWithStats = {
       id: `user-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       name: data.name,
       email: data.email,
@@ -61,11 +62,12 @@ export class MockUserRepository implements IUserRepository {
 
     return {
       user: newUser,
-      token: `${MOCK_TOKEN_PREFIX}-${newUser.id}-${Date.now()}`,
+      accessToken: `${MOCK_TOKEN_PREFIX}-${newUser.id}-${Date.now()}`,
+      refreshToken: `${MOCK_TOKEN_PREFIX}-refresh-${newUser.id}-${Date.now()}`,
     };
   }
 
-  async updateProfile(data: UpdateProfile): Promise<User> {
+  async updateProfile(data: UpdateProfile): Promise<UserWithStats> {
     await simulateDelay();
 
     if (!this.currentUserId) {

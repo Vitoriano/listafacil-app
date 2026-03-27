@@ -10,14 +10,14 @@ export function useAuth() {
     mutationFn: (credentials: LoginCredentials) =>
       userRepository.login(credentials),
     onSuccess: (result) => {
-      setAuth(result.user, result.token);
+      setAuth(result.user, result.accessToken, result.refreshToken);
     },
   });
 
   const registerMutation = useMutation({
     mutationFn: (data: RegisterData) => userRepository.register(data),
     onSuccess: (result) => {
-      setAuth(result.user, result.token);
+      setAuth(result.user, result.accessToken, result.refreshToken);
     },
   });
 

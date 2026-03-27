@@ -22,3 +22,25 @@ export interface Purchase {
   createdAt: string;
   completedAt: string | null;
 }
+
+export interface CreatePurchasePayload {
+  storeId: string;
+  linkedListId?: string;
+}
+
+export interface UpdatePurchasePayload {
+  status: 'completed' | 'cancelled';
+}
+
+export interface AddPurchaseItemPayload {
+  productId: string;
+  barcode: string;
+  price: number;
+  quantity?: number;
+  fromListId?: string;
+}
+
+export interface UpdatePurchaseItemPayload {
+  price?: number;
+  quantity?: number;
+}

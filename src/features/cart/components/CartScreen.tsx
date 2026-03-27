@@ -8,19 +8,18 @@ import { EmptyState } from '@/shared/components/EmptyState';
 import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { logger } from '@/shared/utils/logger';
 import { useCartStore } from '../stores/cartStore';
-import { useCreatePurchase } from '../hooks/useCreatePurchase';
+import { useFinalizePurchase } from '../hooks/useFinalizePurchase';
 import { CartItemCard } from './CartItemCard';
 import { CartSummaryBar } from './CartSummaryBar';
 import { LinkedListBanner } from './LinkedListBanner';
 import { LinkedListSelectModal } from './LinkedListSelectModal';
-import type { Purchase } from '../types';
 import type { ShoppingList } from '@/features/lists/types';
 
 export function CartScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const cart = useCartStore();
-  const { mutate: createPurchase, isPending } = useCreatePurchase();
+  const { mutate: finalizePurchase, isPending } = useFinalizePurchase();
   const [showListSelect, setShowListSelect] = useState(false);
 
   useEffect(() => {
@@ -52,24 +51,10 @@ export function CartScreen() {
   }
 
   function handleFinalize() {
-    if (cart.items.length === 0) return;
+    if (cart.items.length === 0 || !cart.purchaseId) return;
 
-    const now = new Date().toISOString();
-    const purchase: Purchase = {
-      id: cart.purchaseId!,
-      storeId: cart.storeId!,
-      storeName: cart.storeName!,
-      date: now,
-      items: cart.items,
-      total: cart.total,
-      itemCount: cart.itemCount,
-      status: 'completed',
-      createdAt: now,
-      completedAt: now,
-    };
-
-    logger.info('Cart', 'Finalizing purchase', purchase.id);
-    createPurchase(purchase, {
+    logger.info('Cart', 'Finalizing purchase', cart.purchaseId);
+    finalizePurchase(cart.purchaseId, {
       onSuccess: () => {
         logger.info('Cart', 'Purchase finalized');
         cart.reset();
