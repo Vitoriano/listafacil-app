@@ -1,6 +1,6 @@
 import { api } from '@/config/api';
 import type { IStoreRepository } from '../interfaces/IStoreRepository';
-import type { Store } from '@/shared/types';
+import type { Store, CreateStorePayload } from '@/shared/types';
 
 export class ApiStoreRepository implements IStoreRepository {
   async getAll(): Promise<Store[]> {
@@ -29,5 +29,10 @@ export class ApiStoreRepository implements IStoreRepository {
       params: { lat, lng, radiusKm, limit: 50 },
     });
     return Array.isArray(data) ? data : data.data ?? data;
+  }
+
+  async create(payload: CreateStorePayload): Promise<Store> {
+    const { data } = await api.post('/stores', payload);
+    return data;
   }
 }

@@ -1,7 +1,7 @@
 import { InMemoryStore } from '@/data/helpers/InMemoryStore';
 import { simulateDelay } from '@/data/helpers/delay';
 import type { IStoreRepository } from '../interfaces/IStoreRepository';
-import type { Store } from '@/shared/types';
+import type { Store, CreateStorePayload } from '@/shared/types';
 import seedStores from '@/data/seed/stores.json';
 
 function haversineDistanceKm(
@@ -56,5 +56,21 @@ export class MockStoreRepository implements IStoreRepository {
       );
       return distance <= radiusKm;
     });
+  }
+
+  async create(payload: CreateStorePayload): Promise<Store> {
+    await simulateDelay();
+    const newStore: Store = {
+      id: `store-${Date.now()}`,
+      name: payload.name,
+      address: payload.address,
+      city: payload.city,
+      state: payload.state,
+      latitude: payload.latitude,
+      longitude: payload.longitude,
+      type: 'supermarket',
+    };
+    this.store.create(newStore);
+    return newStore;
   }
 }

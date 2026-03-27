@@ -16,3 +16,13 @@ export interface Store {
   longitude: number;
   type: 'supermarket' | 'hypermarket' | 'convenience' | 'wholesale';
 }
+
+export interface CreateStorePayload {
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  latitude: number;
+  longitude: number;
+  googlePlaceId?: string;
+}

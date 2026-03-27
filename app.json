@@ -23,7 +23,11 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "backgroundColor": "#EA1D2C"
       },
-      "package": "com.listafacil.app"
+      "package": "com.listafacil.app",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +40,14 @@
         "expo-camera",
         {
           "cameraPermission": "Allow Lista Fácil to access your camera for barcode scanning."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Permitir que o Lista Fácil acesse sua localização para encontrar supermercados próximos.",
+          "locationAlwaysPermission": "Permitir que o Lista Fácil acesse sua localização para encontrar supermercados próximos.",
+          "locationWhenInUsePermission": "Permitir que o Lista Fácil acesse sua localização para encontrar supermercados próximos."
         }
       ],
       "expo-font",
