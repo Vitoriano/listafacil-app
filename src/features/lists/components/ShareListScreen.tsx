@@ -17,6 +17,7 @@ import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { useListDetail } from '../hooks/useListDetail';
 import { useListMembers } from '../hooks/useListMembers';
+import { useListSocket } from '../hooks/useListSocket';
 import {
   useShareByEmail,
   useGenerateInvite,
@@ -36,6 +37,7 @@ export function ShareListScreen() {
 
   const colors = useThemeColors();
   const { data: list, isLoading: loadingList } = useListDetail(id ?? null);
+  useListSocket(id ?? null);
   const { data: members, isLoading: loadingMembers } = useListMembers(id ?? null);
   const shareByEmail = useShareByEmail();
   const generateInvite = useGenerateInvite();

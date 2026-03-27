@@ -23,6 +23,7 @@ import { useListDetail } from '../hooks/useListDetail';
 import { useUpdateItem } from '../hooks/useUpdateItem';
 import { useRemoveItem } from '../hooks/useRemoveItem';
 import { useAddItem } from '../hooks/useAddItem';
+import { useListSocket } from '../hooks/useListSocket';
 import type { ListItem } from '../types';
 import type { Product } from '@/features/products/types';
 
@@ -40,6 +41,7 @@ export function ListDetailScreen() {
   const isLinkedToCart = cart.isActive && cart.linkedListId === id;
 
   const { data: list, isLoading } = useListDetail(id ?? null);
+  useListSocket(id ?? null);
   const { mutate: updateItem } = useUpdateItem();
   const { mutate: removeItem } = useRemoveItem();
   const { mutate: addItem, isPending: isAddingItem } = useAddItem();

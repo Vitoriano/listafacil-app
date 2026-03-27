@@ -19,3 +19,7 @@ const devHost = Constants.expoConfig?.hostUri?.split(':')[0];
 export const API_BASE_URL = __DEV__ && devHost
   ? `http://${devHost}:3000/v1`
   : 'http://localhost:3000/v1';
+
+export const WS_URL = __DEV__ && devHost
+  ? `http://${devHost}:3000`
+  : 'http://localhost:3000';

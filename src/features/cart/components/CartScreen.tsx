@@ -9,6 +9,7 @@ import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { logger } from '@/shared/utils/logger';
 import { useCartStore } from '../stores/cartStore';
 import { useFinalizePurchase } from '../hooks/useFinalizePurchase';
+import { usePurchaseSocket } from '../hooks/usePurchaseSocket';
 import { CartItemCard } from './CartItemCard';
 import { CartSummaryBar } from './CartSummaryBar';
 import { LinkedListBanner } from './LinkedListBanner';
@@ -19,6 +20,7 @@ export function CartScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const cart = useCartStore();
+  usePurchaseSocket(cart.purchaseId);
   const { mutate: finalizePurchase, isPending } = useFinalizePurchase();
   const [showListSelect, setShowListSelect] = useState(false);
 
