@@ -6,12 +6,20 @@
     "barcode": "7891093010014",
     "unit": "5kg",
     "imageUrl": null,
-    "averagePrice": 22.9,
-    "lowestPrice": 19.99,
-    "priceCount": 8,
     "createdAt": "2025-01-15T10:00:00Z",
     "categoryId": 10,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-001",
+      "price": 19.99,
+      "storeId": "store-1",
+      "submittedAt": "2025-01-15T10:00:00Z",
+      "store": {
+        "id": "store-1",
+        "name": "Supermercado Extra"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-002",
@@ -20,12 +28,20 @@
     "barcode": "7896336601116",
     "unit": "1kg",
     "imageUrl": null,
-    "averagePrice": 7.8,
-    "lowestPrice": 6.49,
-    "priceCount": 6,
     "createdAt": "2025-01-15T10:00:00Z",
     "categoryId": 10,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-002",
+      "price": 6.49,
+      "storeId": "store-2",
+      "submittedAt": "2025-01-15T10:00:00Z",
+      "store": {
+        "id": "store-2",
+        "name": "Carrefour"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-003",
@@ -34,12 +50,20 @@
     "barcode": "7891910000197",
     "unit": "1kg",
     "imageUrl": null,
-    "averagePrice": 4.5,
-    "lowestPrice": 3.89,
-    "priceCount": 7,
     "createdAt": "2025-01-15T10:00:00Z",
     "categoryId": 10,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-003",
+      "price": 3.89,
+      "storeId": "store-3",
+      "submittedAt": "2025-01-15T10:00:00Z",
+      "store": {
+        "id": "store-3",
+        "name": "Pão de Açúcar"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-004",
@@ -48,12 +72,20 @@
     "barcode": "7896048060007",
     "unit": "500g",
     "imageUrl": null,
-    "averagePrice": 14.9,
-    "lowestPrice": 12.99,
-    "priceCount": 9,
     "createdAt": "2025-01-15T10:00:00Z",
     "categoryId": 6,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-004",
+      "price": 12.99,
+      "storeId": "store-4",
+      "submittedAt": "2025-01-15T10:00:00Z",
+      "store": {
+        "id": "store-4",
+        "name": "Assaí Atacadista"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-005",
@@ -62,12 +94,20 @@
     "barcode": "7891097029607",
     "unit": "1L",
     "imageUrl": null,
-    "averagePrice": 4.2,
-    "lowestPrice": 3.69,
-    "priceCount": 10,
     "createdAt": "2025-01-16T10:00:00Z",
     "categoryId": 3,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-005",
+      "price": 3.69,
+      "storeId": "store-5",
+      "submittedAt": "2025-01-16T10:00:00Z",
+      "store": {
+        "id": "store-5",
+        "name": "Mercado Livre"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-006",
@@ -76,12 +116,20 @@
     "barcode": "7891107101621",
     "unit": "900ml",
     "imageUrl": null,
-    "averagePrice": 8.9,
-    "lowestPrice": 7.49,
-    "priceCount": 7,
     "createdAt": "2025-01-16T10:00:00Z",
     "categoryId": 12,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-006",
+      "price": 7.49,
+      "storeId": "store-1",
+      "submittedAt": "2025-01-16T10:00:00Z",
+      "store": {
+        "id": "store-1",
+        "name": "Supermercado Extra"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-007",
@@ -90,12 +138,20 @@
     "barcode": "7613032472306",
     "unit": "500g",
     "imageUrl": null,
-    "averagePrice": 6.5,
-    "lowestPrice": 5.29,
-    "priceCount": 5,
     "createdAt": "2025-01-16T10:00:00Z",
     "categoryId": 10,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-007",
+      "price": 5.29,
+      "storeId": "store-2",
+      "submittedAt": "2025-01-16T10:00:00Z",
+      "store": {
+        "id": "store-2",
+        "name": "Carrefour"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-008",
@@ -104,12 +160,20 @@
     "barcode": "7891085026602",
     "unit": "340g",
     "imageUrl": null,
-    "averagePrice": 3.2,
-    "lowestPrice": 2.79,
-    "priceCount": 8,
     "createdAt": "2025-01-17T10:00:00Z",
     "categoryId": 12,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-008",
+      "price": 2.79,
+      "storeId": "store-3",
+      "submittedAt": "2025-01-17T10:00:00Z",
+      "store": {
+        "id": "store-3",
+        "name": "Pão de Açúcar"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-009",
@@ -118,12 +182,20 @@
     "barcode": "7894900700015",
     "unit": "2L",
     "imageUrl": null,
-    "averagePrice": 8.5,
-    "lowestPrice": 6.99,
-    "priceCount": 12,
     "createdAt": "2025-01-17T10:00:00Z",
     "categoryId": 6,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-009",
+      "price": 6.99,
+      "storeId": "store-4",
+      "submittedAt": "2025-01-17T10:00:00Z",
+      "store": {
+        "id": "store-4",
+        "name": "Assaí Atacadista"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-010",
@@ -132,12 +204,20 @@
     "barcode": "7891991010952",
     "unit": "2L",
     "imageUrl": null,
-    "averagePrice": 7.8,
-    "lowestPrice": 6.49,
-    "priceCount": 11,
     "createdAt": "2025-01-17T10:00:00Z",
     "categoryId": 6,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-010",
+      "price": 6.49,
+      "storeId": "store-5",
+      "submittedAt": "2025-01-17T10:00:00Z",
+      "store": {
+        "id": "store-5",
+        "name": "Mercado Livre"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-011",
@@ -146,12 +226,20 @@
     "barcode": "7891167017752",
     "unit": "2kg",
     "imageUrl": null,
-    "averagePrice": 18.5,
-    "lowestPrice": 15.99,
-    "priceCount": 6,
     "createdAt": "2025-01-18T10:00:00Z",
     "categoryId": 11,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-011",
+      "price": 15.99,
+      "storeId": "store-1",
+      "submittedAt": "2025-01-18T10:00:00Z",
+      "store": {
+        "id": "store-1",
+        "name": "Supermercado Extra"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-012",
@@ -160,12 +248,20 @@
     "barcode": "7891176001834",
     "unit": "500g",
     "imageUrl": null,
-    "averagePrice": 16.9,
-    "lowestPrice": 14.5,
-    "priceCount": 5,
     "createdAt": "2025-01-18T10:00:00Z",
     "categoryId": 4,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-012",
+      "price": 14.5,
+      "storeId": "store-2",
+      "submittedAt": "2025-01-18T10:00:00Z",
+      "store": {
+        "id": "store-2",
+        "name": "Carrefour"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-013",
@@ -174,12 +270,20 @@
     "barcode": "7891908010101",
     "unit": "150g",
     "imageUrl": null,
-    "averagePrice": 9.8,
-    "lowestPrice": 8.49,
-    "priceCount": 7,
     "createdAt": "2025-01-18T10:00:00Z",
     "categoryId": 3,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-013",
+      "price": 8.49,
+      "storeId": "store-3",
+      "submittedAt": "2025-01-18T10:00:00Z",
+      "store": {
+        "id": "store-3",
+        "name": "Pão de Açúcar"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-014",
@@ -188,12 +292,20 @@
     "barcode": "7891000244548",
     "unit": "170g",
     "imageUrl": null,
-    "averagePrice": 3.5,
-    "lowestPrice": 2.99,
-    "priceCount": 6,
     "createdAt": "2025-01-19T10:00:00Z",
     "categoryId": 3,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-014",
+      "price": 2.99,
+      "storeId": "store-4",
+      "submittedAt": "2025-01-19T10:00:00Z",
+      "store": {
+        "id": "store-4",
+        "name": "Assaí Atacadista"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-015",
@@ -202,12 +314,20 @@
     "barcode": "7891152510130",
     "unit": "200g",
     "imageUrl": null,
-    "averagePrice": 7.9,
-    "lowestPrice": 6.79,
-    "priceCount": 7,
     "createdAt": "2025-01-19T10:00:00Z",
     "categoryId": 3,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-015",
+      "price": 6.79,
+      "storeId": "store-5",
+      "submittedAt": "2025-01-19T10:00:00Z",
+      "store": {
+        "id": "store-5",
+        "name": "Mercado Livre"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-016",
@@ -216,12 +336,20 @@
     "barcode": "7896213001051",
     "unit": "450g",
     "imageUrl": null,
-    "averagePrice": 5.8,
-    "lowestPrice": 4.99,
-    "priceCount": 8,
     "createdAt": "2025-01-19T10:00:00Z",
     "categoryId": 5,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-016",
+      "price": 4.99,
+      "storeId": "store-1",
+      "submittedAt": "2025-01-19T10:00:00Z",
+      "store": {
+        "id": "store-1",
+        "name": "Supermercado Extra"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-017",
@@ -230,12 +358,20 @@
     "barcode": "7622201927432",
     "unit": "90g",
     "imageUrl": null,
-    "averagePrice": 4.2,
-    "lowestPrice": 3.49,
-    "priceCount": 9,
     "createdAt": "2025-01-20T10:00:00Z",
     "categoryId": 9,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-017",
+      "price": 3.49,
+      "storeId": "store-2",
+      "submittedAt": "2025-01-20T10:00:00Z",
+      "store": {
+        "id": "store-2",
+        "name": "Carrefour"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-018",
@@ -244,12 +380,20 @@
     "barcode": "7896336901012",
     "unit": "kg",
     "imageUrl": null,
-    "averagePrice": 8.9,
-    "lowestPrice": 6.99,
-    "priceCount": 6,
     "createdAt": "2025-01-20T10:00:00Z",
     "categoryId": 1,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-018",
+      "price": 6.99,
+      "storeId": "store-3",
+      "submittedAt": "2025-01-20T10:00:00Z",
+      "store": {
+        "id": "store-3",
+        "name": "Pão de Açúcar"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-019",
@@ -258,12 +402,20 @@
     "barcode": "7891030050019",
     "unit": "kg",
     "imageUrl": null,
-    "averagePrice": 4.5,
-    "lowestPrice": 3.29,
-    "priceCount": 8,
     "createdAt": "2025-01-20T10:00:00Z",
     "categoryId": 1,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-019",
+      "price": 3.29,
+      "storeId": "store-4",
+      "submittedAt": "2025-01-20T10:00:00Z",
+      "store": {
+        "id": "store-4",
+        "name": "Assaí Atacadista"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-020",
@@ -272,12 +424,20 @@
     "barcode": "7891030050020",
     "unit": "kg",
     "imageUrl": null,
-    "averagePrice": 6.9,
-    "lowestPrice": 4.99,
-    "priceCount": 7,
     "createdAt": "2025-01-21T10:00:00Z",
     "categoryId": 2,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-020",
+      "price": 4.99,
+      "storeId": "store-5",
+      "submittedAt": "2025-01-21T10:00:00Z",
+      "store": {
+        "id": "store-5",
+        "name": "Mercado Livre"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-021",
@@ -286,12 +446,20 @@
     "barcode": "7891030050021",
     "unit": "kg",
     "imageUrl": null,
-    "averagePrice": 5.2,
-    "lowestPrice": 3.99,
-    "priceCount": 6,
     "createdAt": "2025-01-21T10:00:00Z",
     "categoryId": 2,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-021",
+      "price": 3.99,
+      "storeId": "store-1",
+      "submittedAt": "2025-01-21T10:00:00Z",
+      "store": {
+        "id": "store-1",
+        "name": "Supermercado Extra"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-022",
@@ -300,12 +468,20 @@
     "barcode": "7891030050022",
     "unit": "kg",
     "imageUrl": null,
-    "averagePrice": 4.8,
-    "lowestPrice": 3.49,
-    "priceCount": 7,
     "createdAt": "2025-01-21T10:00:00Z",
     "categoryId": 2,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-022",
+      "price": 3.49,
+      "storeId": "store-2",
+      "submittedAt": "2025-01-21T10:00:00Z",
+      "store": {
+        "id": "store-2",
+        "name": "Carrefour"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-023",
@@ -314,12 +490,20 @@
     "barcode": "7896098900046",
     "unit": "500ml",
     "imageUrl": null,
-    "averagePrice": 3.9,
-    "lowestPrice": 2.99,
-    "priceCount": 8,
     "createdAt": "2025-01-22T10:00:00Z",
     "categoryId": 7,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-023",
+      "price": 2.99,
+      "storeId": "store-3",
+      "submittedAt": "2025-01-22T10:00:00Z",
+      "store": {
+        "id": "store-3",
+        "name": "Pão de Açúcar"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-024",
@@ -328,12 +512,20 @@
     "barcode": "7891150045067",
     "unit": "1kg",
     "imageUrl": null,
-    "averagePrice": 18.9,
-    "lowestPrice": 15.99,
-    "priceCount": 9,
     "createdAt": "2025-01-22T10:00:00Z",
     "categoryId": 7,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-024",
+      "price": 15.99,
+      "storeId": "store-4",
+      "submittedAt": "2025-01-22T10:00:00Z",
+      "store": {
+        "id": "store-4",
+        "name": "Assaí Atacadista"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-025",
@@ -342,12 +534,20 @@
     "barcode": "7500435098021",
     "unit": "400ml",
     "imageUrl": null,
-    "averagePrice": 14.5,
-    "lowestPrice": 11.99,
-    "priceCount": 6,
     "createdAt": "2025-01-22T10:00:00Z",
     "categoryId": 8,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-025",
+      "price": 11.99,
+      "storeId": "store-5",
+      "submittedAt": "2025-01-22T10:00:00Z",
+      "store": {
+        "id": "store-5",
+        "name": "Mercado Livre"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-026",
@@ -356,12 +556,20 @@
     "barcode": "7891172024051",
     "unit": "4 rolos",
     "imageUrl": null,
-    "averagePrice": 7.2,
-    "lowestPrice": 5.99,
-    "priceCount": 10,
     "createdAt": "2025-01-23T10:00:00Z",
     "categoryId": 8,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-026",
+      "price": 5.99,
+      "storeId": "store-1",
+      "submittedAt": "2025-01-23T10:00:00Z",
+      "store": {
+        "id": "store-1",
+        "name": "Supermercado Extra"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-027",
@@ -370,12 +578,20 @@
     "barcode": "7896007563038",
     "unit": "1L",
     "imageUrl": null,
-    "averagePrice": 5.8,
-    "lowestPrice": 4.49,
-    "priceCount": 7,
     "createdAt": "2025-01-23T10:00:00Z",
     "categoryId": 6,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-027",
+      "price": 4.49,
+      "storeId": "store-2",
+      "submittedAt": "2025-01-23T10:00:00Z",
+      "store": {
+        "id": "store-2",
+        "name": "Carrefour"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-028",
@@ -384,12 +600,20 @@
     "barcode": "7891000055763",
     "unit": "400g",
     "imageUrl": null,
-    "averagePrice": 11.9,
-    "lowestPrice": 9.99,
-    "priceCount": 6,
     "createdAt": "2025-01-23T10:00:00Z",
     "categoryId": 9,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-028",
+      "price": 9.99,
+      "storeId": "store-3",
+      "submittedAt": "2025-01-23T10:00:00Z",
+      "store": {
+        "id": "store-3",
+        "name": "Pão de Açúcar"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-029",
@@ -398,12 +622,20 @@
     "barcode": "5601252110021",
     "unit": "500ml",
     "imageUrl": null,
-    "averagePrice": 29.9,
-    "lowestPrice": 24.99,
-    "priceCount": 5,
     "createdAt": "2025-01-24T10:00:00Z",
     "categoryId": 12,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-029",
+      "price": 24.99,
+      "storeId": "store-4",
+      "submittedAt": "2025-01-24T10:00:00Z",
+      "store": {
+        "id": "store-4",
+        "name": "Assaí Atacadista"
+      }
+    },
+    "categoryName": null
   },
   {
     "id": "prod-030",
@@ -412,11 +644,19 @@
     "barcode": "7891095100018",
     "unit": "1kg",
     "imageUrl": null,
-    "averagePrice": 2.5,
-    "lowestPrice": 1.89,
-    "priceCount": 9,
     "createdAt": "2025-01-24T10:00:00Z",
     "categoryId": 12,
-    "subCategoryId": null
+    "subCategoryId": null,
+    "latestPrice": {
+      "id": "price-prod-030",
+      "price": 1.89,
+      "storeId": "store-5",
+      "submittedAt": "2025-01-24T10:00:00Z",
+      "store": {
+        "id": "store-5",
+        "name": "Mercado Livre"
+      }
+    },
+    "categoryName": null
   }
 ]

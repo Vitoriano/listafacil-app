@@ -64,15 +64,18 @@ export class MockProductRepository implements IProductRepository {
       barcode,
       categoryId: null,
       subCategoryId: null,
+      categoryName: null,
       unit: 'un',
       imageUrl: null,
-      averagePrice: 9.9 + Math.random() * 20,
-      lowestPrice: 5.9 + Math.random() * 10,
-      priceCount: Math.floor(Math.random() * 5) + 1,
+      latestPrice: {
+        id: `price-${barcode}`,
+        price: Math.round((5.9 + Math.random() * 20) * 100) / 100,
+        storeId: 'store-mock-1',
+        submittedAt: new Date().toISOString(),
+        store: { id: 'store-mock-1', name: 'Supermercado Mock' },
+      },
       createdAt: new Date().toISOString(),
     };
-    mockProduct.averagePrice = Math.round(mockProduct.averagePrice * 100) / 100;
-    mockProduct.lowestPrice = Math.round(mockProduct.lowestPrice * 100) / 100;
     this.store.create(mockProduct);
     return mockProduct;
   }

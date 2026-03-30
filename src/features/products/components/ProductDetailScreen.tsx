@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
@@ -9,6 +9,8 @@ import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { formatDate } from '@/shared/utils/formatDate';
 import { logger } from '@/shared/utils/logger';
+import { useProductImageUri } from '@/shared/hooks/useProductImageUri';
+import { useCategoryName } from '../hooks/useCategoryName';
 import { useProductDetail } from '../hooks/useProductDetail';
 
 export function ProductDetailScreen() {
@@ -17,6 +19,8 @@ export function ProductDetailScreen() {
 
   const colors = useThemeColors();
   const { data: product, isLoading } = useProductDetail(id ?? null);
+  const { uri: imageUri, loading: imageLoading } = useProductImageUri(product);
+  const categoryName = useCategoryName(product);
 
   function handleBack() {
     router.back();
@@ -55,17 +59,25 @@ export function ProductDetailScreen() {
       <AppHeader title={product.name} onBack={handleBack} />
 
       <ScrollView contentContainerStyle={{ padding: 16 }}>
-        {/* Product image or placeholder */}
-        {product.imageUrl ? (
-          <Image
-            source={{ uri: product.imageUrl }}
-            className="mb-4 h-48 w-full rounded-2xl"
-            resizeMode="cover"
-            accessibilityLabel={`Imagem de ${product.name}`}
-          />
+        {/* Product image */}
+        {imageLoading ? (
+          <View className="mb-4 self-center items-center justify-center rounded-2xl bg-background-100" style={{ width: '25%', aspectRatio: 1 }}>
+            <ActivityIndicator color={colors.textMuted} />
+          </View>
+        ) : imageUri ? (
+          <View className="mb-4 self-center overflow-hidden rounded-2xl bg-background-100" style={{ width: '25%' }}>
+            <Image
+              source={{ uri: imageUri }}
+              className="w-full"
+              style={{ aspectRatio: 1 }}
+              resizeMode="contain"
+              accessibilityLabel={`Imagem de ${product.name}`}
+            />
+          </View>
         ) : (
           <View
-            className="mb-4 h-48 w-full items-center justify-center rounded-2xl bg-background-100"
+            className="mb-4 self-center items-center justify-center rounded-2xl bg-background-100"
+            style={{ width: '25%', aspectRatio: 1 }}
             accessibilityLabel="Sem imagem disponivel"
           >
             <Ionicons name="image-outline" size={48} color={colors.textMuted} />
@@ -80,10 +92,10 @@ export function ProductDetailScreen() {
           </Text>
           <Text className="mt-1 text-sm text-typography-500">{product.brand}</Text>
 
-          <View className="mt-3 flex-row gap-2">
-            <View className="rounded-full bg-primary-50 px-3 py-1.5">
-              <Text className="text-xs font-semibold text-primary-600">
-                {product.categoryId ?? '—'}
+          <View className="mt-3 flex-row flex-wrap gap-2">
+            <View className="shrink rounded-full bg-primary-50 px-3 py-1.5">
+              <Text className="text-xs font-semibold text-primary-600" numberOfLines={1}>
+                {categoryName}
               </Text>
             </View>
             <View className="rounded-full bg-background-100 px-3 py-1.5">
@@ -94,34 +106,35 @@ export function ProductDetailScreen() {
           </View>
         </View>
 
-        {/* Price summary card */}
+        {/* Price card */}
         <View className="mt-3 rounded-2xl bg-background-0 p-4">
           <Text className="mb-3 text-base font-bold text-typography-900">
-            Resumo de Precos
+            Ultimo Preco
           </Text>
 
-          <View className="flex-row justify-between">
-            <View>
-              <Text className="text-xs text-typography-400">Menor Preco</Text>
-              <Text className="mt-0.5 text-2xl font-bold text-success-600">
-                {formatCurrency(product.lowestPrice)}
+          {product.latestPrice ? (
+            <>
+              <Text className="text-2xl font-bold text-success-600">
+                {formatCurrency(product.latestPrice.price)}
               </Text>
-            </View>
-            <View className="items-end">
-              <Text className="text-xs text-typography-400">Preco Medio</Text>
-              <Text className="mt-0.5 text-xl font-semibold text-typography-700">
-                {formatCurrency(product.averagePrice)}
-              </Text>
-            </View>
-          </View>
-
-          <View className="mt-3 flex-row items-center gap-1">
-            <Ionicons name="people-outline" size={14} color={colors.textTertiary} />
-            <Text className="text-xs text-typography-500">
-              {product.priceCount}{' '}
-              {product.priceCount === 1 ? 'contribuicao' : 'contribuicoes'}
+              <View className="mt-2 flex-row items-center gap-1">
+                <Ionicons name="storefront-outline" size={14} color={colors.textTertiary} />
+                <Text className="text-xs text-typography-500">
+                  {product.latestPrice.store.name}
+                </Text>
+              </View>
+              <View className="mt-1 flex-row items-center gap-1">
+                <Ionicons name="time-outline" size={14} color={colors.textTertiary} />
+                <Text className="text-xs text-typography-500">
+                  {formatDate(product.latestPrice.submittedAt)}
+                </Text>
+              </View>
+            </>
+          ) : (
+            <Text className="text-sm text-typography-400">
+              Nenhum preco cadastrado ainda.
             </Text>
-          </View>
+          )}
         </View>
 
         {/* Product details card */}
@@ -142,7 +155,7 @@ export function ProductDetailScreen() {
 
             <View className="flex-row items-center justify-between">
               <Text className="text-sm text-typography-500">Categoria</Text>
-              <Text className="text-sm font-medium text-typography-900">{product.categoryId ?? '—'}</Text>
+              <Text className="text-sm font-medium text-typography-900">{categoryName}</Text>
             </View>
 
             <View className="h-px bg-outline-100" />

@@ -69,45 +69,90 @@ export const useCartStore = create<CartState>((set) => ({
     }
   },
 
-  addItem: (item) =>
-    set((state) => {
-      const existing = state.items.find((i) => i.productId === item.productId);
-      let newItems: PurchaseItem[];
+  addItem: (item) => {
+    const { purchaseId, items } = useCartStore.getState();
+    const existing = items.find((i) => i.productId === item.productId);
 
-      if (existing) {
-        newItems = state.items.map((i) =>
-          i.productId === item.productId
-            ? { ...i, quantity: i.quantity + item.quantity, price: item.price }
-            : i,
-        );
-      } else {
-        const newItem: PurchaseItem = {
-          ...item,
-          id: `item-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        };
-        newItems = [...state.items, newItem];
+    if (existing) {
+      // Update locally first
+      const newItems = items.map((i) =>
+        i.productId === item.productId
+          ? { ...i, quantity: i.quantity + item.quantity, price: item.price }
+          : i,
+      );
+      set({ items: newItems, ...recalculate(newItems) });
+
+      // Sync with backend
+      if (purchaseId && existing.id) {
+        purchaseRepository
+          .updateItem(purchaseId, existing.id, {
+            price: item.price,
+            quantity: existing.quantity + item.quantity,
+          })
+          .catch(() => {});
       }
+    } else {
+      // Optimistic local id
+      const tempId = `item-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+      const newItem: PurchaseItem = { ...item, id: tempId };
+      const newItems = [...items, newItem];
+      set({ items: newItems, ...recalculate(newItems) });
 
-      return { items: newItems, ...recalculate(newItems) };
-    }),
+      // Persist to backend and replace temp id with real one
+      if (purchaseId) {
+        purchaseRepository
+          .addItem(purchaseId, {
+            productId: item.productId,
+            barcode: item.barcode,
+            price: item.price,
+            quantity: item.quantity,
+            fromListId: item.fromListId,
+          })
+          .then((saved) => {
+            set((state) => ({
+              items: state.items.map((i) =>
+                i.id === tempId ? { ...i, id: saved.id } : i,
+              ),
+            }));
+          })
+          .catch(() => {});
+      }
+    }
+  },
 
-  removeItem: (itemId) =>
+  removeItem: (itemId) => {
+    const { purchaseId } = useCartStore.getState();
     set((state) => {
       const newItems = state.items.filter((i) => i.id !== itemId);
       return { items: newItems, ...recalculate(newItems) };
-    }),
+    });
+    if (purchaseId) {
+      purchaseRepository.removeItem(purchaseId, itemId).catch(() => {});
+    }
+  },
 
-  updateItemQuantity: (itemId, quantity) =>
-    set((state) => {
-      if (quantity <= 0) {
+  updateItemQuantity: (itemId, quantity) => {
+    const { purchaseId } = useCartStore.getState();
+    if (quantity <= 0) {
+      set((state) => {
         const newItems = state.items.filter((i) => i.id !== itemId);
         return { items: newItems, ...recalculate(newItems) };
+      });
+      if (purchaseId) {
+        purchaseRepository.removeItem(purchaseId, itemId).catch(() => {});
       }
-      const newItems = state.items.map((i) =>
-        i.id === itemId ? { ...i, quantity } : i,
-      );
-      return { items: newItems, ...recalculate(newItems) };
-    }),
+    } else {
+      set((state) => {
+        const newItems = state.items.map((i) =>
+          i.id === itemId ? { ...i, quantity } : i,
+        );
+        return { items: newItems, ...recalculate(newItems) };
+      });
+      if (purchaseId) {
+        purchaseRepository.updateItem(purchaseId, itemId, { quantity }).catch(() => {});
+      }
+    }
+  },
 
   linkList: (listId, listName, items) =>
     set({ linkedListId: listId, linkedListName: listName, linkedListItems: items }),

@@ -11,11 +11,16 @@ const mockProduct: Product = {
   barcode: '7891093010014',
   categoryId: 10,
   subCategoryId: null,
+  categoryName: 'Grãos',
   unit: '5kg',
   imageUrl: null,
-  averagePrice: 22.90,
-  lowestPrice: 19.99,
-  priceCount: 8,
+  latestPrice: {
+    id: 'price-001',
+    price: 19.99,
+    storeId: 'store-1',
+    submittedAt: '2025-01-15T10:00:00Z',
+    store: { id: 'store-1', name: 'Supermercado Extra' },
+  },
   createdAt: '2025-01-15T10:00:00Z',
 };
 
@@ -47,9 +52,9 @@ describe('ProductCard', () => {
     expect(priceText.props.children).toMatch(/19/);
   });
 
-  it('renders categoryId', () => {
+  it('renders category name', () => {
     const { getByText } = renderCard();
-    expect(getByText('10')).toBeTruthy();
+    expect(getByText('Grãos')).toBeTruthy();
   });
 
   it('renders unit', () => {
@@ -57,9 +62,9 @@ describe('ProductCard', () => {
     expect(getByText('5kg')).toBeTruthy();
   });
 
-  it('renders price count', () => {
+  it('renders store name from latestPrice', () => {
     const { getByText } = renderCard();
-    expect(getByText(/8 precos/)).toBeTruthy();
+    expect(getByText('Supermercado Extra')).toBeTruthy();
   });
 
   it('calls onPress when card is pressed', () => {
@@ -69,13 +74,13 @@ describe('ProductCard', () => {
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
-  it('renders singular "preco" for priceCount = 1', () => {
-    const productWithOnePrice: Product = { ...mockProduct, priceCount: 1 };
+  it('renders "Sem preco" when latestPrice is null', () => {
+    const productWithoutPrice: Product = { ...mockProduct, latestPrice: null };
     const { getByText } = render(
       <AppProviders>
-        <ProductCard product={productWithOnePrice} onPress={jest.fn()} />
+        <ProductCard product={productWithoutPrice} onPress={jest.fn()} />
       </AppProviders>,
     );
-    expect(getByText(/1 preco/)).toBeTruthy();
+    expect(getByText('Sem preco')).toBeTruthy();
   });
 });

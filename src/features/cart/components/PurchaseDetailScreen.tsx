@@ -51,10 +51,10 @@ export function PurchaseDetailScreen() {
             </View>
             <View className="flex-1">
               <Text className="text-base font-bold text-typography-900">
-                {purchase.storeName}
+                {purchase.storeName || 'Loja'}
               </Text>
               <Text className="mt-0.5 text-xs text-typography-400">
-                {formatDate(purchase.date)}
+                {purchase.date ? formatDate(purchase.date) : '—'}
               </Text>
             </View>
             <View className="items-end">
@@ -62,7 +62,7 @@ export function PurchaseDetailScreen() {
                 {formatCurrency(purchase.total)}
               </Text>
               <Text className="text-xs text-typography-500">
-                {purchase.itemCount} {purchase.itemCount === 1 ? 'item' : 'itens'}
+                {purchase.itemCount ?? 0} {(purchase.itemCount ?? 0) === 1 ? 'item' : 'itens'}
               </Text>
             </View>
           </View>
@@ -71,21 +71,21 @@ export function PurchaseDetailScreen() {
         {/* Items */}
         <Text className="mb-3 text-sm font-bold text-typography-900">Itens</Text>
         <View className="gap-2">
-          {purchase.items.map((item) => (
+          {(purchase.items ?? []).map((item, index) => (
             <View
-              key={item.id}
+              key={item.id || index}
               className="flex-row items-center justify-between rounded-2xl bg-background-0 p-4"
             >
-              <View className="flex-1 mr-3">
+              <View className="mr-3 flex-1">
                 <Text className="text-sm font-bold text-typography-900" numberOfLines={2}>
-                  {item.productName}
+                  {item.productName || 'Produto'}
                 </Text>
                 <Text className="mt-0.5 text-xs text-typography-400">
-                  {item.quantity}x {formatCurrency(item.price)}
+                  {item.quantity ?? 1}x {formatCurrency(item.price)}
                 </Text>
               </View>
               <Text className="text-sm font-bold text-typography-900">
-                {formatCurrency(item.price * item.quantity)}
+                {formatCurrency((item.price ?? 0) * (item.quantity ?? 1))}
               </Text>
             </View>
           ))}

@@ -60,6 +60,9 @@ export function CartScreen() {
       onSuccess: () => {
         logger.info('Cart', 'Purchase finalized');
         cart.reset();
+        while (router.canGoBack()) {
+          router.back();
+        }
         router.replace('/(tabs)');
       },
     });

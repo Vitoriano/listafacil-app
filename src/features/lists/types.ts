@@ -31,6 +31,7 @@ export interface UpdateShoppingList {
 export interface CreateListItem {
   productId: string;
   quantity: number;
+  estimatedPrice?: number;
 }
 
 export interface UpdateListItem {

@@ -121,7 +121,7 @@ export class MockListRepository implements IListRepository {
       productName: product?.name ?? 'Produto',
       quantity: item.quantity,
       unit: product?.unit ?? 'un',
-      estimatedPrice: product?.lowestPrice ?? 0,
+      estimatedPrice: product?.latestPrice?.price ?? 0,
       checked: false,
     };
 

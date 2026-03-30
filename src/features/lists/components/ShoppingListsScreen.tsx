@@ -98,8 +98,8 @@ export function ShoppingListsScreen() {
                   <View className="mt-1 flex-row items-center gap-1">
                     <Ionicons name="cart-outline" size={13} color={colors.textTertiary} />
                     <Text className="text-xs text-typography-500">
-                      {item.itemCount}{' '}
-                      {item.itemCount === 1 ? 'item' : 'itens'}
+                      {item.itemCount ?? 0}{' '}
+                      {(item.itemCount ?? 0) === 1 ? 'item' : 'itens'}
                     </Text>
                   </View>
                   <Text className="mt-0.5 text-xs text-typography-400">
@@ -107,9 +107,11 @@ export function ShoppingListsScreen() {
                   </Text>
                 </View>
                 <View className="items-end">
-                  <Text className="text-lg font-bold text-primary-500">
-                    {formatCurrency(item.totalEstimate)}
-                  </Text>
+                  {item.totalEstimate ? (
+                    <Text className="text-lg font-bold text-primary-500">
+                      {formatCurrency(item.totalEstimate)}
+                    </Text>
+                  ) : null}
                   <TouchableOpacity
                     onPress={() => handleDeleteList(item)}
                     accessibilityRole="button"

@@ -34,6 +34,7 @@ export function ShareListScreen() {
   const [activeTab, setActiveTab] = useState<Tab>('invite');
   const [email, setEmail] = useState('');
   const [qrValue, setQrValue] = useState<string | null>(null);
+  const [qrError, setQrError] = useState<string | null>(null);
 
   const colors = useThemeColors();
   const { data: list, isLoading: loadingList } = useListDetail(id ?? null);
@@ -43,18 +44,28 @@ export function ShareListScreen() {
   const generateInvite = useGenerateInvite();
   const removeMember = useRemoveMember();
 
-  // Generate QR invite on mount
+  // Gera convite ao abrir / ao mudar de lista (novo id → novo QR)
   useEffect(() => {
-    if (id && !qrValue) {
-      generateInvite.mutate(
-        { listId: id, role: 'editor' },
-        {
-          onSuccess: (result) => {
-            setQrValue(result.shareUrl);
-          },
+    if (!id) return;
+    setQrValue(null);
+    setQrError(null);
+    generateInvite.mutate(
+      { listId: id, role: 'editor' },
+      {
+        onSuccess: (result) => {
+          const url = result.shareUrl?.trim();
+          setQrValue(url && url.length > 0 ? url : null);
+          if (!url) {
+            setQrError('A API nao devolveu link de convite.');
+          }
         },
-      );
-    }
+        onError: (err) => {
+          setQrError(
+            err instanceof Error ? err.message : 'Nao foi possivel gerar o convite.',
+          );
+        },
+      },
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -96,11 +107,21 @@ export function ShareListScreen() {
   function handleRegenerateQR() {
     if (!id) return;
     setQrValue(null);
+    setQrError(null);
     generateInvite.mutate(
       { listId: id, role: 'editor' },
       {
         onSuccess: (result) => {
-          setQrValue(result.shareUrl);
+          const url = result.shareUrl?.trim();
+          setQrValue(url && url.length > 0 ? url : null);
+          if (!url) {
+            setQrError('A API nao devolveu link de convite.');
+          }
+        },
+        onError: (err) => {
+          setQrError(
+            err instanceof Error ? err.message : 'Nao foi possivel gerar o convite.',
+          );
         },
       },
     );
@@ -235,9 +256,23 @@ export function ShareListScreen() {
                     <QRCode
                       value={qrValue}
                       size={200}
-                      color={colors.text}
+                      color="#111111"
                       backgroundColor="#FFFFFF"
                     />
+                  </View>
+                ) : qrError ? (
+                  <View className="h-52 w-52 items-center justify-center rounded-2xl bg-error-50 px-4">
+                    <Ionicons name="alert-circle-outline" size={32} color={colors.error} />
+                    <Text className="mt-2 text-center text-xs text-typography-700">
+                      {qrError}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={handleRegenerateQR}
+                      disabled={generateInvite.isPending}
+                      className="mt-3 rounded-full bg-primary-500 px-4 py-2"
+                    >
+                      <Text className="text-xs font-semibold text-white">Tentar de novo</Text>
+                    </TouchableOpacity>
                   </View>
                 ) : (
                   <View className="h-52 w-52 items-center justify-center rounded-2xl bg-background-100">

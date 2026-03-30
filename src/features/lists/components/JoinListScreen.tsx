@@ -32,12 +32,11 @@ export function JoinListScreen() {
     requestPermission();
   }, [requestPermission]);
 
-  // Parse QR code value to extract invite id
+  // Parse QR code value to extract invite id (deep link ou URL com .../join/{id})
   useEffect(() => {
     if (scannedBarcode && !inviteId) {
-      // Expected format: listafacil://join/{inviteId}
-      const match = scannedBarcode.match(/join\/(.+)$/);
-      if (match) {
+      const match = scannedBarcode.match(/join\/([^/?#]+)/i);
+      if (match?.[1]) {
         setInviteId(match[1]);
         setShowConfirm(true);
       } else {

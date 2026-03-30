@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   FlatList,
   Modal,
+  Pressable,
   Text,
   TextInput,
   TouchableOpacity,
@@ -24,6 +25,7 @@ import { useUpdateItem } from '../hooks/useUpdateItem';
 import { useRemoveItem } from '../hooks/useRemoveItem';
 import { useAddItem } from '../hooks/useAddItem';
 import { useListSocket } from '../hooks/useListSocket';
+import { useUpdateList } from '../hooks/useUpdateList';
 import type { ListItem } from '../types';
 import type { Product } from '@/features/products/types';
 
@@ -31,6 +33,8 @@ export function ListDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [showAddItem, setShowAddItem] = useState(false);
+  const [showEditName, setShowEditName] = useState(false);
+  const [editNameText, setEditNameText] = useState('');
   const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
 
@@ -45,6 +49,7 @@ export function ListDetailScreen() {
   const { mutate: updateItem } = useUpdateItem();
   const { mutate: removeItem } = useRemoveItem();
   const { mutate: addItem, isPending: isAddingItem } = useAddItem();
+  const { mutate: updateList, isPending: isUpdatingName } = useUpdateList();
 
   useEffect(() => {
     return () => {
@@ -76,6 +81,24 @@ export function ListDetailScreen() {
     removeItem({ listId: id!, itemId: item.id });
   }
 
+  function handleOpenEditName() {
+    setEditNameText(list?.name ?? '');
+    setShowEditName(true);
+  }
+
+  function handleSaveName() {
+    const trimmed = editNameText.trim();
+    if (!trimmed || trimmed === list?.name) {
+      setShowEditName(false);
+      return;
+    }
+    logger.info('Lists', 'Renaming list', id, trimmed);
+    updateList(
+      { listId: id!, data: { name: trimmed } },
+      { onSuccess: () => setShowEditName(false) },
+    );
+  }
+
   function handleOpenAddItem() {
     setLoadingProducts(true);
     productRepository
@@ -97,7 +120,7 @@ export function ListDetailScreen() {
   function handleSelectProduct(product: Product) {
     logger.info('Lists', 'Adding item to list', product.id);
     addItem(
-      { listId: id!, item: { productId: product.id, quantity: 1 } },
+      { listId: id!, item: { productId: product.id, quantity: 1, estimatedPrice: product.latestPrice?.price ?? 0 } },
       {
         onSuccess: () => {
           logger.info('Lists', 'Item added successfully');
@@ -122,23 +145,34 @@ export function ListDetailScreen() {
   return (
     <View className="flex-1 bg-background-50">
       <AppHeader
-        title={list?.name ?? 'Detalhe da Lista'}
+        title={list?.name || 'Detalhe da Lista'}
         subtitle={
           list
-            ? `${list.itemCount} ${list.itemCount === 1 ? 'item' : 'itens'} · ${formatCurrency(list.totalEstimate)}`
+            ? `${list.itemCount ?? 0} ${(list.itemCount ?? 0) === 1 ? 'item' : 'itens'}${list.totalEstimate ? ` · ${formatCurrency(list.totalEstimate)}` : ''}`
             : undefined
         }
         onBack={handleBack}
         rightAction={
-          <TouchableOpacity
-            onPress={handleShare}
-            className="h-10 w-10 items-center justify-center rounded-full bg-primary-50"
-            activeOpacity={0.7}
-            accessibilityRole="button"
-            accessibilityLabel="Compartilhar lista"
-          >
-            <Ionicons name="share-outline" size={20} color={colors.primary} />
-          </TouchableOpacity>
+          <View className="flex-row gap-2">
+            <TouchableOpacity
+              onPress={handleOpenEditName}
+              className="h-10 w-10 items-center justify-center rounded-full bg-background-100"
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Editar nome da lista"
+            >
+              <Ionicons name="pencil-outline" size={18} color={colors.icon} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleShare}
+              className="h-10 w-10 items-center justify-center rounded-full bg-primary-50"
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Compartilhar lista"
+            >
+              <Ionicons name="share-outline" size={20} color={colors.primary} />
+            </TouchableOpacity>
+          </View>
         }
       />
 
@@ -252,6 +286,59 @@ export function ListDetailScreen() {
         )}
       />
 
+      {/* Edit Name Modal */}
+      <Modal
+        visible={showEditName}
+        animationType="fade"
+        transparent={false}
+        presentationStyle="overFullScreen"
+        statusBarTranslucent
+        onRequestClose={() => setShowEditName(false)}
+      >
+        <Pressable
+          onPress={() => setShowEditName(false)}
+          style={{ flex: 1, backgroundColor: '#000000AA', justifyContent: 'center', paddingHorizontal: 32 }}
+        >
+          <Pressable onPress={() => {}} style={{ backgroundColor: colors.background, borderRadius: 16, padding: 20 }}>
+            <Text className="mb-4 text-base font-bold text-typography-900">
+              Editar nome da lista
+            </Text>
+            <TextInput
+              className="rounded-xl border border-outline-200 bg-background-50 px-4 py-3.5 text-sm text-typography-900"
+              value={editNameText}
+              onChangeText={setEditNameText}
+              placeholder="Nome da lista"
+              placeholderTextColor={colors.textQuaternary}
+              autoFocus
+              returnKeyType="done"
+              onSubmitEditing={handleSaveName}
+              accessibilityLabel="Nome da lista"
+            />
+            <View className="mt-4 flex-row gap-3">
+              <TouchableOpacity
+                onPress={() => setShowEditName(false)}
+                className="flex-1 items-center rounded-full border-2 border-outline-200 py-3"
+                activeOpacity={0.7}
+              >
+                <Text className="text-sm font-bold text-typography-500">Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleSaveName}
+                disabled={isUpdatingName || !editNameText.trim()}
+                className={`flex-1 items-center rounded-full py-3 ${
+                  isUpdatingName || !editNameText.trim() ? 'bg-primary-300' : 'bg-primary-500'
+                }`}
+                activeOpacity={0.8}
+              >
+                <Text className="text-sm font-bold text-white">
+                  {isUpdatingName ? 'Salvando...' : 'Salvar'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
       {/* Add Item Modal */}
       <Modal
         visible={showAddItem}
@@ -304,7 +391,7 @@ export function ListDetailScreen() {
                       </View>
                       <View className="flex-row items-center gap-2">
                         <Text className="text-sm font-bold text-primary-500">
-                          {formatCurrency(item.lowestPrice)}
+                          {item.latestPrice ? formatCurrency(item.latestPrice.price) : 'Sem preco'}
                         </Text>
                         <View className="h-7 w-7 items-center justify-center rounded-full bg-primary-500">
                           <Ionicons name="add" size={16} color={colors.white} />

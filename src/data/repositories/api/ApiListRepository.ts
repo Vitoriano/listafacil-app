@@ -1,4 +1,8 @@
 import { api } from '@/config/api';
+import {
+  mapShareInviteFromApi,
+  mapShareResultFromApi,
+} from '@/lib/mapShareFromApi';
 import type { IListRepository } from '../interfaces/IListRepository';
 import type {
   ShoppingList,
@@ -14,18 +18,70 @@ import type {
   ShareRole,
 } from '@/features/lists/types';
 
+/**
+ * API item shape:
+ * { id, listId, productId, quantity, estimatedPrice, checked,
+ *   product: { id, name, brand, barcode, unit, imageUrl, ... } }
+ */
+function mapListItemFromApi(raw: Record<string, unknown>): ListItem {
+  const product = raw.product as Record<string, unknown> | undefined;
+
+  return {
+    id: String(raw.id ?? ''),
+    productId: String(raw.productId ?? product?.id ?? ''),
+    productName: String(raw.productName ?? product?.name ?? 'Produto'),
+    quantity: Number(raw.quantity) || 1,
+    unit: String(raw.unit ?? product?.unit ?? 'un'),
+    estimatedPrice: parseFloat(String(raw.estimatedPrice ?? 0)) || 0,
+    checked: Boolean(raw.checked),
+  };
+}
+
+/**
+ * API list shape:
+ * GET /lists:    { id, name, ownerId, createdAt, updatedAt, _count: { items, members }, estimatedTotal: 245.8 }
+ * GET /lists/id: { id, name, ownerId, createdAt, updatedAt, owner, members, items: [{ id, listId, productId, quantity, estimatedPrice: "25.90", checked, createdAt, product: {...} }] }
+ */
+function mapShoppingListFromApi(raw: Record<string, unknown>): ShoppingList {
+  const rawItems = Array.isArray(raw.items) ? raw.items : [];
+  const items = rawItems.map((r) => mapListItemFromApi(r as Record<string, unknown>));
+  const count = raw._count as Record<string, unknown> | undefined;
+  const calculatedTotal = items.reduce((sum, i) => sum + i.estimatedPrice * i.quantity, 0);
+  const apiTotal = raw.estimatedTotal != null
+    ? parseFloat(String(raw.estimatedTotal))
+    : NaN;
+
+  return {
+    id: String(raw.id ?? ''),
+    name: String(raw.name ?? ''),
+    items,
+    totalEstimate: !Number.isNaN(apiTotal) ? apiTotal : calculatedTotal,
+    itemCount: Number(count?.items ?? items.length) || 0,
+    createdAt: String(raw.createdAt ?? ''),
+    updatedAt: String(raw.updatedAt ?? raw.createdAt ?? ''),
+  };
+}
+
+function mapShoppingListArray(data: unknown): ShoppingList[] {
+  const arr = Array.isArray(data)
+    ? data
+    : (data as Record<string, unknown>)?.data;
+  if (!Array.isArray(arr)) return [];
+  return arr.map((r) => mapShoppingListFromApi(r as Record<string, unknown>));
+}
+
 export class ApiListRepository implements IListRepository {
   // ── CRUD ──
 
   async getAll(): Promise<ShoppingList[]> {
     const { data } = await api.get('/lists');
-    return data;
+    return mapShoppingListArray(data);
   }
 
   async getById(id: string): Promise<ShoppingList | null> {
     try {
       const { data } = await api.get(`/lists/${id}`);
-      return data;
+      return mapShoppingListFromApi(data as Record<string, unknown>);
     } catch {
       return null;
     }
@@ -33,12 +89,12 @@ export class ApiListRepository implements IListRepository {
 
   async create(list: CreateShoppingList): Promise<ShoppingList> {
     const { data } = await api.post('/lists', list);
-    return data;
+    return mapShoppingListFromApi(data as Record<string, unknown>);
   }
 
   async update(id: string, updateData: UpdateShoppingList): Promise<ShoppingList> {
     const { data } = await api.patch(`/lists/${id}`, updateData);
-    return data;
+    return mapShoppingListFromApi(data as Record<string, unknown>);
   }
 
   async delete(id: string): Promise<void> {
@@ -49,7 +105,7 @@ export class ApiListRepository implements IListRepository {
 
   async addItem(listId: string, item: CreateListItem): Promise<ListItem> {
     const { data } = await api.post(`/lists/${listId}/items`, item);
-    return data;
+    return mapListItemFromApi(data as Record<string, unknown>);
   }
 
   async removeItem(listId: string, itemId: string): Promise<void> {
@@ -65,7 +121,7 @@ export class ApiListRepository implements IListRepository {
       `/lists/${listId}/items/${itemId}`,
       updateData,
     );
-    return data;
+    return mapListItemFromApi(data as Record<string, unknown>);
   }
 
   // ── Optimization ──
@@ -91,7 +147,7 @@ export class ApiListRepository implements IListRepository {
       email,
       role,
     });
-    return data;
+    return mapShareResultFromApi(data);
   }
 
   async generateInvite(
@@ -99,12 +155,12 @@ export class ApiListRepository implements IListRepository {
     role: ShareRole,
   ): Promise<ShareResult> {
     const { data } = await api.post(`/lists/${listId}/share/invite`, { role });
-    return data;
+    return mapShareResultFromApi(data);
   }
 
   async joinByInvite(inviteId: string): Promise<ShoppingList> {
     const { data } = await api.post(`/invites/${inviteId}/join`);
-    return data;
+    return mapShoppingListFromApi(data as Record<string, unknown>);
   }
 
   async removeMember(listId: string, userId: string): Promise<void> {
@@ -114,7 +170,8 @@ export class ApiListRepository implements IListRepository {
   async getInvite(inviteId: string): Promise<ShareInvite | null> {
     try {
       const { data } = await api.get(`/invites/${inviteId}`);
-      return data;
+      const raw = data as Record<string, unknown>;
+      return mapShareInviteFromApi(raw.invite ?? raw);
     } catch {
       return null;
     }

@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   FlatList,
+  Image,
   Platform,
   ScrollView,
   StatusBar,
@@ -12,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { useThemeColors } from '@/shared/hooks/useThemeColors';
+import { useProductImageUri } from '@/shared/hooks/useProductImageUri';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { formatDate } from '@/shared/utils/formatDate';
 import { useProfile } from '@/features/profile/hooks/useProfile';
@@ -19,12 +21,34 @@ import { useSavings } from '@/features/profile/hooks/useSavings';
 import { useLists } from '@/features/lists/hooks/useLists';
 import { useProducts } from '@/features/products/hooks/useProducts';
 import { useRecentPurchases } from '@/features/cart/hooks/usePurchases';
+import type { Product } from '@/features/products/types';
 
 function getGreeting(): string {
   const hour = new Date().getHours();
   if (hour < 12) return 'Bom dia';
   if (hour < 18) return 'Boa tarde';
   return 'Boa noite';
+}
+
+function ProductThumb({ product }: { product: Product }) {
+  const colors = useThemeColors();
+  const { uri } = useProductImageUri(product);
+
+  if (uri) {
+    return (
+      <Image
+        source={{ uri }}
+        className="mb-2 h-16 w-full rounded-xl bg-background-50"
+        resizeMode="contain"
+      />
+    );
+  }
+
+  return (
+    <View className="mb-2 h-16 w-full items-center justify-center rounded-xl bg-background-50">
+      <Ionicons name="cube-outline" size={24} color={colors.textMuted} />
+    </View>
+  );
 }
 
 export function DashboardScreen() {
@@ -200,10 +224,10 @@ export function DashboardScreen() {
                     </View>
                     <View className="flex-1">
                       <Text className="text-sm font-bold text-typography-900">
-                        {purchase.storeName}
+                        {purchase.storeName || 'Loja'}
                       </Text>
                       <Text className="mt-0.5 text-xs text-typography-500">
-                        {formatDate(purchase.date)} · {purchase.itemCount} {purchase.itemCount === 1 ? 'item' : 'itens'}
+                        {purchase.date ? formatDate(purchase.date) : '—'} · {purchase.itemCount ?? 0} {(purchase.itemCount ?? 0) === 1 ? 'item' : 'itens'}
                       </Text>
                     </View>
                     <Text className="text-sm font-bold text-typography-900">
@@ -270,14 +294,16 @@ export function DashboardScreen() {
                         {list.name}
                       </Text>
                       <Text className="mt-0.5 text-xs text-typography-500">
-                        {list.itemCount} {list.itemCount === 1 ? 'item' : 'itens'}
+                        {list.itemCount ?? 0} {(list.itemCount ?? 0) === 1 ? 'item' : 'itens'}
                       </Text>
                     </View>
-                    <View className="items-end">
-                      <Text className="text-sm font-bold text-primary-500">
-                        {formatCurrency(list.totalEstimate)}
-                      </Text>
-                    </View>
+                    {list.totalEstimate ? (
+                      <View className="items-end">
+                        <Text className="text-sm font-bold text-primary-500">
+                          {formatCurrency(list.totalEstimate)}
+                        </Text>
+                      </View>
+                    ) : null}
                   </View>
                 </TouchableOpacity>
               ))}
@@ -317,9 +343,7 @@ export function DashboardScreen() {
                   style={{ width: 155 }}
                 >
                   <View className="rounded-2xl bg-background-0 p-3.5">
-                    <View className="mb-2 h-16 w-full items-center justify-center rounded-xl bg-background-50">
-                      <Ionicons name="cube-outline" size={24} color={colors.textMuted} />
-                    </View>
+                    <ProductThumb product={item} />
                     <Text
                       className="text-xs font-bold text-typography-900"
                       numberOfLines={2}
@@ -331,13 +355,13 @@ export function DashboardScreen() {
                     </Text>
                     <View className="mt-2 flex-row items-center justify-between">
                       <Text className="text-sm font-bold text-success-600">
-                        {formatCurrency(item.lowestPrice)}
+                        {item.latestPrice ? formatCurrency(item.latestPrice.price) : 'Sem preco'}
                       </Text>
-                      <View className="rounded-full bg-primary-50 px-2 py-0.5">
-                        <Text className="text-xs font-semibold text-primary-600">
-                          {item.priceCount}
+                      {item.latestPrice ? (
+                        <Text className="text-xs text-typography-400" numberOfLines={1}>
+                          {item.latestPrice.store.name}
                         </Text>
-                      </View>
+                      ) : null}
                     </View>
                   </View>
                 </TouchableOpacity>

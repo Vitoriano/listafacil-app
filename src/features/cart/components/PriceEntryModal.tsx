@@ -95,21 +95,22 @@ export function PriceEntryModal({ visible, product, onAdd, onClose }: PriceEntry
               </View>
             </View>
 
-            {/* Reference prices */}
-            <View className="mt-4 flex-row gap-2">
-              <View className="flex-1 rounded-xl bg-success-50 p-3">
-                <Text className="text-xs text-success-600">Menor preco</Text>
+            {/* Reference price */}
+            {product.latestPrice ? (
+              <View className="mt-4 rounded-xl bg-success-50 p-3">
+                <Text className="text-xs text-success-600">Ultimo preco</Text>
                 <Text className="mt-0.5 text-lg font-bold text-success-600">
-                  {formatCurrency(product.lowestPrice)}
+                  {formatCurrency(product.latestPrice.price)}
+                </Text>
+                <Text className="mt-0.5 text-xs text-success-500">
+                  {product.latestPrice.store.name}
                 </Text>
               </View>
-              <View className="flex-1 rounded-xl bg-background-50 p-3">
-                <Text className="text-xs text-typography-500">Preco medio</Text>
-                <Text className="mt-0.5 text-lg font-bold text-typography-700">
-                  {formatCurrency(product.averagePrice)}
-                </Text>
+            ) : (
+              <View className="mt-4 rounded-xl bg-background-50 p-3">
+                <Text className="text-xs text-typography-400">Sem preco cadastrado</Text>
               </View>
-            </View>
+            )}
           </View>
 
           {/* Price input */}
