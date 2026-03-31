@@ -37,26 +37,31 @@ export function useListSocket(listId: string | null) {
     function handleItemAdded() {
       logger.info('Socket', 'list:item:added', listId);
       invalidateList();
+      queryClient.invalidateQueries({ queryKey: ['lists'] });
     }
 
     function handleItemUpdated() {
       logger.info('Socket', 'list:item:updated', listId);
       invalidateList();
+      queryClient.invalidateQueries({ queryKey: ['lists'] });
     }
 
     function handleItemRemoved() {
       logger.info('Socket', 'list:item:removed', listId);
       invalidateList();
+      queryClient.invalidateQueries({ queryKey: ['lists'] });
     }
 
     function handleMemberJoined() {
       logger.info('Socket', 'list:member:joined', listId);
       invalidateMembers();
+      queryClient.invalidateQueries({ queryKey: ['lists'] });
     }
 
     function handleMemberRemoved() {
       logger.info('Socket', 'list:member:removed', listId);
       invalidateMembers();
+      queryClient.invalidateQueries({ queryKey: ['lists'] });
     }
 
     // Eventos cruzados Lista ↔ Compra

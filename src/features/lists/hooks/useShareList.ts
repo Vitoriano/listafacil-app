@@ -1,19 +1,22 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { listRepository } from '@/data/repositories';
-import type { ShareResult, ShareRole } from '../types';
+import type { ShareByEmailResult, ShareResult, ShareRole } from '../types';
 
 export function useShareByEmail() {
   const queryClient = useQueryClient();
 
   return useMutation<
-    ShareResult,
+    ShareByEmailResult,
     Error,
     { listId: string; email: string; role: ShareRole }
   >({
     mutationFn: ({ listId, email, role }) =>
       listRepository.shareByEmail(listId, email, role),
-    onSuccess: (_, variables) => {
+    onSuccess: (result, variables) => {
       queryClient.invalidateQueries({ queryKey: ['list-members', variables.listId] });
+      if (result.joined) {
+        queryClient.invalidateQueries({ queryKey: ['lists'] });
+      }
     },
   });
 }
@@ -52,6 +55,7 @@ export function useRemoveMember() {
       listRepository.removeMember(listId, userId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['list-members', variables.listId] });
+      queryClient.invalidateQueries({ queryKey: ['lists'] });
     },
   });
 }

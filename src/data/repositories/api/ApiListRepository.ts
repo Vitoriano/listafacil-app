@@ -15,6 +15,7 @@ import type {
   SharedMember,
   ShareInvite,
   ShareResult,
+  ShareByEmailResult,
   ShareRole,
 } from '@/features/lists/types';
 
@@ -135,19 +136,31 @@ export class ApiListRepository implements IListRepository {
 
   async getMembers(listId: string): Promise<SharedMember[]> {
     const { data } = await api.get(`/lists/${listId}/members`);
-    return data;
+    const raw = data as Record<string, unknown>;
+    const members = Array.isArray(raw.members) ? raw.members : Array.isArray(raw) ? raw : [];
+    return members.map((m: Record<string, unknown>) => ({
+      userId: String(m.userId ?? m.user_id ?? ''),
+      name: String(m.name ?? ''),
+      email: String(m.email ?? ''),
+      role: (m.role === 'viewer' ? 'viewer' : 'editor') as ShareRole,
+      joinedAt: String(m.joinedAt ?? m.joined_at ?? ''),
+    }));
   }
 
   async shareByEmail(
     listId: string,
     email: string,
     role: ShareRole,
-  ): Promise<ShareResult> {
+  ): Promise<ShareByEmailResult> {
     const { data } = await api.post(`/lists/${listId}/share/email`, {
       email,
       role,
     });
-    return mapShareResultFromApi(data);
+    const raw = data as Record<string, unknown>;
+    if (raw.joined === true) {
+      return { joined: true, userId: String(raw.userId ?? '') };
+    }
+    return { joined: false, inviteId: String(raw.inviteId ?? raw.invite_id ?? '') };
   }
 
   async generateInvite(

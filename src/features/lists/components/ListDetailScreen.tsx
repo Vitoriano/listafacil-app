@@ -16,7 +16,8 @@ import { AppHeader } from '@/shared/components/AppHeader';
 import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { logger } from '@/shared/utils/logger';
-import { productRepository } from '@/data/repositories';
+import { useDebounce } from '@/shared/hooks/useDebounce';
+import { useProducts } from '@/features/products/hooks/useProducts';
 import { useCartStore } from '@/features/cart/stores/cartStore';
 import { ActiveCartBanner } from './ActiveCartBanner';
 import { useListEditorStore } from '../stores/listEditorStore';
@@ -27,6 +28,7 @@ import { useAddItem } from '../hooks/useAddItem';
 import { useListSocket } from '../hooks/useListSocket';
 import { useUpdateList } from '../hooks/useUpdateList';
 import type { ListItem } from '../types';
+import { PAGINATION_LIMIT } from '@/config/constants';
 import type { Product } from '@/features/products/types';
 
 export function ListDetailScreen() {
@@ -35,11 +37,14 @@ export function ListDetailScreen() {
   const [showAddItem, setShowAddItem] = useState(false);
   const [showEditName, setShowEditName] = useState(false);
   const [editNameText, setEditNameText] = useState('');
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loadingProducts, setLoadingProducts] = useState(false);
 
   const colors = useThemeColors();
   const { searchQuery, setSearchQuery, reset: resetEditor } = useListEditorStore();
+  const debouncedSearch = useDebounce(searchQuery, 300);
+  const { data: productsData, isLoading: loadingProducts } = useProducts({
+    q: debouncedSearch || undefined,
+    limit: PAGINATION_LIMIT,
+  });
 
   const cart = useCartStore();
   const isLinkedToCart = cart.isActive && cart.linkedListId === id;
@@ -100,15 +105,6 @@ export function ListDetailScreen() {
   }
 
   function handleOpenAddItem() {
-    setLoadingProducts(true);
-    productRepository
-      .getAll({ limit: 50 })
-      .then((result) => {
-        setProducts(result.data);
-      })
-      .finally(() => {
-        setLoadingProducts(false);
-      });
     setShowAddItem(true);
   }
 
@@ -130,13 +126,7 @@ export function ListDetailScreen() {
     );
   }
 
-  const filteredProducts = searchQuery
-    ? products.filter(
-        (p) =>
-          p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.brand.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-    : products;
+  const products = productsData?.data ?? [];
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -368,7 +358,7 @@ export function ListDetailScreen() {
             <LoadingSpinner />
           ) : (
             <FlatList
-              data={filteredProducts}
+              data={products}
               keyExtractor={(item) => item.id}
               contentContainerStyle={{ padding: 16, flexGrow: 1 }}
               renderItem={({ item }) => (

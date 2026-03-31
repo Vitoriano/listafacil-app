@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Platform, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, Platform, Pressable, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { CameraView } from 'expo-camera';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -173,44 +173,49 @@ export function ScannerScreen() {
         </View>
       ) : null}
 
-      {/* Product not found bottom sheet */}
-      {showNotFound ? (
-        <View className="absolute bottom-0 left-0 right-0 rounded-t-3xl bg-background-0 px-6 pb-10 pt-6">
-          <View className="mb-4 self-center h-1 w-10 rounded-full bg-outline-200" />
-          <Text className="mb-2 text-xl font-bold text-typography-900">
-            Produto Nao Encontrado
-          </Text>
-          <Text className="mb-6 text-sm text-typography-500">
-            Nenhum produto encontrado para o codigo{' '}
-            <Text className="font-mono font-semibold text-typography-900">{scannedBarcode}</Text>.
-          </Text>
-          <TouchableOpacity
-            className="mb-3 flex-row items-center justify-center gap-2 rounded-full bg-primary-500 py-3.5"
-            onPress={() => {
-              setShowNotFound(false);
-              setShowManualEntry(true);
-            }}
-            accessibilityRole="button"
-            activeOpacity={0.8}
-          >
-            <Ionicons name="keypad-outline" size={18} color={colors.white} />
-            <Text className="text-sm font-bold text-white">
-              Digitar Codigo Manualmente
+      {/* Product not found modal */}
+      <Modal
+        visible={showNotFound}
+        animationType="fade"
+        transparent={false}
+        presentationStyle="overFullScreen"
+        statusBarTranslucent
+        onRequestClose={handleDismissNotFound}
+      >
+        <Pressable
+          onPress={handleDismissNotFound}
+          style={{ flex: 1, backgroundColor: '#000000AA', justifyContent: 'center', paddingHorizontal: 32 }}
+        >
+          <Pressable onPress={() => {}} style={{ backgroundColor: colors.background, borderRadius: 16, padding: 20 }}>
+            <Text className="mb-2 text-base font-bold text-typography-900">
+              Produto Nao Encontrado
             </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="flex-row items-center justify-center gap-2 rounded-full border border-outline-200 py-3.5"
-            onPress={handleDismissNotFound}
-            accessibilityRole="button"
-            activeOpacity={0.7}
-          >
-            <Ionicons name="scan-outline" size={18} color={colors.icon} />
-            <Text className="text-sm font-semibold text-typography-700">
-              Escanear Novamente
+            <Text className="mb-4 text-sm text-typography-500">
+              Nenhum produto encontrado para o codigo{' '}
+              <Text className="font-mono font-semibold text-typography-900">{scannedBarcode}</Text>.
             </Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
+            <View className="mt-4 flex-row gap-3">
+              <TouchableOpacity
+                onPress={handleDismissNotFound}
+                className="flex-1 items-center rounded-full border-2 border-outline-200 py-3"
+                activeOpacity={0.7}
+              >
+                <Text className="text-sm font-bold text-typography-500">Escanear</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setShowNotFound(false);
+                  setShowManualEntry(true);
+                }}
+                className="flex-1 items-center rounded-full bg-primary-500 py-3"
+                activeOpacity={0.8}
+              >
+                <Text className="text-sm font-bold text-white">Digitar Codigo</Text>
+              </TouchableOpacity>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       <ManualEntryModal
         visible={showManualEntry}

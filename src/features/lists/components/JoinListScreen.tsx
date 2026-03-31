@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Platform, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Modal, Platform, Pressable, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { CameraView } from 'expo-camera';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -151,101 +151,116 @@ export function JoinListScreen() {
         </View>
       </View>
 
-      {/* Confirm bottom sheet */}
-      {showConfirm ? (
-        <View className="absolute bottom-0 left-0 right-0 rounded-t-3xl bg-background-0 px-6 pb-10 pt-4">
-          <View className="mb-4 self-center h-1 w-10 rounded-full bg-outline-200" />
-
-          {loadingInvite ? (
-            <View className="items-center py-8">
-              <LoadingSpinner size="large" />
-              <Text className="mt-3 text-sm text-typography-500">
-                Verificando convite...
-              </Text>
-            </View>
-          ) : invite ? (
-            <View>
-              <View className="mb-4 flex-row items-center gap-3">
-                <View className="h-12 w-12 items-center justify-center rounded-full bg-primary-50">
-                  <Ionicons name="list" size={22} color={colors.primary} />
+      {/* Confirm modal */}
+      <Modal
+        visible={showConfirm}
+        animationType="fade"
+        transparent={false}
+        presentationStyle="overFullScreen"
+        statusBarTranslucent
+        onRequestClose={handleCancel}
+      >
+        <Pressable
+          onPress={handleCancel}
+          style={{ flex: 1, backgroundColor: '#000000AA', justifyContent: 'center', paddingHorizontal: 32 }}
+        >
+          <Pressable onPress={() => {}} style={{ backgroundColor: colors.background, borderRadius: 16, padding: 20 }}>
+            {loadingInvite ? (
+              <View className="items-center py-6">
+                <LoadingSpinner size="large" />
+                <Text className="mt-3 text-sm text-typography-500">
+                  Verificando convite...
+                </Text>
+              </View>
+            ) : invite ? (
+              <View>
+                <View className="mb-4 flex-row items-center gap-3">
+                  <View className="h-12 w-12 items-center justify-center rounded-full bg-primary-50">
+                    <Ionicons name="list" size={22} color={colors.primary} />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-base font-bold text-typography-900">
+                      {invite.listName}
+                    </Text>
+                    <Text className="mt-0.5 text-xs text-typography-500">
+                      Convite de {invite.invitedBy}
+                    </Text>
+                  </View>
                 </View>
-                <View className="flex-1">
-                  <Text className="text-lg font-bold text-typography-900">
-                    {invite.listName}
-                  </Text>
-                  <Text className="mt-0.5 text-xs text-typography-500">
-                    Convite de {invite.invitedBy}
-                  </Text>
+
+                <View className="mb-4 flex-row gap-3">
+                  <View className="flex-1 items-center rounded-xl bg-background-50 py-3">
+                    <Ionicons name="create-outline" size={16} color={colors.success} />
+                    <Text className="mt-1 text-xs font-semibold text-typography-700">
+                      {invite.role === 'editor' ? 'Editor' : 'Leitor'}
+                    </Text>
+                    <Text className="text-xs text-typography-400">Permissao</Text>
+                  </View>
+                  <View className="flex-1 items-center rounded-xl bg-background-50 py-3">
+                    <Ionicons name="people-outline" size={16} color={colors.info} />
+                    <Text className="mt-1 text-xs font-semibold text-typography-700">
+                      Colaborativa
+                    </Text>
+                    <Text className="text-xs text-typography-400">Lista</Text>
+                  </View>
+                </View>
+
+                <Text className="mb-4 text-center text-xs text-typography-400">
+                  Ao entrar, ambos poderao adicionar e editar itens simultaneamente.
+                </Text>
+
+                <View className="mt-4 flex-row gap-3">
+                  <TouchableOpacity
+                    onPress={handleCancel}
+                    className="flex-1 items-center rounded-full border-2 border-outline-200 py-3"
+                    activeOpacity={0.7}
+                  >
+                    <Text className="text-sm font-bold text-typography-500">Cancelar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={handleJoin}
+                    disabled={joinByInvite.isPending}
+                    className={`flex-1 items-center rounded-full py-3 ${
+                      joinByInvite.isPending ? 'bg-primary-300' : 'bg-primary-500'
+                    }`}
+                    activeOpacity={0.8}
+                  >
+                    <Text className="text-sm font-bold text-white">
+                      {joinByInvite.isPending ? 'Entrando...' : 'Entrar'}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </View>
-
-              <View className="mb-4 flex-row gap-3">
-                <View className="flex-1 items-center rounded-xl bg-background-50 py-3">
-                  <Ionicons name="create-outline" size={16} color={colors.success} />
-                  <Text className="mt-1 text-xs font-semibold text-typography-700">
-                    {invite.role === 'editor' ? 'Editor' : 'Leitor'}
-                  </Text>
-                  <Text className="text-xs text-typography-400">Permissao</Text>
-                </View>
-                <View className="flex-1 items-center rounded-xl bg-background-50 py-3">
-                  <Ionicons name="people-outline" size={16} color={colors.info} />
-                  <Text className="mt-1 text-xs font-semibold text-typography-700">
-                    Colaborativa
-                  </Text>
-                  <Text className="text-xs text-typography-400">Lista</Text>
+            ) : (
+              <View className="items-center py-4">
+                <Ionicons name="alert-circle-outline" size={40} color={colors.error} />
+                <Text className="mt-2 text-sm font-bold text-typography-900">
+                  Convite Invalido
+                </Text>
+                <Text className="mt-1 text-xs text-typography-500">
+                  Este convite nao existe ou ja expirou.
+                </Text>
+                <View className="mt-4 flex-row gap-3 self-stretch">
+                  <TouchableOpacity
+                    onPress={handleCancel}
+                    className="flex-1 items-center rounded-full border-2 border-outline-200 py-3"
+                    activeOpacity={0.7}
+                  >
+                    <Text className="text-sm font-bold text-typography-500">Cancelar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={handleCancel}
+                    className="flex-1 items-center rounded-full bg-primary-500 py-3"
+                    activeOpacity={0.8}
+                  >
+                    <Text className="text-sm font-bold text-white">Tentar Novamente</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
-
-              <Text className="mb-4 text-center text-xs text-typography-400">
-                Ao entrar, ambos poderao adicionar e editar itens simultaneamente.
-              </Text>
-
-              <TouchableOpacity
-                onPress={handleJoin}
-                disabled={joinByInvite.isPending}
-                className={`mb-3 flex-row items-center justify-center gap-2 rounded-full py-4 ${
-                  joinByInvite.isPending ? 'bg-primary-300' : 'bg-primary-500'
-                }`}
-                activeOpacity={0.8}
-                accessibilityRole="button"
-                accessibilityLabel="Entrar na lista"
-              >
-                <Ionicons name="log-in-outline" size={20} color={colors.white} />
-                <Text className="text-sm font-bold text-white">
-                  {joinByInvite.isPending ? 'Entrando...' : 'Entrar na Lista'}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={handleCancel}
-                className="flex-row items-center justify-center gap-2 rounded-full border border-outline-200 py-3.5"
-                activeOpacity={0.7}
-              >
-                <Text className="text-sm font-semibold text-typography-700">
-                  Cancelar
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View className="items-center py-6">
-              <Ionicons name="alert-circle-outline" size={40} color={colors.error} />
-              <Text className="mt-2 text-sm font-bold text-typography-900">
-                Convite Invalido
-              </Text>
-              <Text className="mt-1 text-xs text-typography-500">
-                Este convite nao existe ou ja expirou.
-              </Text>
-              <TouchableOpacity
-                onPress={handleCancel}
-                className="mt-4 rounded-full bg-primary-500 px-6 py-3"
-                activeOpacity={0.8}
-              >
-                <Text className="text-sm font-bold text-white">Tentar Novamente</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-      ) : null}
+            )}
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }

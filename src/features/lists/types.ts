@@ -85,3 +85,7 @@ export interface ShareResult {
   invite: ShareInvite;
   shareUrl: string;
 }
+
+export type ShareByEmailResult =
+  | { joined: true; userId: string }
+  | { joined: false; inviteId: string };

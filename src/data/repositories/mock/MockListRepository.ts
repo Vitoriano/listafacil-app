@@ -13,6 +13,7 @@ import type {
   SharedMember,
   ShareInvite,
   ShareResult,
+  ShareByEmailResult,
   ShareRole,
 } from '@/features/lists/types';
 import type { Store } from '@/shared/types';
@@ -290,33 +291,29 @@ export class MockListRepository implements IListRepository {
     listId: string,
     email: string,
     role: ShareRole,
-  ): Promise<ShareResult> {
+  ): Promise<ShareByEmailResult> {
     await simulateDelay();
 
     const list = this.store.getById(listId);
     if (!list) throw new Error(`Lista com id "${listId}" não encontrada`);
 
-    // Create invite
-    const invite = this.createInviteInternal(listId, list.name, role);
-
-    // Simulate: add user immediately as member (as if they accepted)
+    // Simulate: add user immediately as member (auto-join)
     const existing = this.members.get(listId) ?? [];
     const alreadyMember = existing.some((m) => m.email === email);
     if (!alreadyMember) {
+      const userId = `user-${uid()}`;
       existing.push({
-        userId: `user-${uid()}`,
+        userId,
         name: email.split('@')[0],
         email,
         role,
         joinedAt: new Date().toISOString(),
       });
       this.members.set(listId, existing);
+      return { joined: true, userId };
     }
 
-    return {
-      invite,
-      shareUrl: `listafacil://join/${invite.id}`,
-    };
+    return { joined: false, inviteId: `invite-${uid()}` };
   }
 
   async generateInvite(

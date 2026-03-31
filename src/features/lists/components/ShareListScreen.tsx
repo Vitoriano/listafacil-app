@@ -80,9 +80,13 @@ export function ShareListScreen() {
     shareByEmail.mutate(
       { listId: id, email: trimmed, role: 'editor' },
       {
-        onSuccess: () => {
+        onSuccess: (result) => {
           setEmail('');
-          Alert.alert('Convite Enviado', `Convite enviado para ${trimmed}`);
+          if (result.joined) {
+            Alert.alert('Membro Adicionado', `${trimmed} foi adicionado a lista.`);
+          } else {
+            Alert.alert('Convite Enviado', `Convite enviado para ${trimmed}.`);
+          }
         },
       },
     );

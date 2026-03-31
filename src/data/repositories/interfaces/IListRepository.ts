@@ -9,6 +9,7 @@ import type {
   SharedMember,
   ShareInvite,
   ShareResult,
+  ShareByEmailResult,
   ShareRole,
 } from '@/features/lists/types';
 
@@ -29,7 +30,7 @@ export interface IListRepository {
 
   // Sharing
   getMembers(listId: string): Promise<SharedMember[]>;
-  shareByEmail(listId: string, email: string, role: ShareRole): Promise<ShareResult>;
+  shareByEmail(listId: string, email: string, role: ShareRole): Promise<ShareByEmailResult>;
   generateInvite(listId: string, role: ShareRole): Promise<ShareResult>;
   joinByInvite(inviteId: string): Promise<ShoppingList>;
   removeMember(listId: string, userId: string): Promise<void>;
