@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
@@ -18,6 +18,14 @@ export function PurchaseDetailScreen() {
 
   function handleBack() {
     router.back();
+  }
+
+  function handleNewPurchase() {
+    router.push('/cart/store-select');
+  }
+
+  function handleViewHistory() {
+    router.push('/cart/history');
   }
 
   if (isLoading) {
@@ -99,6 +107,31 @@ export function PurchaseDetailScreen() {
               {formatCurrency(purchase.total)}
             </Text>
           </View>
+        </View>
+
+        {/* Action buttons */}
+        <View className="mt-4 gap-3">
+          <TouchableOpacity
+            onPress={handleNewPurchase}
+            accessibilityRole="button"
+            accessibilityLabel="Nova Compra"
+            className="flex-row items-center justify-center gap-2 rounded-full bg-primary-500 py-4"
+            activeOpacity={0.8}
+          >
+            <Ionicons name="cart-outline" size={20} color="#FFFFFF" />
+            <Text className="text-sm font-bold text-white">Nova Compra</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleViewHistory}
+            accessibilityRole="button"
+            accessibilityLabel="Ver Histórico"
+            className="flex-row items-center justify-center gap-2 rounded-full border-2 border-outline-300 py-3.5"
+            activeOpacity={0.7}
+          >
+            <Ionicons name="time-outline" size={20} color={colors.icon} />
+            <Text className="text-sm font-bold text-typography-700">Ver Histórico</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>

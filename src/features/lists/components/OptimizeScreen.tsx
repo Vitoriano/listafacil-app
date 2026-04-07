@@ -25,28 +25,30 @@ export function OptimizeScreen() {
   if (isLoading) {
     return (
       <View className="flex-1 bg-background-50">
-        <AppHeader title="Otimizacao" onBack={handleBack} />
+        <AppHeader title="Otimização" onBack={handleBack} />
         <LoadingSpinner />
       </View>
     );
   }
 
-  if (!result || result.totalCost === 0) {
+  if (!result || !result.bestStore || !result.stores?.length) {
     return (
       <View className="flex-1 bg-background-50">
-        <AppHeader title="Otimizacao" onBack={handleBack} />
+        <AppHeader title="Otimização" onBack={handleBack} />
         <EmptyState
-          title="Sem Otimizacao"
-          message="Adicione itens a sua lista para receber recomendacoes."
+          title="Sem Otimização"
+          message="Adicione itens à sua lista para receber recomendações de onde comprar mais barato."
           icon="flash-outline"
         />
       </View>
     );
   }
 
+  const { bestStore, stores } = result;
+
   return (
     <View className="flex-1 bg-background-50">
-      <AppHeader title="Otimizacao" onBack={handleBack} />
+      <AppHeader title="Otimização" onBack={handleBack} />
 
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         <View className="gap-4">
@@ -59,25 +61,22 @@ export function OptimizeScreen() {
               </Text>
             </View>
             <Text className="mt-1 text-2xl font-bold text-white">
-              {result.bestStore.name}
-            </Text>
-            <Text className="mt-0.5 text-xs text-white opacity-70">
-              {result.bestStore.city}, {result.bestStore.state}
+              {bestStore.storeName}
             </Text>
             <View className="mt-4 flex-row justify-between">
               <View>
                 <Text className="text-xs text-white opacity-70">Custo Total</Text>
                 <Text className="mt-0.5 text-xl font-bold text-white">
-                  {formatCurrency(result.totalCost)}
+                  {formatCurrency(bestStore.totalCost)}
                 </Text>
               </View>
-              {result.savings > 0 ? (
+              {bestStore.savings > 0 ? (
                 <View className="items-end">
-                  <Text className="text-xs text-white opacity-70">Voce Economiza</Text>
+                  <Text className="text-xs text-white opacity-70">Você Economiza</Text>
                   <View className="mt-0.5 flex-row items-center gap-1">
                     <Ionicons name="trending-down" size={16} color={colors.success} />
                     <Text className="text-xl font-bold text-success-200">
-                      {formatCurrency(result.savings)}
+                      {formatCurrency(bestStore.savings)}
                     </Text>
                   </View>
                 </View>
@@ -87,13 +86,13 @@ export function OptimizeScreen() {
 
           {/* Store breakdown */}
           <Text className="text-sm font-bold text-typography-700">
-            Comparacao entre Lojas
+            Comparação entre Lojas
           </Text>
 
           <View className="gap-3">
-            {result.storeBreakdown.map((breakdown, index) => (
+            {stores.map((store, index) => (
               <View
-                key={breakdown.store.id}
+                key={store.storeId}
                 className={`rounded-2xl p-4 ${
                   index === 0
                     ? 'border-2 border-primary-200 bg-primary-50'
@@ -104,7 +103,7 @@ export function OptimizeScreen() {
                   <View className="flex-1">
                     <View className="flex-row items-center gap-2">
                       <Text className="text-sm font-bold text-typography-900">
-                        {breakdown.store.name}
+                        {store.storeName}
                       </Text>
                       {index === 0 ? (
                         <View className="flex-row items-center gap-1 rounded-full bg-primary-500 px-2.5 py-0.5">
@@ -118,13 +117,13 @@ export function OptimizeScreen() {
                     <View className="mt-1 flex-row items-center gap-1">
                       <Ionicons name="checkmark-circle" size={12} color={colors.success} />
                       <Text className="text-xs text-typography-500">
-                        {breakdown.itemsAvailable} disponiveis
+                        {store.itemsAvailable} disponíveis
                       </Text>
-                      {breakdown.itemsMissing > 0 ? (
+                      {store.itemsMissing > 0 ? (
                         <>
                           <Text className="text-xs text-typography-400"> · </Text>
                           <Text className="text-xs text-error-500">
-                            {breakdown.itemsMissing} indisponiveis
+                            {store.itemsMissing} indisponíveis
                           </Text>
                         </>
                       ) : null}
@@ -135,7 +134,7 @@ export function OptimizeScreen() {
                       index === 0 ? 'text-primary-500' : 'text-typography-700'
                     }`}
                   >
-                    {formatCurrency(breakdown.totalCost)}
+                    {formatCurrency(store.totalCost)}
                   </Text>
                 </View>
               </View>

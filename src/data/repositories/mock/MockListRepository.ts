@@ -9,7 +9,7 @@ import type {
   CreateListItem,
   UpdateListItem,
   OptimizationResult,
-  StoreBreakdown,
+  OptimizationStore,
   SharedMember,
   ShareInvite,
   ShareResult,
@@ -211,22 +211,22 @@ export class MockListRepository implements IListRepository {
 
     if (!list || list.items.length === 0) {
       return {
-        bestStore,
-        totalCost: 0,
-        savings: 0,
-        storeBreakdown: stores.slice(0, 3).map((store) => ({
-          store,
+        listId,
+        itemCount: 0,
+        bestStore: {
+          storeId: bestStore.id,
+          storeName: bestStore.name,
           totalCost: 0,
-          itemsAvailable: 0,
-          itemsMissing: list?.items.length ?? 0,
-        })),
+          savings: 0,
+        },
+        stores: [],
       };
     }
 
     const storeMap = new Map<string, Store>(stores.map((s) => [s.id, s]));
     const storeIds = [...new Set(prices.map((p) => p.storeId))].slice(0, 5);
 
-    const breakdowns: StoreBreakdown[] = storeIds
+    const storeResults: OptimizationStore[] = storeIds
       .map((storeId) => {
         const store = storeMap.get(storeId);
         if (!store) return null;
@@ -246,37 +246,41 @@ export class MockListRepository implements IListRepository {
         }
 
         return {
-          store,
+          storeId: store.id,
+          storeName: store.name,
           totalCost: Math.round(totalCost * 100) / 100,
           itemsAvailable,
           itemsMissing: list.items.length - itemsAvailable,
+          savings: 0,
         };
       })
-      .filter((b): b is StoreBreakdown => b !== null);
+      .filter((b): b is OptimizationStore => b !== null);
 
-    breakdowns.sort((a, b) => a.totalCost - b.totalCost);
+    storeResults.sort((a, b) => a.totalCost - b.totalCost);
 
-    const best = breakdowns[0] ?? {
-      store: bestStore,
-      totalCost: 0,
-      itemsAvailable: 0,
-      itemsMissing: list.items.length,
-    };
+    const best = storeResults[0];
 
-    const averageTotalCost =
-      breakdowns.length > 0
-        ? breakdowns.reduce((sum, b) => sum + b.totalCost, 0) /
-          breakdowns.length
-        : best.totalCost;
+    if (best && storeResults.length > 1) {
+      const worst = storeResults[storeResults.length - 1];
+      for (const s of storeResults) {
+        s.savings = Math.max(0, Math.round((s.totalCost - best.totalCost) * 100) / 100);
+      }
+    }
 
-    const savings =
-      Math.round((averageTotalCost - best.totalCost) * 100) / 100;
+    const totalSavings = best
+      ? Math.max(0, Math.round(((storeResults.reduce((sum, b) => sum + b.totalCost, 0) / storeResults.length) - best.totalCost) * 100) / 100)
+      : 0;
 
     return {
-      bestStore: best.store,
-      totalCost: best.totalCost,
-      savings: Math.max(0, savings),
-      storeBreakdown: breakdowns,
+      listId,
+      itemCount: list.items.length,
+      bestStore: {
+        storeId: best?.storeId ?? bestStore.id,
+        storeName: best?.storeName ?? bestStore.name,
+        totalCost: best?.totalCost ?? 0,
+        savings: totalSavings,
+      },
+      stores: storeResults,
     };
   }
 

@@ -6,5 +6,5 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  return <GluestackUIProvider mode="system">{children}</GluestackUIProvider>;
+  return <GluestackUIProvider mode="light">{children}</GluestackUIProvider>;
 }

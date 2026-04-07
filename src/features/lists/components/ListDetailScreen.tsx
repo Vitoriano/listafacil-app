@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Alert,
   FlatList,
   Modal,
   Pressable,
@@ -27,6 +28,7 @@ import { useRemoveItem } from '../hooks/useRemoveItem';
 import { useAddItem } from '../hooks/useAddItem';
 import { useListSocket } from '../hooks/useListSocket';
 import { useUpdateList } from '../hooks/useUpdateList';
+import { useDeleteList } from '../hooks/useDeleteList';
 import type { ListItem } from '../types';
 import { PAGINATION_LIMIT } from '@/config/constants';
 import type { Product } from '@/features/products/types';
@@ -55,6 +57,7 @@ export function ListDetailScreen() {
   const { mutate: removeItem } = useRemoveItem();
   const { mutate: addItem, isPending: isAddingItem } = useAddItem();
   const { mutate: updateList, isPending: isUpdatingName } = useUpdateList();
+  const { mutate: deleteList, isPending: isDeleting } = useDeleteList();
 
   useEffect(() => {
     return () => {
@@ -64,6 +67,27 @@ export function ListDetailScreen() {
 
   function handleBack() {
     router.back();
+  }
+
+  function handleDeleteList() {
+    Alert.alert(
+      'Excluir Lista',
+      'Tem certeza que deseja excluir esta lista? Esta ação não pode ser desfeita.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: () => {
+            deleteList(id!, {
+              onSuccess: () => {
+                router.replace('/(tabs)/lists');
+              },
+            });
+          },
+        },
+      ],
+    );
   }
 
   function handleShare() {
@@ -162,6 +186,16 @@ export function ListDetailScreen() {
             >
               <Ionicons name="share-outline" size={20} color={colors.primary} />
             </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleDeleteList}
+              disabled={isDeleting}
+              className="h-10 w-10 items-center justify-center rounded-full bg-error-50"
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Excluir lista"
+            >
+              <Ionicons name="trash-outline" size={18} color={colors.error} />
+            </TouchableOpacity>
           </View>
         }
       />
@@ -215,6 +249,20 @@ export function ListDetailScreen() {
                 <Ionicons name="flash" size={20} color={colors.white} />
                 <Text className="text-sm font-bold text-white">
                   Otimizar Compras
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={handleDeleteList}
+                disabled={isDeleting}
+                accessibilityRole="button"
+                accessibilityLabel="Excluir Lista"
+                className="flex-row items-center justify-center gap-2 rounded-full border-2 border-error-500 py-3.5"
+                activeOpacity={0.7}
+              >
+                <Ionicons name="trash-outline" size={20} color={colors.error} />
+                <Text className="text-sm font-bold text-error-500">
+                  Excluir Lista
                 </Text>
               </TouchableOpacity>
             </View>

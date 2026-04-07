@@ -2,13 +2,16 @@ import { z } from 'zod';
 
 export const registerSchema = z
   .object({
-    name: z.string().min(2, 'Name must be at least 2 characters'),
-    email: z.string().email('Invalid email'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
+    name: z.string().min(2, 'O nome deve ter pelo menos 2 caracteres'),
+    email: z.string().email('E-mail inválido'),
+    password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
     confirmPassword: z.string(),
+    acceptedTerms: z.literal(true, {
+      errorMap: () => ({ message: 'Você deve aceitar os Termos de Uso e a Política de Privacidade' }),
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
+    message: 'As senhas não coincidem',
     path: ['confirmPassword'],
   });
 

@@ -9,12 +9,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Ionicons } from '@expo/vector-icons';
 import { AxiosError } from 'axios';
 import { useThemeColors } from '@/shared/hooks/useThemeColors';
+import { useAnimatedEntry } from '@/shared/hooks/useAnimatedEntry';
 import { logger } from '@/shared/utils/logger';
 import { useAuth } from '../hooks/useAuth';
 import { loginSchema, type LoginFormData } from '../schemas/loginSchema';
@@ -30,6 +32,10 @@ export function LoginScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const { login } = useAuth();
+
+  const logoStyle = useAnimatedEntry({ delay: 0, translateY: 30 });
+  const formStyle = useAnimatedEntry({ delay: 200, translateY: 25 });
+  const footerStyle = useAnimatedEntry({ delay: 400, translateY: 20 });
 
   const {
     control,
@@ -67,20 +73,20 @@ export function LoginScreen() {
       >
         <View className="gap-8">
           {/* Logo & Title */}
-          <View className="items-center gap-3">
-            <View className="h-16 w-16 items-center justify-center rounded-full bg-primary-500">
-              <Ionicons name="cart" size={32} color={colors.white} />
+          <Animated.View style={logoStyle} className="items-center gap-3">
+            <View className="mb-2 h-20 w-20 items-center justify-center rounded-3xl bg-primary-500 shadow-lg">
+              <Ionicons name="cart" size={40} color={colors.white} />
             </View>
             <Text className="text-3xl font-bold text-typography-900">
-              Lista Facil
+              Lista Fácil
             </Text>
-            <Text className="text-sm text-typography-500">
-              Entre na sua conta
+            <Text className="text-base text-typography-400">
+              Economize nas suas compras
             </Text>
-          </View>
+          </Animated.View>
 
           {/* Form */}
-          <View className="gap-4">
+          <Animated.View style={formStyle} className="gap-4">
             {/* Email */}
             <View className="gap-1.5">
               <Text className="text-xs font-bold uppercase tracking-wide text-typography-500">
@@ -90,20 +96,25 @@ export function LoginScreen() {
                 control={control}
                 name="email"
                 render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    className={`rounded-2xl border bg-background-50 px-4 py-3.5 text-sm text-typography-900 ${
-                      errors.email ? 'border-error-500' : 'border-outline-200'
-                    }`}
-                    placeholder="seu@email.com"
-                    placeholderTextColor={colors.textQuaternary}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoComplete="email"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    accessibilityLabel="Campo de email"
-                  />
+                  <View className="relative">
+                    <View className="absolute left-4 top-0 bottom-0 z-10 justify-center">
+                      <Ionicons name="mail-outline" size={18} color={colors.textQuaternary} />
+                    </View>
+                    <TextInput
+                      className={`rounded-2xl border bg-background-50 pl-11 pr-4 py-3.5 text-sm text-typography-900 ${
+                        errors.email ? 'border-error-500' : 'border-outline-200'
+                      }`}
+                      placeholder="seu@email.com"
+                      placeholderTextColor={colors.textQuaternary}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      autoComplete="email"
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      accessibilityLabel="Campo de email"
+                    />
+                  </View>
                 )}
               />
               {errors.email ? (
@@ -122,19 +133,24 @@ export function LoginScreen() {
                 control={control}
                 name="password"
                 render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    className={`rounded-2xl border bg-background-50 px-4 py-3.5 text-sm text-typography-900 ${
-                      errors.password ? 'border-error-500' : 'border-outline-200'
-                    }`}
-                    placeholder="******"
-                    placeholderTextColor={colors.textQuaternary}
-                    secureTextEntry
-                    autoComplete="password"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    accessibilityLabel="Campo de senha"
-                  />
+                  <View className="relative">
+                    <View className="absolute left-4 top-0 bottom-0 z-10 justify-center">
+                      <Ionicons name="lock-closed-outline" size={18} color={colors.textQuaternary} />
+                    </View>
+                    <TextInput
+                      className={`rounded-2xl border bg-background-50 pl-11 pr-4 py-3.5 text-sm text-typography-900 ${
+                        errors.password ? 'border-error-500' : 'border-outline-200'
+                      }`}
+                      placeholder="******"
+                      placeholderTextColor={colors.textQuaternary}
+                      secureTextEntry
+                      autoComplete="password"
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      accessibilityLabel="Campo de senha"
+                    />
+                  </View>
                 )}
               />
               {errors.password ? (
@@ -146,8 +162,9 @@ export function LoginScreen() {
 
             {/* API Error */}
             {login.isError ? (
-              <View className="rounded-xl bg-error-50 px-4 py-3">
-                <Text className="text-sm text-error-600">
+              <View className="flex-row items-center gap-2 rounded-xl bg-error-50 px-4 py-3">
+                <Ionicons name="alert-circle" size={18} color={colors.error} />
+                <Text className="flex-1 text-sm text-error-600">
                   {getErrorMessage(login.error)}
                 </Text>
               </View>
@@ -155,7 +172,7 @@ export function LoginScreen() {
 
             {/* Submit */}
             <TouchableOpacity
-              className={`mt-2 items-center rounded-full py-4 ${
+              className={`mt-2 flex-row items-center justify-center gap-2 rounded-full py-4 shadow-sm ${
                 login.isPending ? 'bg-primary-300' : 'bg-primary-500'
               }`}
               onPress={handleSubmit(onSubmit)}
@@ -164,25 +181,32 @@ export function LoginScreen() {
               accessibilityLabel="Entrar"
               activeOpacity={0.8}
             >
+              {login.isPending ? (
+                <Ionicons name="sync" size={18} color="#FFFFFF" />
+              ) : (
+                <Ionicons name="log-in-outline" size={18} color="#FFFFFF" />
+              )}
               <Text className="text-sm font-bold text-white">
                 {login.isPending ? 'Entrando...' : 'Entrar'}
               </Text>
             </TouchableOpacity>
-          </View>
+          </Animated.View>
 
           {/* Register link */}
-          <TouchableOpacity
-            onPress={() => router.push('/auth/register')}
-            accessibilityRole="button"
-            accessibilityLabel="Criar conta"
-            className="items-center py-2"
-            activeOpacity={0.7}
-          >
-            <Text className="text-sm text-typography-500">
-              Nao tem uma conta?{' '}
-              <Text className="font-bold text-primary-500">Cadastre-se</Text>
-            </Text>
-          </TouchableOpacity>
+          <Animated.View style={footerStyle}>
+            <TouchableOpacity
+              onPress={() => router.push('/auth/register')}
+              accessibilityRole="button"
+              accessibilityLabel="Criar conta"
+              className="items-center py-2"
+              activeOpacity={0.7}
+            >
+              <Text className="text-sm text-typography-500">
+                Não tem uma conta?{' '}
+                <Text className="font-bold text-primary-500">Cadastre-se</Text>
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

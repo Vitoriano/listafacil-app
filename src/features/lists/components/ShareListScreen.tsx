@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
+  Share,
   Platform,
   ScrollView,
   Text,
@@ -301,6 +302,32 @@ export function ShareListScreen() {
                     Gerar novo codigo
                   </Text>
                 </TouchableOpacity>
+
+                {qrValue ? (
+                  <View className="mt-3 flex-row gap-3">
+                    <TouchableOpacity
+                      onPress={() => {
+                        import('expo-clipboard').then(({ setStringAsync }) => {
+                          setStringAsync(qrValue);
+                          Alert.alert('Link Copiado', 'O link do convite foi copiado.');
+                        });
+                      }}
+                      className="flex-1 flex-row items-center justify-center gap-1.5 rounded-full border-2 border-outline-200 py-2.5"
+                      activeOpacity={0.7}
+                    >
+                      <Ionicons name="copy-outline" size={14} color={colors.icon} />
+                      <Text className="text-xs font-semibold text-typography-700">Copiar Link</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => Share.share({ message: `Entre na minha lista no Lista Fácil: ${qrValue}` })}
+                      className="flex-1 flex-row items-center justify-center gap-1.5 rounded-full bg-primary-500 py-2.5"
+                      activeOpacity={0.8}
+                    >
+                      <Ionicons name="share-social-outline" size={14} color="#FFFFFF" />
+                      <Text className="text-xs font-semibold text-white">Compartilhar</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : null}
               </View>
             </View>
           </View>

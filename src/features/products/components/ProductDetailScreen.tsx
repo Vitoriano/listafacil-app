@@ -36,6 +36,14 @@ export function ProductDetailScreen() {
     router.push(`/products/prices/submit?productId=${id}`);
   }
 
+  function handleAddToList() {
+    router.push('/(tabs)/lists');
+  }
+
+  function handlePriceHistory() {
+    router.push(`/products/prices/history?productId=${id}`);
+  }
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
@@ -199,6 +207,32 @@ export function ProductDetailScreen() {
             <Ionicons name="add-circle-outline" size={20} color={colors.primary} />
             <Text className="text-sm font-bold text-primary-500">
               Enviar Preco
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="flex-row items-center justify-center gap-2 rounded-full border-2 border-outline-300 py-4"
+            onPress={handlePriceHistory}
+            accessibilityRole="button"
+            accessibilityLabel="Histórico de Preços"
+            activeOpacity={0.7}
+          >
+            <Ionicons name="time-outline" size={20} color={colors.icon} />
+            <Text className="text-sm font-bold text-typography-700">
+              Histórico de Preços
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="flex-row items-center justify-center gap-2 rounded-full border-2 border-success-500 py-4"
+            onPress={handleAddToList}
+            accessibilityRole="button"
+            accessibilityLabel="Adicionar à Lista"
+            activeOpacity={0.7}
+          >
+            <Ionicons name="list-outline" size={20} color={colors.success} />
+            <Text className="text-sm font-bold text-success-600">
+              Adicionar à Lista
             </Text>
           </TouchableOpacity>
         </View>

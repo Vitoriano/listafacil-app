@@ -20,7 +20,7 @@ function createWrapper() {
 }
 
 describe('useOptimize', () => {
-  it('returns OptimizationResult with bestStore and storeBreakdown for list-001', async () => {
+  it('returns OptimizationResult with bestStore and stores for list-001', async () => {
     const { Wrapper } = createWrapper();
     const { result } = renderHook(() => useOptimize('list-001'), {
       wrapper: Wrapper,
@@ -30,11 +30,11 @@ describe('useOptimize', () => {
 
     expect(result.current.data).toBeDefined();
     expect(result.current.data?.bestStore).toBeDefined();
-    expect(result.current.data?.bestStore.id).toBeTruthy();
-    expect(Array.isArray(result.current.data?.storeBreakdown)).toBe(true);
+    expect(result.current.data?.bestStore.storeId).toBeTruthy();
+    expect(Array.isArray(result.current.data?.stores)).toBe(true);
   });
 
-  it('returns totalCost and savings fields', async () => {
+  it('returns totalCost and savings on bestStore', async () => {
     const { Wrapper } = createWrapper();
     const { result } = renderHook(() => useOptimize('list-001'), {
       wrapper: Wrapper,
@@ -42,8 +42,8 @@ describe('useOptimize', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(typeof result.current.data?.totalCost).toBe('number');
-    expect(typeof result.current.data?.savings).toBe('number');
+    expect(typeof result.current.data?.bestStore.totalCost).toBe('number');
+    expect(typeof result.current.data?.bestStore.savings).toBe('number');
   });
 
   it('does not fetch when listId is null', () => {

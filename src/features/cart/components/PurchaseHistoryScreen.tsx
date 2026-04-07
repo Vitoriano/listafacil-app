@@ -30,7 +30,22 @@ export function PurchaseHistoryScreen() {
 
   return (
     <View className="flex-1 bg-background-50">
-      <AppHeader title="Historico de Compras" onBack={handleBack} />
+      <AppHeader
+        title="Historico de Compras"
+        onBack={handleBack}
+        rightAction={
+          <TouchableOpacity
+            onPress={() => router.push('/cart/store-select')}
+            className="flex-row items-center gap-1.5 rounded-full bg-primary-500 px-4 py-2.5"
+            accessibilityRole="button"
+            accessibilityLabel="Nova compra"
+            activeOpacity={0.8}
+          >
+            <Ionicons name="add" size={16} color="#FFFFFF" />
+            <Text className="text-xs font-bold text-white">Nova Compra</Text>
+          </TouchableOpacity>
+        }
+      />
 
       <FlatList
         data={purchases ?? []}
@@ -74,6 +89,7 @@ export function PurchaseHistoryScreen() {
             title="Nenhuma Compra"
             message="Suas compras finalizadas aparecerão aqui."
             icon="bag-outline"
+            action={{ label: 'Iniciar Compra', onPress: () => router.push('/cart/store-select') }}
           />
         }
       />

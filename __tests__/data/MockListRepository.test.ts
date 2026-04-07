@@ -93,18 +93,18 @@ describe('MockListRepository', () => {
   });
 
   describe('optimize()', () => {
-    it('returns an OptimizationResult with bestStore and savings fields populated', async () => {
+    it('returns an OptimizationResult with bestStore and stores fields populated', async () => {
       const result = await repo.optimize('list-001');
 
       expect(result).toBeDefined();
       expect(result.bestStore).toBeDefined();
-      expect(result.bestStore.id).toBeDefined();
-      expect(result.bestStore.name).toBeDefined();
-      expect(typeof result.savings).toBe('number');
-      expect(result.savings).toBeGreaterThanOrEqual(0);
-      expect(typeof result.totalCost).toBe('number');
-      expect(result.storeBreakdown).toBeDefined();
-      expect(Array.isArray(result.storeBreakdown)).toBe(true);
+      expect(result.bestStore.storeId).toBeDefined();
+      expect(result.bestStore.storeName).toBeDefined();
+      expect(typeof result.bestStore.savings).toBe('number');
+      expect(result.bestStore.savings).toBeGreaterThanOrEqual(0);
+      expect(typeof result.bestStore.totalCost).toBe('number');
+      expect(result.stores).toBeDefined();
+      expect(Array.isArray(result.stores)).toBe(true);
     });
 
     it('returns empty optimization for an empty list', async () => {
@@ -112,8 +112,8 @@ describe('MockListRepository', () => {
       const result = await repo.optimize(list.id);
 
       expect(result).toBeDefined();
-      expect(result.totalCost).toBe(0);
-      expect(result.savings).toBe(0);
+      expect(result.bestStore.totalCost).toBe(0);
+      expect(result.bestStore.savings).toBe(0);
     });
   });
 

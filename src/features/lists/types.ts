@@ -40,17 +40,24 @@ export interface UpdateListItem {
 }
 
 export interface OptimizationResult {
-  bestStore: Store;
-  totalCost: number;
-  savings: number;
-  storeBreakdown: StoreBreakdown[];
+  listId: string;
+  itemCount: number;
+  bestStore: {
+    storeId: string;
+    storeName: string;
+    totalCost: number;
+    savings: number;
+  };
+  stores: OptimizationStore[];
 }
 
-export interface StoreBreakdown {
-  store: Store;
+export interface OptimizationStore {
+  storeId: string;
+  storeName: string;
   totalCost: number;
   itemsAvailable: number;
   itemsMissing: number;
+  savings: number;
 }
 
 // ── Sharing ──

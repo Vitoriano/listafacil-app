@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { AppHeader } from '@/shared/components/AppHeader';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { useThemeColors } from '@/shared/hooks/useThemeColors';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { logger } from '@/shared/utils/logger';
 import { useCartStore } from '../stores/cartStore';
 import { useFinalizePurchase } from '../hooks/useFinalizePurchase';
@@ -54,18 +55,29 @@ export function CartScreen() {
 
   function handleFinalize() {
     if (cart.items.length === 0 || !cart.purchaseId) return;
-
-    logger.info('Cart', 'Finalizing purchase', cart.purchaseId);
-    finalizePurchase(cart.purchaseId, {
-      onSuccess: () => {
-        logger.info('Cart', 'Purchase finalized');
-        cart.reset();
-        while (router.canGoBack()) {
-          router.back();
-        }
-        router.replace('/(tabs)');
-      },
-    });
+    Alert.alert(
+      'Finalizar Compra',
+      `Confirma a finalização da compra com ${cart.itemCount} ${cart.itemCount === 1 ? 'item' : 'itens'} totalizando ${formatCurrency(cart.total)}?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Finalizar',
+          onPress: () => {
+            logger.info('Cart', 'Finalizing purchase', cart.purchaseId);
+            finalizePurchase(cart.purchaseId!, {
+              onSuccess: () => {
+                logger.info('Cart', 'Purchase finalized');
+                cart.reset();
+                while (router.canGoBack()) {
+                  router.back();
+                }
+                router.replace('/(tabs)');
+              },
+            });
+          },
+        },
+      ],
+    );
   }
 
   function handleLinkList(list: ShoppingList) {
