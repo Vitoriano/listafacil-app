@@ -6,6 +6,7 @@ describe('registerSchema', () => {
     email: 'maria@example.com',
     password: 'password123',
     confirmPassword: 'password123',
+    acceptedTerms: true as const,
   };
 
   it('accepts valid name, email, password, confirmPassword when passwords match', () => {
@@ -22,24 +23,17 @@ describe('registerSchema', () => {
     const result = registerSchema.safeParse({ ...validData, name: 'A' });
     expect(result.success).toBe(false);
     if (!result.success) {
-      const nameError = result.error.issues.find((i) =>
-        i.path.includes('name'),
-      );
-      expect(nameError?.message).toBe('Name must be at least 2 characters');
+      const nameError = result.error.issues.find((i) => i.path.includes('name'));
+      expect(nameError?.message).toBe('O nome deve ter pelo menos 2 caracteres');
     }
   });
 
   it('rejects invalid email format', () => {
-    const result = registerSchema.safeParse({
-      ...validData,
-      email: 'not-an-email',
-    });
+    const result = registerSchema.safeParse({ ...validData, email: 'not-an-email' });
     expect(result.success).toBe(false);
     if (!result.success) {
-      const emailError = result.error.issues.find((i) =>
-        i.path.includes('email'),
-      );
-      expect(emailError?.message).toBe('Invalid email');
+      const emailError = result.error.issues.find((i) => i.path.includes('email'));
+      expect(emailError?.message).toBe('E-mail inválido');
     }
   });
 
@@ -51,16 +45,12 @@ describe('registerSchema', () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      const passwordError = result.error.issues.find((i) =>
-        i.path.includes('password'),
-      );
-      expect(passwordError?.message).toBe(
-        'Password must be at least 6 characters',
-      );
+      const passwordError = result.error.issues.find((i) => i.path.includes('password'));
+      expect(passwordError?.message).toBe('A senha deve ter pelo menos 6 caracteres');
     }
   });
 
-  it('rejects mismatched password and confirmPassword with "Passwords do not match" error on confirmPassword path', () => {
+  it('rejects mismatched password and confirmPassword with error on confirmPassword path', () => {
     const result = registerSchema.safeParse({
       ...validData,
       password: 'password123',
@@ -68,10 +58,19 @@ describe('registerSchema', () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      const confirmError = result.error.issues.find((i) =>
-        i.path.includes('confirmPassword'),
+      const confirmError = result.error.issues.find((i) => i.path.includes('confirmPassword'));
+      expect(confirmError?.message).toBe('As senhas não coincidem');
+    }
+  });
+
+  it('rejects when terms are not accepted', () => {
+    const result = registerSchema.safeParse({ ...validData, acceptedTerms: false });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const termsError = result.error.issues.find((i) => i.path.includes('acceptedTerms'));
+      expect(termsError?.message).toBe(
+        'Você deve aceitar os Termos de Uso e a Política de Privacidade',
       );
-      expect(confirmError?.message).toBe('Passwords do not match');
     }
   });
 

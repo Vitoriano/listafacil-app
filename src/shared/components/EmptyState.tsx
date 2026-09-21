@@ -2,7 +2,6 @@ import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
-import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { useAnimatedEntry } from '@/shared/hooks/useAnimatedEntry';
 
 interface EmptyStateAction {
@@ -32,7 +31,6 @@ const ILLUSTRATION_MAP: Partial<Record<string, { bg: string; accent: string; sec
 };
 
 export function EmptyState({ message, title, icon = 'file-tray-outline', action }: EmptyStateProps) {
-  const colors = useThemeColors();
   const illustration = ILLUSTRATION_MAP[icon] ?? ILLUSTRATION_MAP['file-tray-outline']!;
 
   const iconStyle = useAnimatedEntry({ delay: 0, translateY: 30 });

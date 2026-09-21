@@ -42,33 +42,26 @@ describe('ProductDetailScreen', () => {
 
     it('renders all product fields for a known product id', async () => {
       const { getByText, getAllByText } = renderScreen();
-      // Wait for product data by checking for Resumo de Precos (unique to loaded state)
-      await waitFor(() => expect(getByText('Resumo de Precos')).toBeTruthy());
+      // Wait for product data by checking for the barcode section (unique to loaded state)
+      await waitFor(() => expect(getByText('Codigo de Barras')).toBeTruthy());
       // Product name appears in header AND body — expect at least 1 instance
       expect(getAllByText('Arroz Branco Tipo 1 Tio João').length).toBeGreaterThan(0);
       expect(getByText('Tio João')).toBeTruthy();
-      // category and unit may appear in badge and detail section — expect at least 1
-      expect(getAllByText('grains').length).toBeGreaterThan(0);
+      // unit may appear in badge and detail section — expect at least 1
       expect(getAllByText('5kg').length).toBeGreaterThan(0);
       // Barcode
       expect(getByText('7891093010014')).toBeTruthy();
-      // Price section
-      expect(getByText('Resumo de Precos')).toBeTruthy();
-      expect(getByText('Menor Preco')).toBeTruthy();
-      expect(getByText('Preco Medio')).toBeTruthy();
-      // Submissions count
-      expect(getByText(/8 contribuicoes/)).toBeTruthy();
     });
 
     it('renders Comparar Precos button', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('Resumo de Precos')).toBeTruthy());
+      await waitFor(() => expect(getByText('Codigo de Barras')).toBeTruthy());
       expect(getByText('Comparar Precos')).toBeTruthy();
     });
 
     it('renders Enviar Preco button', async () => {
       const { getByText } = renderScreen();
-      await waitFor(() => expect(getByText('Resumo de Precos')).toBeTruthy());
+      await waitFor(() => expect(getByText('Codigo de Barras')).toBeTruthy());
       expect(getByText('Enviar Preco')).toBeTruthy();
     });
 

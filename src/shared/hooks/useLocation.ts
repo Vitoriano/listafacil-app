@@ -60,7 +60,7 @@ export function useLocation() {
         longitude: location.coords.longitude,
         errorMessage: null,
       });
-    } catch (error) {
+    } catch {
       setState((prev) => ({
         ...prev,
         status: 'error',

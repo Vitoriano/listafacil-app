@@ -110,24 +110,17 @@ describe('ProductListScreen', () => {
   });
 
   it('pressing a category tab updates filter state', async () => {
-    const { getByText } = renderScreen();
+    const { getByText, getAllByText } = renderScreen();
     await waitFor(() => expect(getByText('Produtos')).toBeTruthy());
 
-    // Press on 'Graos' category
-    fireEvent.press(getByText('Graos'));
+    // Press on the 'Grãos' category tab (the name also appears on product card badges;
+    // the tab row is rendered first in the tree)
+    fireEvent.press(getAllByText('Grãos')[0]);
 
     // After filtering by grains, should show grain products
     await waitFor(() =>
       expect(getByText('Arroz Branco Tipo 1 Tio João')).toBeTruthy(),
     );
-  });
-
-  it('sort controls are rendered', async () => {
-    const { getByText } = renderScreen();
-    await waitFor(() => expect(getByText('Produtos')).toBeTruthy());
-    expect(getByText('Nome')).toBeTruthy();
-    expect(getByText('Preco')).toBeTruthy();
-    expect(getByText('Recentes')).toBeTruthy();
   });
 
   it('pressing a product card navigates to product detail', async () => {

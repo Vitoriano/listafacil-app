@@ -261,7 +261,6 @@ export class MockListRepository implements IListRepository {
     const best = storeResults[0];
 
     if (best && storeResults.length > 1) {
-      const worst = storeResults[storeResults.length - 1];
       for (const s of storeResults) {
         s.savings = Math.max(0, Math.round((s.totalCost - best.totalCost) * 100) / 100);
       }

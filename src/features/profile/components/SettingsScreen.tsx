@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { AppHeader } from '@/shared/components/AppHeader';
@@ -14,7 +14,6 @@ export function SettingsScreen() {
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const user = useAuthStore((state) => state.user);
   const [editingName, setEditingName] = useState(false);
-  const [nameText, setNameText] = useState(user?.name ?? '');
 
   function handleBack() {
     router.back();

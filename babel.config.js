@@ -5,32 +5,15 @@ module.exports = function (api) {
   return {
     presets: [
       ['babel-preset-expo', { jsxImportSource: 'nativewind' }],
-      // Skip nativewind/babel in test environment as it requires react-native-worklets/plugin
-      // which is a Reanimated v4 dependency not used in this project (Reanimated v3)
+      // nativewind/babel applies the css-interop transform (className -> style).
+      // It is skipped under Jest, where jest-expo + jsxImportSource already cover rendering.
       ...(isTest ? [] : ['nativewind/babel']),
     ],
-    plugins: [
-      [
-        'module-resolver',
-        {
-          root: ['./src'],
-          alias: {
-            '@': './src',
-          },
-          extensions: [
-            '.ios.ts',
-            '.android.ts',
-            '.ts',
-            '.ios.tsx',
-            '.android.tsx',
-            '.tsx',
-            '.js',
-            '.jsx',
-            '.json',
-          ],
-        },
-      ],
-      'react-native-reanimated/plugin',
-    ],
+    // NOTES:
+    // - The `@/*` alias is resolved from tsconfig `paths` by Expo's Metro config and by
+    //   `moduleNameMapper` in jest.config.js. No babel alias plugin is needed.
+    // - react-native-worklets/plugin (Reanimated 4) is added automatically by
+    //   babel-preset-expo (SDK 54+) when react-native-worklets is installed.
+    plugins: [],
   };
 };

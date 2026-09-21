@@ -104,7 +104,7 @@ describe('Navigation placeholder screens', () => {
   it('OptimizeScreen renders without crashing', () => {
     const { getByText } = renderWithProviders(<OptimizeScreen />);
     // OptimizeScreen shows "Store Optimization" as the screen title
-    expect(getByText('Otimizacao')).toBeTruthy();
+    expect(getByText('Otimização')).toBeTruthy();
   });
 
   it('ProfileScreen renders without crashing', async () => {
@@ -125,13 +125,13 @@ describe('Navigation placeholder screens', () => {
 
   it('SettingsScreen renders without crashing', () => {
     const { getByText } = renderWithProviders(<SettingsScreen />);
-    expect(getByText('Configuracoes')).toBeTruthy();
+    expect(getByText('Configurações')).toBeTruthy();
   });
 
   it('LoginScreen renders without crashing', () => {
     const { getByText } = renderWithProviders(<LoginScreen />);
     // LoginScreen shows "Lista Fácil" title and "Sign in to your account" subtitle
-    expect(getByText('Lista Facil')).toBeTruthy();
+    expect(getByText('Lista Fácil')).toBeTruthy();
   });
 
   it('RegisterScreen renders without crashing', () => {

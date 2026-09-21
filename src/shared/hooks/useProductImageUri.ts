@@ -50,6 +50,9 @@ export function useProductImageUri(
     return () => {
       cancelled = true;
     };
+    // Depend on primitive fields only: query results create a new `product` object on
+    // every fetch and re-resolving the download URL each time would be wasteful.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product?.id, product?.imageStorageKey, product?.imageUrl]);
 
   return useMemo(() => ({ uri, loading }), [uri, loading]);

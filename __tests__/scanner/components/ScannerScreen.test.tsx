@@ -128,7 +128,7 @@ describe('ScannerScreen', () => {
       await waitFor(() => expect(getByText('Produto Nao Encontrado')).toBeTruthy(), {
         timeout: 3000,
       });
-      expect(getByText('Escanear Novamente')).toBeTruthy();
+      expect(getByText('Escanear')).toBeTruthy();
     });
 
     it('navigates to product detail after manual entry of known barcode', async () => {
@@ -161,7 +161,7 @@ describe('ScannerScreen', () => {
       });
 
       act(() => {
-        fireEvent.press(getByText('Escanear Novamente'));
+        fireEvent.press(getByText('Escanear'));
       });
 
       expect(queryByText('Produto Nao Encontrado')).toBeNull();

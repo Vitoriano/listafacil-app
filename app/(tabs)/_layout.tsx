@@ -1,10 +1,11 @@
 import { Tabs } from 'expo-router';
-import { Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@/shared/hooks/useThemeColors';
 
 export default function TabsLayout() {
   const colors = useThemeColors();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
@@ -20,9 +21,11 @@ export default function TabsLayout() {
         tabBarStyle: {
           backgroundColor: colors.background,
           borderTopWidth: 0,
-          height: Platform.OS === 'ios' ? 88 : 64,
+          // Edge-to-edge is mandatory since SDK 55: size the bar from the real bottom inset
+          // instead of hardcoding per-platform heights.
+          height: 60 + insets.bottom,
           paddingTop: 8,
-          paddingBottom: Platform.OS === 'ios' ? 28 : 10,
+          paddingBottom: insets.bottom + 4,
           elevation: 0,
           shadowColor: colors.text,
           shadowOffset: { width: 0, height: -2 },

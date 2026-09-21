@@ -60,9 +60,10 @@ describe('RegisterScreen', () => {
       getByLabelText('Campo de confirmar senha'),
       'differentpass',
     );
+    fireEvent.press(getByLabelText('Aceitar termos de uso e política de privacidade'));
     fireEvent.press(getByRole('button', { name: 'Criar Conta' }));
 
-    await findByText('Passwords do not match');
+    await findByText('As senhas não coincidem');
   });
 
   it('shows validation error for short name on submit', async () => {
@@ -77,7 +78,7 @@ describe('RegisterScreen', () => {
     );
     fireEvent.press(getByRole('button', { name: 'Criar Conta' }));
 
-    await findByText('Name must be at least 2 characters');
+    await findByText('O nome deve ter pelo menos 2 caracteres');
   });
 
   it('successful registration navigates away from auth flow', async () => {
@@ -90,6 +91,7 @@ describe('RegisterScreen', () => {
       getByLabelText('Campo de confirmar senha'),
       'securepass123',
     );
+    fireEvent.press(getByLabelText('Aceitar termos de uso e política de privacidade'));
     fireEvent.press(getByRole('button', { name: 'Criar Conta' }));
 
     await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('/(tabs)'), {

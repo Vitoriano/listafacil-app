@@ -56,10 +56,10 @@ describe('OptimizeScreen', () => {
     it('renders store breakdown rows for all stores in the result', async () => {
       const { getByText } = renderScreen();
       await waitFor(() =>
-        expect(getByText('Comparacao entre Lojas')).toBeTruthy(),
+        expect(getByText('Comparação entre Lojas')).toBeTruthy(),
       );
       // At least one store breakdown row
-      expect(getByText('Comparacao entre Lojas')).toBeTruthy();
+      expect(getByText('Comparação entre Lojas')).toBeTruthy();
     });
 
     it('back button calls router.back()', async () => {
@@ -86,11 +86,11 @@ describe('OptimizeScreen', () => {
     it('renders EmptyState when optimization returns 0 total cost', async () => {
       const { getByText } = renderScreen();
       await waitFor(() =>
-        expect(getByText('Sem Otimizacao')).toBeTruthy(),
+        expect(getByText('Sem Otimização')).toBeTruthy(),
       );
       expect(
         getByText(
-          'Adicione itens a sua lista para receber recomendacoes.',
+          'Adicione itens à sua lista para receber recomendações de onde comprar mais barato.',
         ),
       ).toBeTruthy();
     });

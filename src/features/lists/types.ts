@@ -1,5 +1,3 @@
-import type { Store } from '@/shared/types';
-
 export interface ShoppingList {
   id: string;
   name: string;

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Alert } from 'react-native';
 import { fireEvent, render } from '@testing-library/react-native';
 import { AppProviders } from '@/providers/AppProviders';
 import { SettingsScreen } from '@/features/profile/components/SettingsScreen';
@@ -63,6 +64,11 @@ describe('SettingsScreen', () => {
       refreshToken: 'mock-refresh-123',
     });
 
+    // Logout asks for confirmation via Alert; auto-confirm the destructive action.
+    jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
+      buttons?.find((b) => b.style === 'destructive')?.onPress?.();
+    });
+
     const { getByRole } = renderScreen();
     fireEvent.press(getByRole('button', { name: 'Sair da Conta' }));
 
@@ -77,7 +83,7 @@ describe('SettingsScreen', () => {
 
   it('renders Settings title', () => {
     const { getByText } = renderScreen();
-    expect(getByText('Configuracoes')).toBeTruthy();
+    expect(getByText('Configurações')).toBeTruthy();
   });
 
   it('shows account info when user is logged in', () => {

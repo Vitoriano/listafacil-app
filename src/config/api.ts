@@ -21,10 +21,10 @@ api.interceptors.request.use((config) => {
 
 // Handle refresh token on 401
 let isRefreshing = false;
-let failedQueue: Array<{
+let failedQueue: {
   resolve: (token: string) => void;
   reject: (error: unknown) => void;
-}> = [];
+}[] = [];
 
 function processQueue(error: unknown, token: string | null) {
   failedQueue.forEach((promise) => {

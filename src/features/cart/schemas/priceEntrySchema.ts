@@ -3,7 +3,9 @@ import { PRICE_MAX } from '@/config/constants';
 
 export const priceEntrySchema = z.object({
   price: z
-    .number({ required_error: 'Informe o preco' })
+    .number({
+      error: (issue) => (issue.input === undefined ? 'Informe o preco' : undefined),
+    })
     .positive('Preco deve ser positivo')
     .max(PRICE_MAX, 'Preco excede o maximo'),
   quantity: z
