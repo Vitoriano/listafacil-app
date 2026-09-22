@@ -40,3 +40,8 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Android signing keys (nunca versionar)
+*.jks
+*.keystore
+!android/app/debug.keystore

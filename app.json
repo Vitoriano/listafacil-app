@@ -21,7 +21,8 @@
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION"
-      ]
+      ],
+      "versionCode": 1
     },
     "web": {
       "bundler": "metro",
@@ -33,7 +34,8 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow Lista Fácil to access your camera for barcode scanning."
+          "cameraPermission": "Allow Lista Fácil to access your camera for barcode scanning.",
+          "recordAudioAndroid": false
         }
       ],
       [
@@ -55,10 +57,18 @@
       "expo-font",
       "expo-secure-store",
       "expo-image",
-      "expo-status-bar"
+      "expo-status-bar",
+      "./plugins/withAndroidReleaseSigning.js"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "af3db56d-f291-4fda-bdc0-fe47ae885170"
+      }
+    },
+    "owner": "vitorianoernandes"
   }
 }
