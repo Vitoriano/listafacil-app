@@ -1,5 +1,8 @@
 # Release Android → Google Play (teste interno)
 
+Pipeline automático via GitHub Actions. Para builds pelo EAS (APK de teste, dev client, submit
+manual) veja [eas-build.md](eas-build.md).
+
 Ao dar push numa tag `vX.Y.Z`, o workflow `.github/workflows/android-release.yml`:
 
 1. Define `expo.version = X.Y.Z` e `expo.android.versionCode = GITHUB_RUN_NUMBER` no `app.json`.
@@ -69,54 +72,17 @@ cd android && ./gradlew bundleRelease \
 
 Sem essas propriedades o `release` usa o `debug.keystore`, útil para testar o build.
 
-## APK de teste via EAS Build
+## Build via EAS (APK de teste, AAB sem GitHub, dev client)
 
-Alternativa ao workflow do GitHub para gerar um **APK instalável** (compartilhar com testadores sem Play).
-A configuração está em `eas.json`:
-
-| Perfil        | Saída | Uso                                                   |
-|---------------|-------|-------------------------------------------------------|
-| `development` | APK   | dev client (`expo start --dev-client`)                 |
-| `preview`     | APK   | testes internos, instala direto no aparelho           |
-| `production`  | AAB   | Google Play (`eas submit`, faixa internal)            |
-
-`appVersionSource` é `local`: a versão e o `versionCode` vêm do `app.json`, como no workflow do GitHub.
-Bump manual do `versionCode` antes de cada build de produção.
-
-### Setup (uma vez)
+Perfis em `eas.json`, variáveis de ambiente, keystores e `eas submit` estão documentados em
+[eas-build.md](eas-build.md). Resumo:
 
 ```bash
-npm i -g eas-cli            # ou npx eas-cli
-eas login
-eas init                    # vincula o projeto (grava extra.eas.projectId no app.json)
-scripts/setup-eas-env.sh   # usa https://api.listafacil.nataldev.com.br/v1 por padrão
+scripts/setup-eas-env.sh    # uma vez: envia EXPO_PUBLIC_* para o EAS
+npm run build:apk           # APK instalável (perfil preview)
+npm run build:aab           # AAB de produção (bump manual do versionCode antes)
+eas submit -p android --profile production --latest
 ```
 
-O `.env` é ignorado pelo git e **não sobe para o EAS**; o script acima envia as `EXPO_PUBLIC_*`
-como variáveis de ambiente do projeto (ambientes `preview` e `production`). Sem isso o APK aponta
-para `http://localhost:3000/v1` e o mapa fica em branco.
-
-`app.config.js` injeta `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` em `android.config.googleMaps.apiKey`
-(react-native-maps com provider Google exige a chave no `AndroidManifest`).
-
-### Gerar o APK
-
-```bash
-npm run build:apk           # na nuvem; ao terminar mostra o link/QR para baixar o .apk
-npm run build:apk:local     # na sua máquina (precisa de JDK 17 + Android SDK), sem fila
-```
-
-Na primeira vez o EAS pergunta se pode gerar o keystore; responda sim para builds de teste.
-**Atenção**: esse keystore é diferente do `upload-keystore.jks` do workflow do GitHub. Um APK do EAS
-não instala por cima de um build do GitHub (e vice-versa) sem desinstalar antes. Para usar o mesmo
-keystore nos dois, envie o do `~/.listafacil-secrets/` com `eas credentials` (Android → Keystore →
-Set up a new keystore → upload).
-
-```bash
-npm run build:aab           # AAB de produção
-eas submit -p android --profile production --latest   # envia para a faixa internal do Play
-```
-
-Na primeira vez o `eas submit` pergunta pela chave da service account: informe
-`~/.listafacil-secrets/play-publisher.json` e aceite guardá-la no EAS (fica em `eas credentials`),
-assim as próximas vezes não perguntam mais.
+**Atenção**: o keystore do EAS é diferente do `upload-keystore.jks` deste workflow. Veja a seção
+"Keystores" do guia para unificar.
