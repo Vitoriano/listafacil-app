@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
-  KeyboardAvoidingView,
   Share,
-  Platform,
-  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { FormScrollView } from '@/shared/components/FormScrollView';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
@@ -147,10 +145,7 @@ export function ShareListScreen() {
   ];
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-background-50"
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
+    <View className="flex-1 bg-background-50">
       <AppHeader
         title="Compartilhar Lista"
         subtitle={list?.name}
@@ -191,7 +186,7 @@ export function ShareListScreen() {
         ))}
       </View>
 
-      <ScrollView contentContainerStyle={{ padding: 16, flexGrow: 1 }}>
+      <FormScrollView contentContainerStyle={{ padding: 16, flexGrow: 1 }}>
         {/* ── TAB: Convidar ── */}
         {activeTab === 'invite' ? (
           <View className="gap-5">
@@ -437,7 +432,7 @@ export function ShareListScreen() {
             </TouchableOpacity>
           </View>
         ) : null}
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </FormScrollView>
+    </View>
   );
 }

@@ -23,3 +23,9 @@ timeoutManager.setTimeoutProvider<TimerId>({
   setInterval: (callback, delay) => unref(setInterval(callback, delay)),
   clearInterval: (id) => clearInterval(id),
 });
+
+// react-native-keyboard-controller has native code; use the mock shipped with the package
+// so KeyboardProvider / KeyboardAwareScrollView render as plain views under Jest.
+jest.mock('react-native-keyboard-controller', () =>
+  require('react-native-keyboard-controller/jest'),
+);

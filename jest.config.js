@@ -4,7 +4,7 @@ module.exports = {
   // its resolver skips the `.native` files so Reanimated 4 falls back to the JS implementation.
   resolver: '<rootDir>/jest.resolver.js',
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|native-base|react-native-svg|nativewind|@gluestack-ui|@gluestack-style|react-native-reanimated|react-native-worklets|react-native-safe-area-context|react-native-screens|react-native-gesture-handler|firebase|@firebase)',
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|native-base|react-native-svg|nativewind|@gluestack-ui|@gluestack-style|react-native-reanimated|react-native-worklets|react-native-safe-area-context|react-native-screens|react-native-gesture-handler|react-native-keyboard-controller|firebase|@firebase)',
   ],
   transform: {
     // jest-expo only transforms .[jt]sx? files; firebase ships ESM `.mjs` entry points.

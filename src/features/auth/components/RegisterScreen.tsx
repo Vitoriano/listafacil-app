@@ -1,14 +1,13 @@
 import React from 'react';
 import {
-  KeyboardAvoidingView,
   Platform,
-  ScrollView,
   StatusBar,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { FormScrollView } from '@/shared/components/FormScrollView';
 import Animated from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
@@ -86,14 +85,9 @@ export function RegisterScreen() {
   ];
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-background-0"
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ paddingTop: androidPadding }}
-    >
-      <ScrollView
+    <View className="flex-1 bg-background-0" style={{ paddingTop: androidPadding }}>
+      <FormScrollView
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 24 }}
-        keyboardShouldPersistTaps="handled"
       >
         <View className="gap-8">
           {/* Title */}
@@ -252,7 +246,7 @@ export function RegisterScreen() {
             </TouchableOpacity>
           </Animated.View>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </FormScrollView>
+    </View>
   );
 }

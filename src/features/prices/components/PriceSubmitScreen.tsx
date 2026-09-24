@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { FormScrollView } from '@/shared/components/FormScrollView';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -82,13 +80,10 @@ export function PriceSubmitScreen() {
   }
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-background-50"
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
+    <View className="flex-1 bg-background-50">
       <AppHeader title="Enviar Preco" onBack={handleBack} />
 
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
+      <FormScrollView contentContainerStyle={{ padding: 16 }}>
         <View className="gap-4">
           {/* Store selector */}
           <View className="rounded-2xl bg-background-0 p-4">
@@ -193,7 +188,7 @@ export function PriceSubmitScreen() {
             </Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </FormScrollView>
+    </View>
   );
 }

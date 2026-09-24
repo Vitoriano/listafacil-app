@@ -1,13 +1,11 @@
 import React from 'react';
 import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { FormScrollView } from '@/shared/components/FormScrollView';
 import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -47,13 +45,10 @@ export function CreateListScreen() {
   }
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-background-50"
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
+    <View className="flex-1 bg-background-50">
       <AppHeader title="Nova Lista" onBack={handleBack} />
 
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
+      <FormScrollView contentContainerStyle={{ padding: 16 }}>
         <View className="gap-4">
           <View className="rounded-2xl bg-background-0 p-4">
             <Text className="mb-3 text-sm font-bold text-typography-900">
@@ -100,7 +95,7 @@ export function CreateListScreen() {
             </Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </FormScrollView>
+    </View>
   );
 }
