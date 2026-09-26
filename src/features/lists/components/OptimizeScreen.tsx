@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
@@ -9,6 +9,10 @@ import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { logger } from '@/shared/utils/logger';
 import { useOptimize } from '../hooks/useOptimize';
+import { useListDetail } from '../hooks/useListDetail';
+import { useStartPurchase } from '@/features/cart/hooks/useStartPurchase';
+import { useCartStore } from '@/features/cart/stores/cartStore';
+import type { OptimizationStore } from '../types';
 
 export function OptimizeScreen() {
   const router = useRouter();
@@ -16,10 +20,30 @@ export function OptimizeScreen() {
 
   const colors = useThemeColors();
   const { data: result, isLoading } = useOptimize(listId ?? null);
+  const { data: list } = useListDetail(listId ?? null);
+  const { start, isStarting } = useStartPurchase();
+  const cartActive = useCartStore((s) => s.isActive);
+  const cartStoreId = useCartStore((s) => s.storeId);
+  const linkList = useCartStore((s) => s.linkList);
 
   function handleBack() {
     logger.info('Lists', 'Navigating back from optimize');
     router.back();
+  }
+
+  async function handleShopAt(store: OptimizationStore) {
+    if (!list) return;
+    const linked = { id: list.id, name: list.name, items: list.items };
+    // Já comprando nesta loja: só vincula a lista e vai para o carrinho.
+    if (cartActive && cartStoreId === store.storeId) {
+      linkList(linked);
+      router.navigate('/cart');
+      return;
+    }
+    const ok = await start({ storeId: store.storeId, storeName: store.storeName, linkedList: linked });
+    if (ok) {
+      router.navigate('/cart');
+    }
   }
 
   if (isLoading) {
@@ -137,6 +161,33 @@ export function OptimizeScreen() {
                     {formatCurrency(store.totalCost)}
                   </Text>
                 </View>
+                <TouchableOpacity
+                  onPress={() => handleShopAt(store)}
+                  disabled={isStarting || !list}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Comprar em ${store.storeName}`}
+                  className={`mt-3 flex-row items-center justify-center gap-2 rounded-full py-3 ${
+                    index === 0 ? 'bg-primary-500' : 'border-2 border-outline-200'
+                  }`}
+                  activeOpacity={0.8}
+                >
+                  {isStarting ? (
+                    <ActivityIndicator size="small" color={index === 0 ? colors.white : colors.primary} />
+                  ) : (
+                    <>
+                      <Ionicons
+                        name="cart-outline"
+                        size={18}
+                        color={index === 0 ? colors.white : colors.icon}
+                      />
+                      <Text
+                        className={`text-sm font-bold ${index === 0 ? 'text-white' : 'text-typography-700'}`}
+                      >
+                        Comprar aqui
+                      </Text>
+                    </>
+                  )}
+                </TouchableOpacity>
               </View>
             ))}
           </View>

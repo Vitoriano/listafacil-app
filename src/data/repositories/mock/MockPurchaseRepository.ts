@@ -30,6 +30,11 @@ export class MockPurchaseRepository implements IPurchaseRepository {
     return this.store.getById(id);
   }
 
+  async getActive(): Promise<Purchase | null> {
+    await simulateDelay();
+    return this.store.getAll().find((p) => p.status === 'active') ?? null;
+  }
+
   async create(payload: CreatePurchasePayload): Promise<Purchase> {
     await simulateDelay();
     const purchase: Purchase = {
@@ -43,15 +48,23 @@ export class MockPurchaseRepository implements IPurchaseRepository {
       status: 'active',
       createdAt: new Date().toISOString(),
       completedAt: null,
+      linkedListId: payload.linkedListId ?? null,
+      linkedList: null,
     };
     return this.store.create(purchase);
   }
 
   async update(id: string, payload: UpdatePurchasePayload): Promise<Purchase | null> {
     await simulateDelay();
-    const updates: Partial<Purchase> = { status: payload.status };
-    if (payload.status === 'completed') {
-      updates.completedAt = new Date().toISOString();
+    const updates: Partial<Purchase> = {};
+    if (payload.status) {
+      updates.status = payload.status;
+      if (payload.status === 'completed') {
+        updates.completedAt = new Date().toISOString();
+      }
+    }
+    if (payload.linkedListId !== undefined) {
+      updates.linkedListId = payload.linkedListId;
     }
     return this.store.update(id, updates);
   }

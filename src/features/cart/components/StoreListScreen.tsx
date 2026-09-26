@@ -13,7 +13,9 @@ import { AppHeader } from '@/shared/components/AppHeader';
 import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { logger } from '@/shared/utils/logger';
 import { useStores } from '../hooks/useStores';
-import { useCartStore } from '../stores/cartStore';
+import { useStartPurchase } from '../hooks/useStartPurchase';
+import { useLinkedListParam } from '../hooks/useLinkedListParam';
+import { LinkedListChip } from './LinkedListChip';
 import type { Store } from '@/shared/types';
 
 const STORE_TYPE_LABELS: Record<string, string> = {
@@ -28,8 +30,8 @@ export function StoreListScreen() {
   const colors = useThemeColors();
   const [search, setSearch] = useState('');
   const { data: allStores, isLoading } = useStores();
-  const startSession = useCartStore((s) => s.startSession);
-  const isStarting = useCartStore((s) => s.isStarting);
+  const { start, isStarting } = useStartPurchase();
+  const linked = useLinkedListParam();
 
   const stores = allStores?.filter((s) =>
     search
@@ -41,11 +43,13 @@ export function StoreListScreen() {
 
   async function handleSelectStore(store: Store) {
     logger.info('Cart', 'Store selected from list', store.id);
-    try {
-      await startSession(store.id, store.name);
-      router.replace('/cart');
-    } catch (error) {
-      logger.error('Cart', 'Failed to start session', error);
+    const ok = await start({
+      storeId: store.id,
+      storeName: store.name,
+      linkedList: linked.linkedList,
+    });
+    if (ok) {
+      router.dismissTo('/cart');
     }
   }
 
@@ -66,6 +70,7 @@ export function StoreListScreen() {
   return (
     <View className="flex-1 bg-background-50">
       <AppHeader title="Buscar Supermercado" onBack={() => router.back()} />
+      {linked.linkedList ? <LinkedListChip listName={linked.linkedList.name} /> : null}
 
       <View className="px-5 py-3">
         <View className="flex-row items-center gap-2.5 rounded-xl bg-background-0 px-3.5">

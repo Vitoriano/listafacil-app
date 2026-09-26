@@ -1,10 +1,20 @@
 import { create } from 'zustand';
 import { purchaseRepository } from '@/data/repositories';
-import type { PurchaseItem } from '../types';
+import { logger } from '@/shared/utils/logger';
+import type { Purchase, PurchaseItem } from '../types';
 import type { ListItem } from '@/features/lists/types';
+
+/** Lista que acompanha a compra (progresso "x de y itens"). */
+export interface LinkedListInput {
+  id: string;
+  name: string;
+  items: ListItem[];
+}
 
 interface CartState {
   isActive: boolean;
+  /** true enquanto a sessão ainda não foi conferida com a API (evita piscar a tela vazia). */
+  isHydrating: boolean;
   purchaseId: string | null;
   storeId: string | null;
   storeName: string | null;
@@ -17,11 +27,20 @@ interface CartState {
   linkedListItems: ListItem[];
 
   isStarting: boolean;
-  startSession: (storeId: string, storeName: string) => Promise<void>;
+  startSession: (
+    storeId: string,
+    storeName: string,
+    linkedList?: LinkedListInput | null,
+  ) => Promise<void>;
+  /** Restaura a sessão a partir de uma compra ativa devolvida pela API. */
+  hydrate: (purchase: Purchase) => void;
+  /** Consulta a API e sincroniza a sessão local (retoma ou descarta). */
+  syncFromServer: () => Promise<void>;
+  cancelSession: () => Promise<void>;
   addItem: (item: Omit<PurchaseItem, 'id'>) => void;
   removeItem: (itemId: string) => void;
   updateItemQuantity: (itemId: string, quantity: number) => void;
-  linkList: (listId: string, listName: string, items: ListItem[]) => void;
+  linkList: (list: LinkedListInput) => void;
   unlinkList: () => void;
   clearCart: () => void;
   reset: () => void;
@@ -33,44 +52,113 @@ function recalculate(items: PurchaseItem[]) {
   return { total, itemCount };
 }
 
-export const useCartStore = create<CartState>((set) => ({
+function getConflictPurchaseId(error: unknown): string | null {
+  const response = (error as { response?: { status?: number; data?: unknown } })?.response;
+  if (response?.status !== 409) return null;
+  const data = response.data as { activePurchaseId?: string } | undefined;
+  return data?.activePurchaseId ?? null;
+}
+
+const EMPTY_SESSION = {
   isActive: false,
   purchaseId: null,
   storeId: null,
   storeName: null,
-  items: [],
+  items: [] as PurchaseItem[],
   total: 0,
   itemCount: 0,
   linkedListId: null,
   linkedListName: null,
-  linkedListItems: [],
+  linkedListItems: [] as ListItem[],
   isStarting: false,
+};
 
-  startSession: async (storeId, storeName) => {
+export class ActivePurchaseConflictError extends Error {
+  constructor(public readonly activePurchaseId: string | null) {
+    super('Já existe uma compra em andamento');
+    this.name = 'ActivePurchaseConflictError';
+  }
+}
+
+export const useCartStore = create<CartState>((set, get) => ({
+  ...EMPTY_SESSION,
+  isHydrating: false,
+
+  startSession: async (storeId, storeName, linkedList) => {
     set({ isStarting: true });
     try {
-      const purchase = await purchaseRepository.create({ storeId });
+      const purchase = await purchaseRepository.create({
+        storeId,
+        linkedListId: linkedList?.id,
+      });
       set({
+        ...EMPTY_SESSION,
         isActive: true,
         purchaseId: purchase.id,
         storeId,
         storeName,
-        items: [],
-        total: 0,
-        itemCount: 0,
-        linkedListId: null,
-        linkedListName: null,
-        linkedListItems: [],
-        isStarting: false,
+        linkedListId: linkedList?.id ?? null,
+        linkedListName: linkedList?.name ?? null,
+        linkedListItems: linkedList?.items ?? [],
       });
-    } catch {
+    } catch (error) {
       set({ isStarting: false });
-      throw new Error('Falha ao iniciar sessao de compra');
+      const conflictId = getConflictPurchaseId(error);
+      if (conflictId) {
+        // Outra sessão ficou aberta (ex.: app fechado no meio da compra): retoma ela.
+        await get().syncFromServer();
+        throw new ActivePurchaseConflictError(conflictId);
+      }
+      throw new Error('Falha ao iniciar sessão de compra');
     }
   },
 
+  hydrate: (purchase) => {
+    set({
+      ...EMPTY_SESSION,
+      isActive: true,
+      isHydrating: false,
+      purchaseId: purchase.id,
+      storeId: purchase.storeId,
+      storeName: purchase.storeName,
+      items: purchase.items,
+      ...recalculate(purchase.items),
+      linkedListId: purchase.linkedList?.id ?? purchase.linkedListId ?? null,
+      linkedListName: purchase.linkedList?.name ?? null,
+      linkedListItems: purchase.linkedList?.items ?? [],
+    });
+  },
+
+  syncFromServer: async () => {
+    set({ isHydrating: true });
+    try {
+      const active = await purchaseRepository.getActive();
+      if (active && active.status === 'active') {
+        logger.info('Cart', 'Resuming active purchase', active.id);
+        get().hydrate(active);
+      } else if (get().isActive) {
+        logger.info('Cart', 'Local session no longer active on server, resetting');
+        set({ ...EMPTY_SESSION, isHydrating: false });
+      } else {
+        set({ isHydrating: false });
+      }
+    } catch (error) {
+      // Sem rede: mantém o estado local como está.
+      logger.warn('Cart', 'Could not sync active purchase', error);
+      set({ isHydrating: false });
+    }
+  },
+
+  cancelSession: async () => {
+    const { purchaseId } = get();
+    if (purchaseId) {
+      await purchaseRepository.update(purchaseId, { status: 'cancelled' });
+    }
+    set({ ...EMPTY_SESSION });
+  },
+
   addItem: (item) => {
-    const { purchaseId, items } = useCartStore.getState();
+    const { purchaseId, items } = get();
     const existing = items.find((i) => i.productId === item.productId);
 
     if (existing) {
@@ -121,7 +209,7 @@ export const useCartStore = create<CartState>((set) => ({
   },
 
   removeItem: (itemId) => {
-    const { purchaseId } = useCartStore.getState();
+    const { purchaseId } = get();
     set((state) => {
       const newItems = state.items.filter((i) => i.id !== itemId);
       return { items: newItems, ...recalculate(newItems) };
@@ -132,7 +220,7 @@ export const useCartStore = create<CartState>((set) => ({
   },
 
   updateItemQuantity: (itemId, quantity) => {
-    const { purchaseId } = useCartStore.getState();
+    const { purchaseId } = get();
     if (quantity <= 0) {
       set((state) => {
         const newItems = state.items.filter((i) => i.id !== itemId);
@@ -154,27 +242,24 @@ export const useCartStore = create<CartState>((set) => ({
     }
   },
 
-  linkList: (listId, listName, items) =>
-    set({ linkedListId: listId, linkedListName: listName, linkedListItems: items }),
+  linkList: (list) => {
+    const { purchaseId } = get();
+    set({ linkedListId: list.id, linkedListName: list.name, linkedListItems: list.items });
+    if (purchaseId) {
+      purchaseRepository.update(purchaseId, { linkedListId: list.id }).catch(() => {});
+    }
+  },
 
-  unlinkList: () =>
-    set({ linkedListId: null, linkedListName: null, linkedListItems: [] }),
+  unlinkList: () => {
+    const { purchaseId } = get();
+    set({ linkedListId: null, linkedListName: null, linkedListItems: [] });
+    if (purchaseId) {
+      purchaseRepository.update(purchaseId, { linkedListId: null }).catch(() => {});
+    }
+  },
 
   clearCart: () =>
     set({ items: [], total: 0, itemCount: 0 }),
 
-  reset: () =>
-    set({
-      isActive: false,
-      purchaseId: null,
-      storeId: null,
-      storeName: null,
-      items: [],
-      total: 0,
-      itemCount: 0,
-      linkedListId: null,
-      linkedListName: null,
-      linkedListItems: [],
-      isStarting: false,
-    }),
+  reset: () => set({ ...EMPTY_SESSION, isHydrating: false }),
 }));

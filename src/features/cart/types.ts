@@ -1,3 +1,5 @@
+import type { ListItem } from '@/features/lists/types';
+
 export type PurchaseStatus = 'active' | 'completed' | 'cancelled';
 
 export interface PurchaseItem {
@@ -8,6 +10,13 @@ export interface PurchaseItem {
   price: number;
   quantity: number;
   fromListId?: string;
+}
+
+/** Lista vinculada a uma compra, como devolvida pela API em GET /purchases/active. */
+export interface LinkedListSnapshot {
+  id: string;
+  name: string;
+  items: ListItem[];
 }
 
 export interface Purchase {
@@ -21,6 +30,8 @@ export interface Purchase {
   status: PurchaseStatus;
   createdAt: string;
   completedAt: string | null;
+  linkedListId?: string | null;
+  linkedList?: LinkedListSnapshot | null;
 }
 
 export interface CreatePurchasePayload {
@@ -29,7 +40,9 @@ export interface CreatePurchasePayload {
 }
 
 export interface UpdatePurchasePayload {
-  status: 'completed' | 'cancelled';
+  status?: 'completed' | 'cancelled';
+  /** uuid para vincular, null para desvincular. */
+  linkedListId?: string | null;
 }
 
 export interface AddPurchaseItemPayload {

@@ -10,6 +10,8 @@ import type {
 export interface IPurchaseRepository {
   getAll(): Promise<Purchase[]>;
   getById(id: string): Promise<Purchase | null>;
+  /** Compra em andamento do usuário (no máximo uma), ou null. */
+  getActive(): Promise<Purchase | null>;
   create(payload: CreatePurchasePayload): Promise<Purchase>;
   update(id: string, payload: UpdatePurchasePayload): Promise<Purchase | null>;
   getRecent(limit?: number): Promise<Purchase[]>;

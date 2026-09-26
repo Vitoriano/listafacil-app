@@ -18,6 +18,11 @@ export function ProfileScreen() {
     router.push('/(tabs)/profile/savings');
   }
 
+  function handlePurchaseHistory() {
+    logger.info('Profile', 'Navigating to purchase history');
+    router.push('/purchases/history');
+  }
+
   function handleSettings() {
     logger.info('Profile', 'Navigating to settings');
     router.push('/(tabs)/profile/settings');
@@ -103,6 +108,29 @@ export function ProfileScreen() {
               </Text>
               <Text className="mt-0.5 text-xs text-typography-500">
                 Veja economia mensal e compras recentes
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handlePurchaseHistory}
+          accessibilityRole="button"
+          accessibilityLabel="Histórico de Compras"
+          className="rounded-2xl bg-background-0 p-4"
+          activeOpacity={0.7}
+        >
+          <View className="flex-row items-center gap-3">
+            <View className="h-10 w-10 items-center justify-center rounded-full bg-info-50">
+              <Ionicons name="receipt-outline" size={20} color={colors.info} />
+            </View>
+            <View className="flex-1">
+              <Text className="text-sm font-bold text-typography-900">
+                Histórico de Compras
+              </Text>
+              <Text className="mt-0.5 text-xs text-typography-500">
+                Todas as suas compras finalizadas
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />

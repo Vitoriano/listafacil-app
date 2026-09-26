@@ -3,11 +3,13 @@ import type { IPurchaseRepository } from '../interfaces/IPurchaseRepository';
 import type {
   Purchase,
   PurchaseItem,
+  LinkedListSnapshot,
   CreatePurchasePayload,
   UpdatePurchasePayload,
   AddPurchaseItemPayload,
   UpdatePurchaseItemPayload,
 } from '@/features/cart/types';
+import type { ListItem } from '@/features/lists/types';
 
 /**
  * API item shape:
@@ -25,6 +27,30 @@ function mapPurchaseItemFromApi(raw: Record<string, unknown>): PurchaseItem {
     price: parseFloat(String(raw.price)) || 0,
     quantity: Number(raw.quantity) || 1,
     fromListId: raw.fromListId != null ? String(raw.fromListId) : undefined,
+  };
+}
+
+function mapLinkedListItemFromApi(raw: Record<string, unknown>): ListItem {
+  const product = raw.product as Record<string, unknown> | undefined;
+  return {
+    id: String(raw.id ?? ''),
+    productId: String(raw.productId ?? product?.id ?? ''),
+    productName: String(product?.name ?? 'Produto'),
+    quantity: Number(raw.quantity) || 1,
+    unit: String(product?.unit ?? 'un'),
+    estimatedPrice: parseFloat(String(raw.estimatedPrice ?? 0)) || 0,
+    checked: Boolean(raw.checked),
+  };
+}
+
+function mapLinkedListFromApi(raw: unknown): LinkedListSnapshot | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const list = raw as Record<string, unknown>;
+  const rawItems = Array.isArray(list.items) ? list.items : [];
+  return {
+    id: String(list.id ?? ''),
+    name: String(list.name ?? ''),
+    items: rawItems.map((r) => mapLinkedListItemFromApi(r as Record<string, unknown>)),
   };
 }
 
@@ -54,6 +80,8 @@ function mapPurchaseFromApi(raw: Record<string, unknown>): Purchase {
     status: (raw.status as Purchase['status']) ?? 'completed',
     createdAt: String(raw.createdAt ?? ''),
     completedAt: raw.completedAt != null ? String(raw.completedAt) : null,
+    linkedListId: raw.linkedListId != null ? String(raw.linkedListId) : null,
+    linkedList: mapLinkedListFromApi(raw.linkedList),
   };
 }
 
@@ -84,6 +112,12 @@ export class ApiPurchaseRepository implements IPurchaseRepository {
     } catch {
       return null;
     }
+  }
+
+  async getActive(): Promise<Purchase | null> {
+    const { data } = await api.get('/purchases/active');
+    if (!data || typeof data !== 'object') return null;
+    return mapPurchaseFromApi(data as Record<string, unknown>);
   }
 
   async create(payload: CreatePurchasePayload): Promise<Purchase> {

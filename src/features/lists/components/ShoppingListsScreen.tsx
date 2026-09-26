@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, Platform, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, Platform, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
@@ -34,8 +34,21 @@ export function ShoppingListsScreen() {
   }
 
   function handleDeleteList(list: ShoppingList) {
-    logger.info('Lists', 'Deleting list', list.id);
-    deleteList(list.id);
+    Alert.alert(
+      'Excluir Lista',
+      `Excluir "${list.name}"? Esta ação não pode ser desfeita.`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: () => {
+            logger.info('Lists', 'Deleting list', list.id);
+            deleteList(list.id);
+          },
+        },
+      ],
+    );
   }
 
   const androidPadding = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0;

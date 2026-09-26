@@ -37,9 +37,10 @@ export function CreateListScreen() {
   function onSubmit(data: CreateListFormData) {
     logger.info('Lists', 'Creating new list', data.name);
     createList(data, {
-      onSuccess: () => {
-        logger.info('Lists', 'List created successfully');
-        router.back();
+      onSuccess: (list) => {
+        logger.info('Lists', 'List created successfully', list.id);
+        // Substitui o formulário pela lista recém-criada: o próximo passo natural é adicionar itens.
+        router.replace(`/lists/${list.id}?new=1`);
       },
     });
   }

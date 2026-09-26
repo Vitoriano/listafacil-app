@@ -11,9 +11,10 @@ jest.mock('@/config/mock', () => ({
 
 const mockPush = jest.fn();
 const mockBack = jest.fn();
+const mockReplace = jest.fn();
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: mockPush, back: mockBack }),
+  useRouter: () => ({ push: mockPush, back: mockBack, replace: mockReplace }),
   useLocalSearchParams: () => ({}),
 }));
 
@@ -55,15 +56,20 @@ describe('CreateListScreen', () => {
     await findByText('Name too long');
   });
 
-  it('successful form submit calls useCreateList and calls router.back()', async () => {
+  it('successful form submit opens the created list (replace) instead of going back', async () => {
     const { getByRole, getByLabelText } = renderScreen();
     const input = getByLabelText('Campo nome da lista');
     fireEvent.changeText(input, 'My New List');
     const submitButton = getByRole('button', { name: 'Criar Lista' });
     fireEvent.press(submitButton);
-    await waitFor(() => expect(mockBack).toHaveBeenCalledTimes(1), {
-      timeout: 3000,
-    });
+    await waitFor(
+      () =>
+        expect(mockReplace).toHaveBeenCalledWith(
+          expect.stringMatching(/^\/lists\/.+\?new=1$/),
+        ),
+      { timeout: 3000 },
+    );
+    expect(mockBack).not.toHaveBeenCalled();
   });
 
   it('submit button is accessible', () => {

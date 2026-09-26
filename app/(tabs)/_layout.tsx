@@ -2,10 +2,13 @@ import { Tabs } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@/shared/hooks/useThemeColors';
+import { useCartStore } from '@/features/cart/stores/cartStore';
 
 export default function TabsLayout() {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
+  const cartActive = useCartStore((s) => s.isActive);
+  const cartItemCount = useCartStore((s) => s.itemCount);
 
   return (
     <Tabs
@@ -37,23 +40,10 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Inicio',
+          title: 'Início',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? 'home' : 'home-outline'}
-              size={24}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="products"
-        options={{
-          title: 'Produtos',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? 'grid' : 'grid-outline'}
               size={24}
               color={color}
             />
@@ -67,6 +57,45 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? 'list' : 'list-outline'}
+              size={24}
+              color={color}
+            />
+          ),
+        }}
+      />
+      {/* Aba central: o "modo compra" é a ação principal do app e precisa de acesso
+          permanente na zona do polegar. O badge mostra a compra em andamento. */}
+      <Tabs.Screen
+        name="cart"
+        options={{
+          title: 'Comprar',
+          tabBarBadge: cartActive ? (cartItemCount > 0 ? cartItemCount : '') : undefined,
+          tabBarBadgeStyle: {
+            backgroundColor: colors.success,
+            color: colors.white,
+            fontSize: 10,
+            fontWeight: '700',
+            minWidth: cartItemCount > 0 ? 18 : 10,
+            height: cartItemCount > 0 ? 18 : 10,
+            lineHeight: cartItemCount > 0 ? 18 : 10,
+            borderRadius: 9,
+          },
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? 'cart' : 'cart-outline'}
+              size={26}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="products"
+        options={{
+          title: 'Produtos',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? 'grid' : 'grid-outline'}
               size={24}
               color={color}
             />

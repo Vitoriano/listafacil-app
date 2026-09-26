@@ -14,7 +14,7 @@ const mockBack = jest.fn();
 const mockUseLocalSearchParams = jest.fn();
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: mockPush, back: mockBack }),
+  useRouter: () => ({ push: mockPush, back: mockBack, navigate: jest.fn(), replace: jest.fn() }),
   useLocalSearchParams: () => mockUseLocalSearchParams(),
 }));
 
@@ -92,6 +92,13 @@ describe('ListDetailScreen', () => {
       fireEvent.press(removeButtons[0]);
       // Verify no crash
       expect(true).toBe(true);
+    });
+
+    it('renders the "Iniciar Compra" primary action when the list has items', async () => {
+      const { getByRole } = renderScreen();
+      await waitFor(() => {
+        expect(getByRole('button', { name: 'Iniciar Compra' })).toBeTruthy();
+      });
     });
 
     it('"Optimize" button navigates to /lists/optimize?listId=list-001', async () => {

@@ -4,14 +4,18 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { AppHeader } from '@/shared/components/AppHeader';
 import { useThemeColors } from '@/shared/hooks/useThemeColors';
+import { useLinkedListParam } from '../hooks/useLinkedListParam';
+import { LinkedListChip } from './LinkedListChip';
 
 export function ManualSelectScreen() {
   const router = useRouter();
   const colors = useThemeColors();
+  const linked = useLinkedListParam();
 
   return (
     <View className="flex-1 bg-background-50">
       <AppHeader title="Selecionar Supermercado" onBack={() => router.back()} />
+      {linked.linkedList ? <LinkedListChip listName={linked.linkedList.name} /> : null}
 
       <View className="px-5 py-3">
         <Text className="text-sm text-typography-500">
@@ -21,7 +25,7 @@ export function ManualSelectScreen() {
 
       <View className="gap-3 px-5">
         <TouchableOpacity
-          onPress={() => router.push('/cart/store-list')}
+          onPress={() => router.push({ pathname: '/cart/store-list', params: linked.params })}
           accessibilityRole="button"
           activeOpacity={0.7}
         >
@@ -42,7 +46,7 @@ export function ManualSelectScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => router.push('/cart/store-map')}
+          onPress={() => router.push({ pathname: '/cart/store-map', params: linked.params })}
           accessibilityRole="button"
           activeOpacity={0.7}
         >

@@ -21,6 +21,7 @@ import { useSavings } from '@/features/profile/hooks/useSavings';
 import { useLists } from '@/features/lists/hooks/useLists';
 import { useProducts } from '@/features/products/hooks/useProducts';
 import { useRecentPurchases } from '@/features/cart/hooks/usePurchases';
+import { useCartStore } from '@/features/cart/stores/cartStore';
 import type { Product } from '@/features/products/types';
 
 function getGreeting(): string {
@@ -61,6 +62,10 @@ export function DashboardScreen() {
     limit: 6,
   });
   const { data: recentPurchases } = useRecentPurchases(3);
+  const cartActive = useCartStore((s) => s.isActive);
+  const cartStoreName = useCartStore((s) => s.storeName);
+  const cartItemCount = useCartStore((s) => s.itemCount);
+  const cartTotal = useCartStore((s) => s.total);
 
   const androidPadding = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0;
 
@@ -75,7 +80,7 @@ export function DashboardScreen() {
   return (
     <View className="flex-1 bg-background-50" style={{ paddingTop: androidPadding }}>
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
@@ -90,7 +95,7 @@ export function DashboardScreen() {
               </Text>
             </View>
             <TouchableOpacity
-              onPress={() => router.push('/(tabs)/profile')}
+              onPress={() => router.navigate('/profile')}
               accessibilityRole="button"
               accessibilityLabel="Ir para perfil"
               activeOpacity={0.7}
@@ -104,10 +109,40 @@ export function DashboardScreen() {
           </View>
         </View>
 
+        {/* Compra em andamento: atalho para retomar de onde parou */}
+        {cartActive ? (
+          <TouchableOpacity
+            onPress={() => router.navigate('/cart')}
+            activeOpacity={0.8}
+            className="mx-5 mt-4"
+            accessibilityRole="button"
+            accessibilityLabel="Continuar compra"
+          >
+            <View className="flex-row items-center gap-3 rounded-2xl bg-success-50 p-4">
+              <View className="h-11 w-11 items-center justify-center rounded-full bg-success-100">
+                <Ionicons name="cart" size={20} color={colors.success} />
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm font-bold text-typography-900">
+                  Compra em andamento
+                </Text>
+                <Text className="mt-0.5 text-xs text-typography-500" numberOfLines={1}>
+                  {cartStoreName ?? 'Supermercado'} · {cartItemCount}{' '}
+                  {cartItemCount === 1 ? 'item' : 'itens'} · {formatCurrency(cartTotal)}
+                </Text>
+              </View>
+              <View className="flex-row items-center gap-1 rounded-full bg-success-500 px-3 py-1.5">
+                <Text className="text-xs font-bold text-white">Continuar</Text>
+                <Ionicons name="chevron-forward" size={12} color={colors.white} />
+              </View>
+            </View>
+          </TouchableOpacity>
+        ) : null}
+
         {/* Savings card */}
         {!loadingSavings ? (
           <TouchableOpacity
-            onPress={() => router.push('/(tabs)/profile/savings')}
+            onPress={() => router.navigate('/profile/savings')}
             activeOpacity={0.8}
             className="mx-5 mt-4"
           >
@@ -152,18 +187,22 @@ export function DashboardScreen() {
           </Text>
           <View className="flex-row gap-3">
             <TouchableOpacity
-              onPress={() => router.push('/cart')}
+              onPress={() => router.navigate('/cart')}
               className="flex-1 items-center rounded-3xl bg-background-0 py-5"
               activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Comprar"
             >
               <View className="mb-2 h-11 w-11 items-center justify-center rounded-full bg-primary-50">
                 <Ionicons name="cart-outline" size={22} color={colors.primary} />
               </View>
-              <Text className="text-xs font-semibold text-typography-700">Carrinho</Text>
+              <Text className="text-xs font-semibold text-typography-700">Comprar</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => router.push('/scanner')}
+              onPress={() => router.push('/scan/product')}
+              accessibilityRole="button"
+              accessibilityLabel="Escanear produto"
               className="flex-1 items-center rounded-3xl bg-background-0 py-5"
               activeOpacity={0.7}
             >
@@ -174,9 +213,11 @@ export function DashboardScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => router.push('/lists/create')}
+              onPress={() => router.navigate('/lists/create')}
               className="flex-1 items-center rounded-3xl bg-background-0 py-5"
               activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Nova lista"
             >
               <View className="mb-2 h-11 w-11 items-center justify-center rounded-full bg-success-50">
                 <Ionicons name="add-circle-outline" size={22} color={colors.success} />
@@ -185,9 +226,11 @@ export function DashboardScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => router.push('/(tabs)/products')}
+              onPress={() => router.navigate('/products')}
               className="flex-1 items-center rounded-3xl bg-background-0 py-5"
               activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Buscar produtos"
             >
               <View className="mb-2 h-11 w-11 items-center justify-center rounded-full bg-warning-50">
                 <Ionicons name="search-outline" size={22} color={colors.warning} />
@@ -205,7 +248,7 @@ export function DashboardScreen() {
                 Compras Recentes
               </Text>
               <TouchableOpacity
-                onPress={() => router.push('/cart/history')}
+                onPress={() => router.push('/purchases/history')}
                 activeOpacity={0.7}
               >
                 <Text className="text-xs font-semibold text-primary-500">Ver todas</Text>
@@ -215,7 +258,7 @@ export function DashboardScreen() {
               {recentPurchases!.map((purchase) => (
                 <TouchableOpacity
                   key={purchase.id}
-                  onPress={() => router.push(`/cart/${purchase.id}`)}
+                  onPress={() => router.push(`/purchases/${purchase.id}`)}
                   activeOpacity={0.7}
                 >
                   <View className="flex-row items-center rounded-2xl bg-background-0 p-4">
@@ -248,7 +291,7 @@ export function DashboardScreen() {
             </Text>
             {(lists ?? []).length > 0 ? (
               <TouchableOpacity
-                onPress={() => router.push('/(tabs)/lists')}
+                onPress={() => router.navigate('/lists')}
                 activeOpacity={0.7}
               >
                 <Text className="text-xs font-semibold text-primary-500">Ver todas</Text>
@@ -262,7 +305,7 @@ export function DashboardScreen() {
             </View>
           ) : recentLists.length === 0 ? (
             <TouchableOpacity
-              onPress={() => router.push('/lists/create')}
+              onPress={() => router.navigate('/lists/create')}
               activeOpacity={0.7}
             >
               <View className="items-center rounded-3xl border-2 border-dashed border-outline-200 py-8">
@@ -282,7 +325,7 @@ export function DashboardScreen() {
               {recentLists.map((list) => (
                 <TouchableOpacity
                   key={list.id}
-                  onPress={() => router.push(`/lists/${list.id}`)}
+                  onPress={() => router.navigate(`/lists/${list.id}`)}
                   activeOpacity={0.7}
                 >
                   <View className="flex-row items-center rounded-2xl bg-background-0 p-4">
@@ -318,7 +361,7 @@ export function DashboardScreen() {
               Melhores Precos
             </Text>
             <TouchableOpacity
-              onPress={() => router.push('/(tabs)/products')}
+              onPress={() => router.navigate('/products')}
               activeOpacity={0.7}
             >
               <Text className="text-xs font-semibold text-primary-500">Ver todos</Text>
@@ -338,7 +381,7 @@ export function DashboardScreen() {
               contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }}
               renderItem={({ item }) => (
                 <TouchableOpacity
-                  onPress={() => router.push(`/products/${item.id}`)}
+                  onPress={() => router.navigate(`/products/${item.id}`)}
                   activeOpacity={0.7}
                   style={{ width: 155 }}
                 >
@@ -371,31 +414,6 @@ export function DashboardScreen() {
         </View>
       </ScrollView>
 
-      {/* FAB - Cart mode */}
-      <TouchableOpacity
-        onPress={() => router.push('/cart')}
-        accessibilityRole="button"
-        accessibilityLabel="Modo carrinho"
-        activeOpacity={0.85}
-        style={{
-          position: 'absolute',
-          bottom: Platform.OS === 'ios' ? 24 : 20,
-          right: 20,
-          width: 60,
-          height: 60,
-          borderRadius: 30,
-          backgroundColor: colors.primary,
-          alignItems: 'center',
-          justifyContent: 'center',
-          shadowColor: colors.primary,
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.35,
-          shadowRadius: 8,
-          elevation: 8,
-        }}
-      >
-        <Ionicons name="cart" size={26} color={colors.white} />
-      </TouchableOpacity>
     </View>
   );
 }

@@ -1,3 +1,4 @@
+import type React from 'react';
 import { notifyManager, timeoutManager } from '@tanstack/react-query';
 
 // Reanimated 4: install the Jest timers/mocks so Animated components render synchronously.
@@ -29,3 +30,16 @@ timeoutManager.setTimeoutProvider<TimerId>({
 jest.mock('react-native-keyboard-controller', () =>
   require('react-native-keyboard-controller/jest'),
 );
+
+// Telas com barra de ações fixa usam useSafeAreaInsets; fora do NavigationContainer não há provider,
+// então usamos o mock oficial do pacote (insets zerados).
+jest.mock('react-native-safe-area-context', () => {
+  const actual = jest.requireActual('react-native-safe-area-context');
+  const zero = { top: 0, right: 0, bottom: 0, left: 0 };
+  return {
+    ...actual,
+    useSafeAreaInsets: () => zero,
+    useSafeAreaFrame: () => ({ x: 0, y: 0, width: 390, height: 844 }),
+    SafeAreaProvider: ({ children }: { children?: React.ReactNode }) => children,
+  };
+});

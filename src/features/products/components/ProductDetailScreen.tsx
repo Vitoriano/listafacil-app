@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,6 +12,7 @@ import { logger } from '@/shared/utils/logger';
 import { useProductImageUri } from '@/shared/hooks/useProductImageUri';
 import { useCategoryName } from '../hooks/useCategoryName';
 import { useProductDetail } from '../hooks/useProductDetail';
+import { AddToListSheet } from '@/features/lists/components/AddToListSheet';
 
 export function ProductDetailScreen() {
   const router = useRouter();
@@ -21,6 +22,7 @@ export function ProductDetailScreen() {
   const { data: product, isLoading } = useProductDetail(id ?? null);
   const { uri: imageUri, loading: imageLoading } = useProductImageUri(product);
   const categoryName = useCategoryName(product);
+  const [showAddToList, setShowAddToList] = useState(false);
 
   function handleBack() {
     router.back();
@@ -37,11 +39,7 @@ export function ProductDetailScreen() {
   }
 
   function handleAddToList() {
-    router.push('/(tabs)/lists');
-  }
-
-  function handlePriceHistory() {
-    router.push(`/products/prices/history?productId=${id}`);
+    setShowAddToList(true);
   }
 
   if (isLoading) {
@@ -184,59 +182,48 @@ export function ProductDetailScreen() {
           </View>
         </View>
 
-        {/* Action buttons */}
+        {/* Action buttons: adicionar à lista é a ação principal; histórico fica dentro da comparação */}
         <View className="mt-4 gap-3">
           <TouchableOpacity
             className="flex-row items-center justify-center gap-2 rounded-full bg-primary-500 py-4"
-            onPress={handleComparePrices}
+            onPress={handleAddToList}
             accessibilityRole="button"
-            accessibilityLabel="Comparar Precos"
+            accessibilityLabel="Adicionar à Lista"
             activeOpacity={0.8}
           >
-            <Ionicons name="swap-horizontal" size={20} color={colors.white} />
-            <Text className="text-sm font-bold text-white">Comparar Precos</Text>
+            <Ionicons name="add-circle" size={20} color={colors.white} />
+            <Text className="text-sm font-bold text-white">Adicionar à Lista</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             className="flex-row items-center justify-center gap-2 rounded-full border-2 border-primary-500 py-4"
+            onPress={handleComparePrices}
+            accessibilityRole="button"
+            accessibilityLabel="Comparar Precos"
+            activeOpacity={0.7}
+          >
+            <Ionicons name="swap-horizontal" size={20} color={colors.primary} />
+            <Text className="text-sm font-bold text-primary-500">Comparar Precos</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="flex-row items-center justify-center gap-2 rounded-full border-2 border-outline-300 py-4"
             onPress={handleSubmitPrice}
             accessibilityRole="button"
             accessibilityLabel="Enviar Preco"
             activeOpacity={0.7}
           >
-            <Ionicons name="add-circle-outline" size={20} color={colors.primary} />
-            <Text className="text-sm font-bold text-primary-500">
-              Enviar Preco
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className="flex-row items-center justify-center gap-2 rounded-full border-2 border-outline-300 py-4"
-            onPress={handlePriceHistory}
-            accessibilityRole="button"
-            accessibilityLabel="Histórico de Preços"
-            activeOpacity={0.7}
-          >
-            <Ionicons name="time-outline" size={20} color={colors.icon} />
-            <Text className="text-sm font-bold text-typography-700">
-              Histórico de Preços
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className="flex-row items-center justify-center gap-2 rounded-full border-2 border-success-500 py-4"
-            onPress={handleAddToList}
-            accessibilityRole="button"
-            accessibilityLabel="Adicionar à Lista"
-            activeOpacity={0.7}
-          >
-            <Ionicons name="list-outline" size={20} color={colors.success} />
-            <Text className="text-sm font-bold text-success-600">
-              Adicionar à Lista
-            </Text>
+            <Ionicons name="pricetag-outline" size={20} color={colors.icon} />
+            <Text className="text-sm font-bold text-typography-700">Enviar Preco</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <AddToListSheet
+        visible={showAddToList}
+        product={product}
+        onClose={() => setShowAddToList(false)}
+      />
     </View>
   );
 }

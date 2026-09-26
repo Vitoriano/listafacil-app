@@ -44,7 +44,8 @@ export function ScannerScreen() {
       if (product) {
         logger.info('Scanner', 'Product found, navigating', product.id);
         setShowNotFound(false);
-        router.push(`/products/${product.id}`);
+        // Fecha a câmera e abre o produto dentro da aba Produtos (sem duplicar as abas).
+        router.dismissTo(`/products/${product.id}`);
         resumeScan();
       } else {
         logger.info('Scanner', 'Product not found for barcode', scannedBarcode);

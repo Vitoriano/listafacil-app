@@ -7,8 +7,9 @@ import { ScannerScreen } from '@/features/scanner/components/ScannerScreen';
 // ── Mocks ──────────────────────────────────────────────────────────────────
 
 const mockPush = jest.fn();
+const mockDismissTo = jest.fn();
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: mockPush }),
+  useRouter: () => ({ push: mockPush, back: jest.fn(), dismissTo: mockDismissTo }),
 }));
 
 jest.mock('expo-haptics', () => ({
@@ -64,6 +65,7 @@ describe('ScannerScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPush.mockReset();
+    mockDismissTo.mockReset();
   });
 
   afterEach(() => {
@@ -141,7 +143,7 @@ describe('ScannerScreen', () => {
       fireEvent.changeText(input, '7891093010014');
       fireEvent.press(getByText('Buscar Produto'));
 
-      await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/products/prod-001'), {
+      await waitFor(() => expect(mockDismissTo).toHaveBeenCalledWith('/products/prod-001'), {
         timeout: 3000,
       });
     });

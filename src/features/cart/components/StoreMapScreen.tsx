@@ -16,7 +16,8 @@ import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { useLocation } from '@/shared/hooks/useLocation';
 import { logger } from '@/shared/utils/logger';
 import { storeRepository } from '@/data/repositories';
-import { useCartStore } from '../stores/cartStore';
+import { useStartPurchase } from '../hooks/useStartPurchase';
+import { useLinkedListParam } from '../hooks/useLinkedListParam';
 
 const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? '';
 
@@ -57,8 +58,8 @@ export function StoreMapScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const location = useLocation();
-  const startSession = useCartStore((s) => s.startSession);
-  const isStarting = useCartStore((s) => s.isStarting);
+  const { start, isStarting } = useStartPurchase();
+  const linked = useLinkedListParam();
   const mapRef = useRef<MapView>(null);
   const [selectedPlace, setSelectedPlace] = useState<SelectedPlace | null>(
     null,
@@ -129,10 +130,16 @@ export function StoreMapScreen() {
         googlePlaceId: selectedPlace.placeId,
       });
 
-      await startSession(store.id, store.name);
-      router.replace('/cart');
+      const ok = await start({
+        storeId: store.id,
+        storeName: store.name,
+        linkedList: linked.linkedList,
+      });
+      if (ok) {
+        router.dismissTo('/cart');
+      }
     } catch (error) {
-      logger.error('Cart', 'Failed to register store and start session', error);
+      logger.error('Cart', 'Failed to register store', error);
     } finally {
       setIsRegistering(false);
     }

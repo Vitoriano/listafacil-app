@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,7 +13,6 @@ export function SettingsScreen() {
   const colors = useThemeColors();
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const user = useAuthStore((state) => state.user);
-  const [editingName, setEditingName] = useState(false);
 
   function handleBack() {
     router.back();
@@ -58,45 +57,9 @@ export function SettingsScreen() {
                 </Text>
                 <Text className="mt-0.5 text-xs text-typography-500">{user.email}</Text>
               </View>
-              <TouchableOpacity
-                onPress={() => setEditingName(!editingName)}
-                className="h-9 w-9 items-center justify-center rounded-full bg-background-100"
-                activeOpacity={0.7}
-                accessibilityRole="button"
-                accessibilityLabel="Editar perfil"
-              >
-                <Ionicons name="pencil-outline" size={16} color={colors.icon} />
-              </TouchableOpacity>
             </View>
           </View>
         ) : null}
-
-        {/* Menu items */}
-        <View className="rounded-2xl bg-background-0">
-          <TouchableOpacity
-            onPress={() => router.push('/profile/savings')}
-            className="flex-row items-center gap-3 border-b border-outline-100 p-4"
-            activeOpacity={0.7}
-          >
-            <View className="h-9 w-9 items-center justify-center rounded-full bg-success-50">
-              <Ionicons name="trending-up" size={18} color={colors.success} />
-            </View>
-            <Text className="flex-1 text-sm font-semibold text-typography-900">Economia</Text>
-            <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => router.push('/cart/history')}
-            className="flex-row items-center gap-3 p-4"
-            activeOpacity={0.7}
-          >
-            <View className="h-9 w-9 items-center justify-center rounded-full bg-info-50">
-              <Ionicons name="receipt-outline" size={18} color={colors.info} />
-            </View>
-            <Text className="flex-1 text-sm font-semibold text-typography-900">Histórico de Compras</Text>
-            <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
-          </TouchableOpacity>
-        </View>
 
         {/* About section */}
         <View className="rounded-2xl bg-background-0">

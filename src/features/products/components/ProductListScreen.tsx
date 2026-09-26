@@ -72,7 +72,19 @@ export function ProductListScreen() {
     <View className="flex-1 bg-background-50" style={{ paddingTop: androidPadding }}>
       {/* Header */}
       <View className="bg-background-0 px-5 pb-3 pt-4">
-        <Text className="mb-3 text-2xl font-bold text-typography-900">Produtos</Text>
+        <View className="mb-3 flex-row items-center justify-between">
+          <Text className="text-2xl font-bold text-typography-900">Produtos</Text>
+          <TouchableOpacity
+            onPress={() => router.push('/scan/product')}
+            className="flex-row items-center gap-1.5 rounded-full bg-primary-500 px-4 py-2.5"
+            accessibilityRole="button"
+            accessibilityLabel="Escanear código de barras"
+            activeOpacity={0.8}
+          >
+            <Ionicons name="barcode-outline" size={16} color={colors.white} />
+            <Text className="text-xs font-bold text-white">Escanear</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Search input */}
         <View className="flex-row items-center rounded-2xl bg-background-50 px-4">

@@ -1,11 +1,9 @@
 import React from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { AppHeader } from '@/shared/components/AppHeader';
-import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { formatDate } from '@/shared/utils/formatDate';
 import { logger } from '@/shared/utils/logger';
@@ -18,7 +16,6 @@ export function PriceHistoryScreen() {
     storeId?: string;
   }>();
 
-  const colors = useThemeColors();
   const { data: history, isLoading } = usePriceHistory(
     productId ?? null,
     storeId ?? undefined,
@@ -76,18 +73,6 @@ export function PriceHistoryScreen() {
           </View>
         )}
 
-        <TouchableOpacity
-          className="mt-4 flex-row items-center justify-center gap-2 rounded-full border-2 border-primary-500 py-4"
-          onPress={handleBack}
-          accessibilityRole="button"
-          accessibilityLabel="Voltar"
-          activeOpacity={0.7}
-        >
-          <Ionicons name="arrow-back" size={18} color={colors.primary} />
-          <Text className="text-sm font-bold text-primary-500">
-            Voltar
-          </Text>
-        </TouchableOpacity>
       </ScrollView>
     </View>
   );

@@ -19,6 +19,7 @@ import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { logger } from '@/shared/utils/logger';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { useProducts } from '@/features/products/hooks/useProducts';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCartStore } from '@/features/cart/stores/cartStore';
 import { ActiveCartBanner } from './ActiveCartBanner';
 import { useListEditorStore } from '../stores/listEditorStore';
@@ -35,8 +36,10 @@ import type { Product } from '@/features/products/types';
 
 export function ListDetailScreen() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const [showAddItem, setShowAddItem] = useState(false);
+  const insets = useSafeAreaInsets();
+  const { id, new: isNew } = useLocalSearchParams<{ id: string; new?: string }>();
+  // Lista recém-criada: já abre a busca de produtos (próximo passo natural).
+  const [showAddItem, setShowAddItem] = useState(isNew === '1');
   const [showEditName, setShowEditName] = useState(false);
   const [editNameText, setEditNameText] = useState('');
 
@@ -52,6 +55,7 @@ export function ListDetailScreen() {
   const isLinkedToCart = cart.isActive && cart.linkedListId === id;
 
   const { data: list, isLoading } = useListDetail(id ?? null);
+  const hasItems = (list?.items.length ?? 0) > 0;
   useListSocket(id ?? null);
   const { mutate: updateItem } = useUpdateItem();
   const { mutate: removeItem } = useRemoveItem();
@@ -81,13 +85,49 @@ export function ListDetailScreen() {
           onPress: () => {
             deleteList(id!, {
               onSuccess: () => {
-                router.replace('/(tabs)/lists');
+                // Volta para a lista de listas sem empilhar uma cópia do índice.
+                router.dismissTo('/lists');
               },
             });
           },
         },
       ],
     );
+  }
+
+  function handleMoreActions() {
+    Alert.alert(list?.name ?? 'Lista', undefined, [
+      { text: 'Renomear', onPress: handleOpenEditName },
+      { text: 'Excluir lista', style: 'destructive', onPress: handleDeleteList },
+      { text: 'Cancelar', style: 'cancel' },
+    ]);
+  }
+
+  function handleStartPurchase() {
+    if (!list) return;
+    if (isLinkedToCart) {
+      router.navigate('/cart');
+      return;
+    }
+    if (cart.isActive) {
+      Alert.alert(
+        'Compra em andamento',
+        `Você já está comprando em ${cart.storeName ?? 'um supermercado'}. Deseja acompanhar esta lista nessa compra?`,
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          {
+            text: 'Vincular e ir ao carrinho',
+            onPress: () => {
+              cart.linkList({ id: list.id, name: list.name, items: list.items });
+              router.navigate('/cart');
+            },
+          },
+        ],
+      );
+      return;
+    }
+    logger.info('Lists', 'Starting purchase from list', id);
+    router.navigate({ pathname: '/cart/store-select', params: { listId: id! } });
   }
 
   function handleShare() {
@@ -169,15 +209,6 @@ export function ListDetailScreen() {
         rightAction={
           <View className="flex-row gap-2">
             <TouchableOpacity
-              onPress={handleOpenEditName}
-              className="h-10 w-10 items-center justify-center rounded-full bg-background-100"
-              activeOpacity={0.7}
-              accessibilityRole="button"
-              accessibilityLabel="Editar nome da lista"
-            >
-              <Ionicons name="pencil-outline" size={18} color={colors.icon} />
-            </TouchableOpacity>
-            <TouchableOpacity
               onPress={handleShare}
               className="h-10 w-10 items-center justify-center rounded-full bg-primary-50"
               activeOpacity={0.7}
@@ -187,14 +218,14 @@ export function ListDetailScreen() {
               <Ionicons name="share-outline" size={20} color={colors.primary} />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={handleDeleteList}
+              onPress={handleMoreActions}
               disabled={isDeleting}
-              className="h-10 w-10 items-center justify-center rounded-full bg-error-50"
+              className="h-10 w-10 items-center justify-center rounded-full bg-background-100"
               activeOpacity={0.7}
               accessibilityRole="button"
-              accessibilityLabel="Excluir lista"
+              accessibilityLabel="Mais opções"
             >
-              <Ionicons name="trash-outline" size={18} color={colors.error} />
+              <Ionicons name="ellipsis-horizontal" size={20} color={colors.icon} />
             </TouchableOpacity>
           </View>
         }
@@ -207,7 +238,7 @@ export function ListDetailScreen() {
             (list?.items ?? []).some((li) => li.productId === ci.productId),
           ).length}
           totalCount={list?.items.length ?? 0}
-          onGoToCart={() => router.push('/cart')}
+          onGoToCart={() => router.navigate('/cart')}
         />
       ) : null}
 
@@ -224,48 +255,25 @@ export function ListDetailScreen() {
           />
         }
         ListFooterComponent={
-          list && list.items.length > 0 ? (
-            <View className="mt-4 gap-3">
-              <TouchableOpacity
-                onPress={handleOpenAddItem}
-                accessibilityRole="button"
-                accessibilityLabel="Adicionar Item"
-                className="flex-row items-center justify-center gap-2 rounded-full border-2 border-primary-500 py-3.5"
-                activeOpacity={0.7}
-              >
-                <Ionicons name="add-circle-outline" size={20} color={colors.primary} />
-                <Text className="text-sm font-bold text-primary-500">
-                  Adicionar Item
+          hasItems ? (
+            <TouchableOpacity
+              onPress={handleOptimize}
+              accessibilityRole="button"
+              accessibilityLabel="Otimizar Compras"
+              className="mt-2 flex-row items-center gap-3 rounded-2xl bg-warning-50 p-4"
+              activeOpacity={0.7}
+            >
+              <View className="h-10 w-10 items-center justify-center rounded-full bg-warning-100">
+                <Ionicons name="flash" size={20} color={colors.warning} />
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm font-bold text-typography-900">Otimizar Compras</Text>
+                <Text className="mt-0.5 text-xs text-typography-500">
+                  Descubra em qual loja esta lista sai mais barata
                 </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={handleOptimize}
-                accessibilityRole="button"
-                accessibilityLabel="Otimizar"
-                className="flex-row items-center justify-center gap-2 rounded-full bg-primary-500 py-4"
-                activeOpacity={0.8}
-              >
-                <Ionicons name="flash" size={20} color={colors.white} />
-                <Text className="text-sm font-bold text-white">
-                  Otimizar Compras
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={handleDeleteList}
-                disabled={isDeleting}
-                accessibilityRole="button"
-                accessibilityLabel="Excluir Lista"
-                className="flex-row items-center justify-center gap-2 rounded-full border-2 border-error-500 py-3.5"
-                activeOpacity={0.7}
-              >
-                <Ionicons name="trash-outline" size={20} color={colors.error} />
-                <Text className="text-sm font-bold text-error-500">
-                  Excluir Lista
-                </Text>
-              </TouchableOpacity>
-            </View>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+            </TouchableOpacity>
           ) : null
         }
         renderItem={({ item }) => (
@@ -323,6 +331,44 @@ export function ListDetailScreen() {
           </View>
         )}
       />
+
+      {/* Ações principais na zona do polegar */}
+      {hasItems ? (
+        <View
+          className="flex-row gap-3 bg-background-0 px-5 pt-3"
+          style={{
+            paddingBottom: Math.max(insets.bottom, 12) + 4,
+            shadowColor: colors.text,
+            shadowOffset: { width: 0, height: -2 },
+            shadowOpacity: 0.08,
+            shadowRadius: 12,
+            elevation: 8,
+          }}
+        >
+          <TouchableOpacity
+            onPress={handleOpenAddItem}
+            accessibilityRole="button"
+            accessibilityLabel="Adicionar Item"
+            className="flex-1 flex-row items-center justify-center gap-2 rounded-full border-2 border-primary-500 py-3.5"
+            activeOpacity={0.7}
+          >
+            <Ionicons name="add-circle-outline" size={20} color={colors.primary} />
+            <Text className="text-sm font-bold text-primary-500">Adicionar Item</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleStartPurchase}
+            accessibilityRole="button"
+            accessibilityLabel={isLinkedToCart ? 'Ir ao carrinho' : 'Iniciar Compra'}
+            className="flex-[1.2] flex-row items-center justify-center gap-2 rounded-full bg-primary-500 py-3.5"
+            activeOpacity={0.8}
+          >
+            <Ionicons name="cart" size={20} color={colors.white} />
+            <Text className="text-sm font-bold text-white">
+              {isLinkedToCart ? 'Ir ao carrinho' : 'Iniciar Compra'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
 
       {/* Edit Name Modal */}
       <Modal

@@ -13,19 +13,21 @@ import { usePurchaseDetail } from '../hooks/usePurchaseDetail';
 export function PurchaseDetailScreen() {
   const router = useRouter();
   const colors = useThemeColors();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, completed } = useLocalSearchParams<{ id: string; completed?: string }>();
   const { data: purchase, isLoading } = usePurchaseDetail(id ?? null);
+  const justCompleted = completed === '1';
 
   function handleBack() {
     router.back();
   }
 
-  function handleNewPurchase() {
-    router.push('/cart/store-select');
+  function handleGoHome() {
+    // Fecha o recibo e volta para a aba Início.
+    router.dismissTo('/(tabs)');
   }
 
-  function handleViewHistory() {
-    router.push('/cart/history');
+  function handleNewPurchase() {
+    router.dismissTo('/cart/store-select');
   }
 
   if (isLoading) {
@@ -48,9 +50,24 @@ export function PurchaseDetailScreen() {
 
   return (
     <View className="flex-1 bg-background-50">
-      <AppHeader title="Detalhe da Compra" onBack={handleBack} />
+      <AppHeader
+        title={justCompleted ? 'Compra Finalizada' : 'Detalhe da Compra'}
+        onBack={handleBack}
+      />
 
       <ScrollView contentContainerStyle={{ padding: 20 }}>
+        {justCompleted ? (
+          <View className="mb-4 flex-row items-center gap-3 rounded-2xl bg-success-50 p-4">
+            <Ionicons name="checkmark-circle" size={28} color={colors.success} />
+            <View className="flex-1">
+              <Text className="text-sm font-bold text-typography-900">Compra registrada!</Text>
+              <Text className="mt-0.5 text-xs text-typography-500">
+                Os preços informados ajudam outras pessoas a economizar.
+              </Text>
+            </View>
+          </View>
+        ) : null}
+
         {/* Store and date info */}
         <View className="mb-4 rounded-2xl bg-background-0 p-4">
           <View className="flex-row items-center gap-3">
@@ -111,27 +128,29 @@ export function PurchaseDetailScreen() {
 
         {/* Action buttons */}
         <View className="mt-4 gap-3">
-          <TouchableOpacity
-            onPress={handleNewPurchase}
-            accessibilityRole="button"
-            accessibilityLabel="Nova Compra"
-            className="flex-row items-center justify-center gap-2 rounded-full bg-primary-500 py-4"
-            activeOpacity={0.8}
-          >
-            <Ionicons name="cart-outline" size={20} color="#FFFFFF" />
-            <Text className="text-sm font-bold text-white">Nova Compra</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={handleViewHistory}
-            accessibilityRole="button"
-            accessibilityLabel="Ver Histórico"
-            className="flex-row items-center justify-center gap-2 rounded-full border-2 border-outline-300 py-3.5"
-            activeOpacity={0.7}
-          >
-            <Ionicons name="time-outline" size={20} color={colors.icon} />
-            <Text className="text-sm font-bold text-typography-700">Ver Histórico</Text>
-          </TouchableOpacity>
+          {justCompleted ? (
+            <TouchableOpacity
+              onPress={handleGoHome}
+              accessibilityRole="button"
+              accessibilityLabel="Voltar ao início"
+              className="flex-row items-center justify-center gap-2 rounded-full bg-primary-500 py-4"
+              activeOpacity={0.8}
+            >
+              <Ionicons name="home-outline" size={20} color="#FFFFFF" />
+              <Text className="text-sm font-bold text-white">Voltar ao início</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={handleNewPurchase}
+              accessibilityRole="button"
+              accessibilityLabel="Nova Compra"
+              className="flex-row items-center justify-center gap-2 rounded-full bg-primary-500 py-4"
+              activeOpacity={0.8}
+            >
+              <Ionicons name="cart-outline" size={20} color="#FFFFFF" />
+              <Text className="text-sm font-bold text-white">Nova Compra</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
     </View>

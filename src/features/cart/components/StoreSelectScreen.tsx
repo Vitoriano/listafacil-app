@@ -13,7 +13,9 @@ import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { useLocation } from '@/shared/hooks/useLocation';
 import { logger } from '@/shared/utils/logger';
 import { useNearbyStores } from '../hooks/useNearbyStores';
-import { useCartStore } from '../stores/cartStore';
+import { useStartPurchase } from '../hooks/useStartPurchase';
+import { useLinkedListParam } from '../hooks/useLinkedListParam';
+import { LinkedListChip } from './LinkedListChip';
 import type { Store } from '@/shared/types';
 
 const STORE_TYPE_LABELS: Record<string, string> = {
@@ -69,24 +71,27 @@ export function StoreSelectScreen() {
     location.latitude,
     location.longitude,
   );
-  const startSession = useCartStore((s) => s.startSession);
-  const isStarting = useCartStore((s) => s.isStarting);
+  const { start, isStarting } = useStartPurchase();
+  const linked = useLinkedListParam();
 
   function handleBack() {
     router.back();
   }
 
   function handleManualSelect() {
-    router.push('/cart/manual-select');
+    router.push({ pathname: '/cart/manual-select', params: linked.params });
   }
 
   async function handleSelectStore(store: Store) {
     logger.info('Cart', 'Store selected', store.id);
-    try {
-      await startSession(store.id, store.name);
-      router.replace('/cart');
-    } catch (error) {
-      logger.error('Cart', 'Failed to start session', error);
+    const ok = await start({
+      storeId: store.id,
+      storeName: store.name,
+      linkedList: linked.linkedList,
+    });
+    if (ok) {
+      // Volta direto para o carrinho, descartando as telas de escolha da pilha.
+      router.dismissTo('/cart');
     }
   }
 
@@ -218,6 +223,7 @@ export function StoreSelectScreen() {
   return (
     <View className="flex-1 bg-background-50">
       <AppHeader title="Escolher Supermercado" onBack={handleBack} />
+      {linked.linkedList ? <LinkedListChip listName={linked.linkedList.name} /> : null}
 
       {!isLocationReady ? (
         renderLocationState()
