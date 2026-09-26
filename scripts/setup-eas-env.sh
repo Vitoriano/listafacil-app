@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# Envia as variaveis EXPO_PUBLIC_* do .env local para os ambientes `preview` e `production` do EAS.
+# Envia as variaveis EXPO_PUBLIC_* do .env local para os ambientes `development`, `preview` e `production` do EAS.
 # O .env e ignorado pelo git e por isso NAO sobe para o EAS Build; sem isso o APK sai sem
-# Firebase, sem chave do Google Maps e apontando para http://localhost:3000/v1.
+# Firebase, sem chave do Google Maps e apontando para a URL padrao de homologacao.
 #
 # Uso:
 #   scripts/setup-eas-env.sh            [URL da API]   # opcional, padrao: https://api.listafacil.nataldev.com.br/v1
@@ -22,14 +22,19 @@ command -v eas >/dev/null || { echo "Falta 'eas' no PATH (npm i -g eas-cli)" >&2
 
 env_value() { grep -E "^$1=" "$ENV_FILE" 2>/dev/null | head -1 | cut -d= -f2- | sed -e 's/^"//' -e 's/"$//'; }
 
+ENVIRONMENTS="development preview production"
+
 push() { # nome valor visibilidade
-  local name="$1" value="$2" vis="$3"
-  eas env:create --environment preview --environment production --scope project --type string \
-    --name "$name" --value "$value" --visibility "$vis" --force --non-interactive >/dev/null
+  local name="$1" value="$2" vis="$3" env
+  # Um ambiente por chamada: criar em varios de uma vez falha quando a variavel ja existe em algum deles.
+  for env in $ENVIRONMENTS; do
+    eas env:create --environment "$env" --scope project --type string \
+      --name "$name" --value "$value" --visibility "$vis" --force --non-interactive >/dev/null
+  done
   echo "  ok $name ($vis)"
 }
 
-echo "Enviando variaveis para os ambientes preview e production ..."
+echo "Enviando variaveis para os ambientes development, preview e production ..."
 push EXPO_PUBLIC_API_URL "$API_URL" plaintext
 push EXPO_PUBLIC_FIREBASE_STORAGE_PATH_PREFIX "$(env_value EXPO_PUBLIC_FIREBASE_STORAGE_PATH_PREFIX)" plaintext
 

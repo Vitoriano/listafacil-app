@@ -9,6 +9,7 @@ pipeline automático do GitHub Actions (tag `vX.Y.Z` → Play).
 | Objetivo                                             | Caminho                                   |
 |------------------------------------------------------|-------------------------------------------|
 | Mandar um APK para alguém testar sem Play            | `npm run build:apk` (EAS, perfil preview) |
+| APK com config de produção, sem passar pelo Play     | `npm run build:apk:prod` (perfil production-apk) |
 | Publicar versão na faixa internal do Play            | `git tag vX.Y.Z && git push --tags` (GitHub Actions) |
 | Publicar no Play sem depender do GitHub              | `npm run build:aab` + `eas submit`        |
 | Rodar o app com módulos nativos sem Expo Go          | `npm run build:dev` (dev client)          |
@@ -34,6 +35,7 @@ Todos estendem `base`, que fixa `node: 24.8.0` (mesma versão usada localmente e
 | `development` | APK   | internal       | `developmentClient: true`, `:app:assembleDebug`       | `expo start --dev-client`             |
 | `preview`     | APK   | internal       | build release, assinado com o keystore do EAS         | testar direto no aparelho             |
 | `production`  | AAB   | store          | `autoIncrement: false`                                | Google Play (`eas submit`)            |
+| `production-apk` | APK | internal      | herda `production` (ambiente `production`), gera APK   | instalar build de produção direto no aparelho |
 
 O bloco `submit.production` envia para a faixa **internal** com `releaseStatus: completed`.
 
@@ -48,8 +50,8 @@ Os perfis não declaram `environment`, então o EAS usa o padrão:
 - `preview` (`distribution: internal`) → ambiente `preview`
 - `production` → ambiente `production`
 
-O script `scripts/setup-eas-env.sh` popula apenas `preview` e `production`. O dev client não precisa:
-ele carrega o JS pelo Metro, que lê o `.env` da sua máquina em tempo de execução.
+O script `scripts/setup-eas-env.sh` popula `development`, `preview` e `production`. O dev client
+carrega o JS pelo Metro, que lê o `.env` da sua máquina em tempo de execução.
 
 ## Setup (uma vez por máquina)
 
@@ -57,7 +59,7 @@ ele carrega o JS pelo Metro, que lê o `.env` da sua máquina em tempo de execu�
 npm i -g eas-cli            # eas.json exige >= 18; ou use npx eas-cli
 eas login                   # conta Expo (owner: vitorianoernandes)
 eas init                    # só se extra.eas.projectId não existir no app.json
-scripts/setup-eas-env.sh    # envia EXPO_PUBLIC_* para o EAS (preview + production)
+scripts/setup-eas-env.sh    # envia EXPO_PUBLIC_* para o EAS (development + preview + production)
 ```
 
 O projeto já está vinculado (`extra.eas.projectId` no `app.json`), então `eas init` normalmente
@@ -68,11 +70,14 @@ não é necessário.
 O `.env` é ignorado pelo git e o EAS Build faz checkout limpo do repositório. Sem as variáveis no
 EAS, o build sai com:
 
-- API apontando para `http://localhost:3000/v1` (fallback em `src/config/constants.ts`)
 - Firebase sem configuração
 - Mapa em branco (sem chave do Google Maps)
 
-O script lê o `.env` local e cria cada variável nos ambientes `preview` e `production`:
+A API não depende disso: o app aponta sempre para homologação
+(`https://api.listafacil.nataldev.com.br/v1`, padrão em `src/config/constants.ts`), em dev, preview e
+production. `EXPO_PUBLIC_API_URL` só serve para trocar o destino (ex.: produção).
+
+O script lê o `.env` local e cria cada variável nos ambientes `development`, `preview` e `production`:
 
 | Variável                                   | Visibilidade | Origem                          |
 |--------------------------------------------|--------------|---------------------------------|
@@ -123,8 +128,8 @@ npm run build:apk:local     # eas build ... --local
 ```
 
 Requisitos: JDK 17 e Android SDK instalados. O build roda na sua máquina, mas segue o mesmo perfil
-e usa as credenciais do EAS. Garanta que o `.env` local tenha `EXPO_PUBLIC_API_URL` de produção
-ou rode `eas env:pull --environment preview` antes, senão o APK aponta para localhost.
+e usa as credenciais do EAS. Para apontar para outra API que não a homologação, defina
+`EXPO_PUBLIC_API_URL` no `.env` local ou rode `eas env:pull --environment preview` antes.
 
 ## Gerar AAB e enviar ao Google Play
 
@@ -140,7 +145,7 @@ Na primeira vez o `eas submit` pede a chave JSON da service account do Play. Inf
 no EAS. As próximas vezes não perguntam mais.
 
 Pré-requisitos no Play Console, iguais ao pipeline do GitHub: app criado com package
-`com.listafacil.app`, service account convidada com permissão de lançar em faixas de teste, e um
+`br.com.nataldev.listafacil`, service account convidada com permissão de lançar em faixas de teste, e um
 primeiro AAB enviado manualmente pelo console (a API do Play só aceita uploads depois disso).
 
 ## Versionamento
@@ -210,7 +215,7 @@ eas whoami                           # conta logada
 
 | Sintoma                                               | Causa provável                                   | Solução                                             |
 |-------------------------------------------------------|--------------------------------------------------|-----------------------------------------------------|
-| App chama `localhost:3000`                            | `EXPO_PUBLIC_API_URL` não está no EAS             | `scripts/setup-eas-env.sh` e refaça o build          |
+| App chama a API errada                                | `EXPO_PUBLIC_API_URL` no EAS com valor antigo     | `eas env:update` ou `scripts/setup-eas-env.sh` e refaça o build |
 | Mapa em branco                                        | chave do Maps ausente no manifest                | idem; confira `eas env:list`                         |
 | Login/Firebase falha                                  | `EXPO_PUBLIC_FIREBASE_*` ausentes                | idem                                                 |
 | "App not installed" ao atualizar                      | keystore diferente do build anterior             | desinstale, ou unifique os keystores                 |

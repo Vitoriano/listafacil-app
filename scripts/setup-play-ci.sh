@@ -81,7 +81,7 @@ Pronto. Falta apenas o que so o Play Console permite fazer manualmente:
   1. Play Console > Usuarios e permissoes > Convidar novos usuarios
      e-mail: $SA_EMAIL
      Permissoes do app: "Lancar em faixas de teste" (e "Gerenciar versoes" se quiser producao).
-  2. Criar o app "Lista Facil" (package com.listafacil.app) no Play Console, se ainda nao existir.
+  2. Criar o app "Lista Facil" (package br.com.nataldev.listafacil) no Play Console, se ainda nao existir.
   3. Fazer o PRIMEIRO envio do AAB manualmente (Teste interno) - a API do Google Play exige.
      Rode o workflow via "Actions > Run workflow" para gerar o AAB e baixe o artifact.
 Depois disso, "git tag v1.0.1 && git push origin v1.0.1" publica sozinho no teste interno.

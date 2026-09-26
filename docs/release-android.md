@@ -47,7 +47,7 @@ Gera `~/.listafacil-secrets/upload-keystore.jks` (faça backup!) e envia para o 
 
 1. **Usuários e permissões → Convidar**: `play-publisher@listafacil-4edd1.iam.gserviceaccount.com`
    com permissão "Lançar em faixas de teste".
-2. Criar o app **Lista Fácil** com package `com.listafacil.app` (se ainda não existir).
+2. Criar o app **Lista Fácil** com package `br.com.nataldev.listafacil` (se ainda não existir).
 3. **Primeiro envio manual**: a API do Play só aceita uploads depois de um primeiro AAB enviado pelo console.
    Rode o workflow manualmente, baixe o artifact `.aab` e envie em *Teste interno*.
 

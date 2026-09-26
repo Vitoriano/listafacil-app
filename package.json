@@ -13,6 +13,7 @@
     "build:apk": "eas build --platform android --profile preview",
     "build:apk:local": "eas build --platform android --profile preview --local",
     "build:aab": "eas build --platform android --profile production",
+    "build:apk:prod": "eas build --platform android --profile production-apk",
     "build:dev": "eas build --platform android --profile development"
   },
   "dependencies": {
