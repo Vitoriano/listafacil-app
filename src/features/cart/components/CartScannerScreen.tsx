@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { CameraView } from 'expo-camera';
 import { useRouter } from 'expo-router';
@@ -11,6 +11,8 @@ import { useScanner } from '@/features/scanner/hooks/useScanner';
 import { useBarcodeResult } from '@/features/scanner/hooks/useBarcodeResult';
 import { ScannerOverlay } from '@/features/scanner/components/ScannerOverlay';
 import { ManualEntryModal } from '@/features/scanner/components/ManualEntryModal';
+import { ProductNotFoundSheet } from '@/features/scanner/components/ProductNotFoundSheet';
+import type { BarcodeResult } from '@/features/scanner/types';
 import { useUpdateItem } from '@/features/lists/hooks/useUpdateItem';
 import { useCartStore } from '../stores/cartStore';
 import { PriceEntryModal } from './PriceEntryModal';
@@ -43,6 +45,8 @@ export function CartScannerScreen() {
 
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [showNotFound, setShowNotFound] = useState(false);
+  const [notFoundBarcode, setNotFoundBarcode] = useState<string | null>(null);
+  const lastNotFoundRef = useRef<{ code: string; at: number } | null>(null);
   const [showPriceEntry, setShowPriceEntry] = useState(false);
   const [foundProduct, setFoundProduct] = useState<Product | null>(null);
 
@@ -66,21 +70,36 @@ export function CartScannerScreen() {
         setShowPriceEntry(true);
       } else {
         logger.info('CartScanner', 'Product not found', scannedBarcode);
+        // Aviso não bloqueante: a câmera segue ativa para o próximo produto.
+        lastNotFoundRef.current = { code: scannedBarcode, at: Date.now() };
+        setNotFoundBarcode(scannedBarcode);
         setShowNotFound(true);
+        resumeScan();
       }
     }
-  }, [isFetched, product, scannedBarcode]);
+  }, [isFetched, product, scannedBarcode, resumeScan]);
+
+  const handleScan = useCallback(
+    (result: BarcodeResult) => {
+      const last = lastNotFoundRef.current;
+      if (last && last.code === result.data && Date.now() - last.at < 3000) {
+        return;
+      }
+      handleBarcodeScanned(result);
+    },
+    [handleBarcodeScanned],
+  );
 
   function handleManualSubmit(barcode: string) {
     setShowManualEntry(false);
     setShowNotFound(false);
+    lastNotFoundRef.current = null;
     setManualBarcode(barcode);
   }
 
-  function handleDismissNotFound() {
+  const handleDismissNotFound = useCallback(() => {
     setShowNotFound(false);
-    resumeScan();
-  }
+  }, []);
 
   function handleAddToCart(price: number, quantity: number) {
     if (!foundProduct) return;
@@ -149,7 +168,7 @@ export function CartScannerScreen() {
         style={{ flex: 1 }}
         facing="back"
         barcodeScannerSettings={{ barcodeTypes: ['ean13', 'upc_a'] }}
-        onBarcodeScanned={isPaused ? undefined : handleBarcodeScanned}
+        onBarcodeScanned={isPaused ? undefined : handleScan}
       />
 
       <ScannerOverlay />
@@ -236,37 +255,15 @@ export function CartScannerScreen() {
         </View>
       ) : null}
 
-      {/* Product not found */}
-      {showNotFound ? (
-        <View className="absolute bottom-0 left-0 right-0 rounded-t-3xl bg-background-0 px-6 pb-10 pt-6">
-          <View className="mb-4 self-center h-1 w-10 rounded-full bg-outline-200" />
-          <Text className="mb-2 text-xl font-bold text-typography-900">
-            Produto Nao Encontrado
-          </Text>
-          <Text className="mb-6 text-sm text-typography-500">
-            Codigo: <Text className="font-mono font-semibold text-typography-900">{scannedBarcode}</Text>
-          </Text>
-          <TouchableOpacity
-            className="mb-3 flex-row items-center justify-center gap-2 rounded-full bg-primary-500 py-3.5"
-            onPress={() => {
-              setShowNotFound(false);
-              setShowManualEntry(true);
-            }}
-            activeOpacity={0.8}
-          >
-            <Ionicons name="keypad-outline" size={18} color={colors.white} />
-            <Text className="text-sm font-bold text-white">Digitar Codigo</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="flex-row items-center justify-center gap-2 rounded-full border border-outline-200 py-3.5"
-            onPress={handleDismissNotFound}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="scan-outline" size={18} color={colors.icon} />
-            <Text className="text-sm font-semibold text-typography-700">Escanear Novamente</Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
+      <ProductNotFoundSheet
+        visible={showNotFound && !showPriceEntry}
+        barcode={notFoundBarcode}
+        onManualEntry={() => {
+          setShowNotFound(false);
+          setShowManualEntry(true);
+        }}
+        onDismiss={handleDismissNotFound}
+      />
 
       <PriceEntryModal
         visible={showPriceEntry}

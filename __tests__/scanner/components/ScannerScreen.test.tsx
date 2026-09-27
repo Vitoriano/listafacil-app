@@ -127,10 +127,12 @@ describe('ScannerScreen', () => {
       fireEvent.press(getByText('Buscar Produto'));
 
       // Wait for query to resolve and not-found sheet to appear
-      await waitFor(() => expect(getByText('Produto Nao Encontrado')).toBeTruthy(), {
+      await waitFor(() => expect(getByText('Produto não encontrado')).toBeTruthy(), {
         timeout: 3000,
       });
-      expect(getByText('Escanear')).toBeTruthy();
+      // A câmera continua ativa: o aviso não bloqueia a leitura.
+      expect(getByText('A câmera continua ativa: aponte para outro código para tentar de novo.')).toBeTruthy();
+      expect(getByLabelText('Digitar código de barras')).toBeTruthy();
     });
 
     it('navigates to product detail after manual entry of known barcode', async () => {
@@ -148,7 +150,7 @@ describe('ScannerScreen', () => {
       });
     });
 
-    it('dismisses the not-found sheet and resumes scan on "Scan Again"', async () => {
+    it('dismisses the not-found sheet on close', async () => {
       const { getByText, getByLabelText, queryByText } = renderScanner();
       await waitFor(() => expect(getByText('Digitar Codigo')).toBeTruthy());
 
@@ -158,15 +160,15 @@ describe('ScannerScreen', () => {
       fireEvent.changeText(input, '0000000000000');
       fireEvent.press(getByText('Buscar Produto'));
 
-      await waitFor(() => expect(getByText('Produto Nao Encontrado')).toBeTruthy(), {
+      await waitFor(() => expect(getByText('Produto não encontrado')).toBeTruthy(), {
         timeout: 3000,
       });
 
       act(() => {
-        fireEvent.press(getByText('Escanear'));
+        fireEvent.press(getByLabelText('Fechar aviso'));
       });
 
-      expect(queryByText('Produto Nao Encontrado')).toBeNull();
+      expect(queryByText('Produto não encontrado')).toBeNull();
     });
   });
 });

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, Platform, Pressable, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Platform, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { CameraView } from 'expo-camera';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,6 +11,11 @@ import { useScanner } from '../hooks/useScanner';
 import { useBarcodeResult } from '../hooks/useBarcodeResult';
 import { ScannerOverlay } from './ScannerOverlay';
 import { ManualEntryModal } from './ManualEntryModal';
+import { ProductNotFoundSheet } from './ProductNotFoundSheet';
+import type { BarcodeResult } from '../types';
+
+/** Depois de um "não encontrado", ignora o mesmo código por este tempo (evita repique). */
+const SAME_CODE_COOLDOWN_MS = 3000;
 
 export function ScannerScreen() {
   const router = useRouter();
@@ -32,6 +37,8 @@ export function ScannerScreen() {
 
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [showNotFound, setShowNotFound] = useState(false);
+  const [notFoundBarcode, setNotFoundBarcode] = useState<string | null>(null);
+  const lastNotFoundRef = useRef<{ code: string; at: number } | null>(null);
 
   useEffect(() => {
     if (!permissionDetermined || (!permissionGranted && canAskAgain)) {
@@ -49,21 +56,36 @@ export function ScannerScreen() {
         resumeScan();
       } else {
         logger.info('Scanner', 'Product not found for barcode', scannedBarcode);
+        // Mostra o aviso e já libera a câmera: o usuário só precisa apontar para outro código.
+        lastNotFoundRef.current = { code: scannedBarcode, at: Date.now() };
+        setNotFoundBarcode(scannedBarcode);
         setShowNotFound(true);
+        resumeScan();
       }
     }
   }, [isFetched, product, scannedBarcode, router, resumeScan]);
 
+  const handleScan = useCallback(
+    (result: BarcodeResult) => {
+      const last = lastNotFoundRef.current;
+      if (last && last.code === result.data && Date.now() - last.at < SAME_CODE_COOLDOWN_MS) {
+        return;
+      }
+      handleBarcodeScanned(result);
+    },
+    [handleBarcodeScanned],
+  );
+
   function handleManualSubmit(barcode: string) {
     setShowManualEntry(false);
     setShowNotFound(false);
+    lastNotFoundRef.current = null;
     setManualBarcode(barcode);
   }
 
-  function handleDismissNotFound() {
+  const handleDismissNotFound = useCallback(() => {
     setShowNotFound(false);
-    resumeScan();
-  }
+  }, []);
 
   const androidPadding = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0;
 
@@ -120,7 +142,7 @@ export function ScannerScreen() {
         barcodeScannerSettings={{
           barcodeTypes: ['ean13', 'upc_a'],
         }}
-        onBarcodeScanned={isPaused ? undefined : handleBarcodeScanned}
+        onBarcodeScanned={isPaused ? undefined : handleScan}
       />
 
       <ScannerOverlay />
@@ -174,49 +196,15 @@ export function ScannerScreen() {
         </View>
       ) : null}
 
-      {/* Product not found modal */}
-      <Modal
+      <ProductNotFoundSheet
         visible={showNotFound}
-        animationType="fade"
-        transparent={false}
-        presentationStyle="overFullScreen"
-        statusBarTranslucent
-        onRequestClose={handleDismissNotFound}
-      >
-        <Pressable
-          onPress={handleDismissNotFound}
-          style={{ flex: 1, backgroundColor: '#000000AA', justifyContent: 'center', paddingHorizontal: 32 }}
-        >
-          <Pressable onPress={() => {}} style={{ backgroundColor: colors.background, borderRadius: 16, padding: 20 }}>
-            <Text className="mb-2 text-base font-bold text-typography-900">
-              Produto Nao Encontrado
-            </Text>
-            <Text className="mb-4 text-sm text-typography-500">
-              Nenhum produto encontrado para o codigo{' '}
-              <Text className="font-mono font-semibold text-typography-900">{scannedBarcode}</Text>.
-            </Text>
-            <View className="mt-4 flex-row gap-3">
-              <TouchableOpacity
-                onPress={handleDismissNotFound}
-                className="flex-1 items-center rounded-full border-2 border-outline-200 py-3"
-                activeOpacity={0.7}
-              >
-                <Text className="text-sm font-bold text-typography-500">Escanear</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  setShowNotFound(false);
-                  setShowManualEntry(true);
-                }}
-                className="flex-1 items-center rounded-full bg-primary-500 py-3"
-                activeOpacity={0.8}
-              >
-                <Text className="text-sm font-bold text-white">Digitar Codigo</Text>
-              </TouchableOpacity>
-            </View>
-          </Pressable>
-        </Pressable>
-      </Modal>
+        barcode={notFoundBarcode}
+        onManualEntry={() => {
+          setShowNotFound(false);
+          setShowManualEntry(true);
+        }}
+        onDismiss={handleDismissNotFound}
+      />
 
       <ManualEntryModal
         visible={showManualEntry}
