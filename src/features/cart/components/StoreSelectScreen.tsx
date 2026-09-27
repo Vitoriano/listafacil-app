@@ -56,7 +56,7 @@ function ManualSelectButton({ onPress }: { onPress: () => void }) {
       activeOpacity={0.8}
     >
       <Text className="text-sm font-semibold text-primary-500">
-        Selecionar manualmente
+        Buscar na lista
       </Text>
     </TouchableOpacity>
   );
@@ -124,7 +124,7 @@ export function StoreSelectScreen() {
   }
 
   function handleManualSelect() {
-    router.push({ pathname: '/cart/manual-select', params: linked.params });
+    router.push({ pathname: '/cart/store-list', params: linked.params });
   }
 
   async function handleSelectStore(store: Store) {
@@ -170,7 +170,7 @@ export function StoreSelectScreen() {
       logger.error('Cart', 'Failed to register place', error);
       Alert.alert(
         'Não foi possível cadastrar',
-        'Tente novamente ou escolha o supermercado pelo mapa.',
+        'Tente novamente ou escolha o supermercado na lista.',
       );
     } finally {
       setRegisteringPlaceId(null);
@@ -201,10 +201,10 @@ export function StoreSelectScreen() {
                 className="rounded-full bg-primary-500 px-8 py-3.5"
                 onPress={handleManualSelect}
                 accessibilityRole="button"
-                accessibilityLabel="Selecionar manualmente"
+                accessibilityLabel="Buscar na lista"
                 activeOpacity={0.8}
               >
-                <Text className="text-sm font-bold text-white">Selecionar manualmente</Text>
+                <Text className="text-sm font-bold text-white">Buscar na lista</Text>
               </TouchableOpacity>
             ) : (
               <ManualSelectButton onPress={handleManualSelect} />
@@ -381,7 +381,7 @@ export function StoreSelectScreen() {
             </Text>
             <TouchableOpacity onPress={handleManualSelect}>
               <Text className="text-xs font-semibold text-primary-500">
-                Selecionar manualmente
+                Buscar na lista
               </Text>
             </TouchableOpacity>
           </View>

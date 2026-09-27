@@ -20,7 +20,6 @@ pipeline automático do GitHub Actions (tag `vX.Y.Z` → Play).
 |-------------------------------------------|-----------------------------------------------------------------------|
 | `eas.json`                                | Perfis de build (`development`, `preview`, `production`) e de submit  |
 | `app.json`                                | Config estática: `version`, `android.versionCode`, `package`, plugins, `extra.eas.projectId`, `owner` |
-| `app.config.js`                           | Config dinâmica: injeta a chave do Google Maps a partir do env        |
 | `plugins/withAndroidReleaseSigning.js`    | Config plugin: assinatura de release via propriedades do Gradle       |
 | `scripts/setup-eas-env.sh`                | Envia as `EXPO_PUBLIC_*` do `.env` para os ambientes do EAS           |
 | `package.json` (`build:*`)                | Atalhos para os comandos `eas build`                                  |
@@ -103,11 +102,11 @@ eas env:update --environment preview --name EXPO_PUBLIC_API_URL --value https://
 eas env:pull --environment preview     # gera .env.local com os valores do EAS
 ```
 
-### Chave do Google Maps no AndroidManifest
+### Chave do Google Places
 
-`react-native-maps` com `PROVIDER_GOOGLE` exige a chave no `AndroidManifest`, não basta no JS.
-`app.config.js` lê `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` e grava em `android.config.googleMaps.apiKey`
-durante o prebuild. Sem a variável a chave simplesmente não é injetada e o mapa fica em branco.
+`EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` é usada só no JS (Google Places: mercados próximos e busca por
+nome na escolha de loja). Precisa estar definida como variável de ambiente do EAS para entrar no
+build; sem ela o app mostra apenas as lojas cadastradas no banco.
 
 ## Gerar um APK de teste
 
