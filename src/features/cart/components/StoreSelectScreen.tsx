@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Text,
   TouchableOpacity,
@@ -12,9 +13,13 @@ import { AppHeader } from '@/shared/components/AppHeader';
 import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { useLocation, type LocationStatus } from '@/shared/hooks/useLocation';
 import { logger } from '@/shared/utils/logger';
+import { storeRepository } from '@/data/repositories';
+import { getPlaceDetails, hasGooglePlacesKey, type NearbyPlace } from '@/lib/googlePlaces';
 import { useNearbyStores } from '../hooks/useNearbyStores';
+import { useNearbyPlaces } from '../hooks/useNearbyPlaces';
 import { useStartPurchase } from '../hooks/useStartPurchase';
 import { useLinkedListParam } from '../hooks/useLinkedListParam';
+import { mergeNearbyStores } from '../utils/mergeNearbyStores';
 import { LinkedListChip } from './LinkedListChip';
 import type { Store } from '@/shared/types';
 
@@ -24,22 +29,6 @@ const STORE_TYPE_LABELS: Record<string, string> = {
   convenience: 'Conveniencia',
   wholesale: 'Atacado',
 };
-
-function getDistanceKm(
-  lat1: number,
-  lng1: number,
-  lat2: number,
-  lng2: number,
-): number {
-  const toRad = (v: number) => (v * Math.PI) / 180;
-  const R = 6371;
-  const dLat = toRad(lat2 - lat1);
-  const dLng = toRad(lng2 - lng1);
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
 
 function formatDistance(km: number): string {
   if (km < 1) {
@@ -71,8 +60,21 @@ export function StoreSelectScreen() {
     location.latitude,
     location.longitude,
   );
+  // Google Places: mostra supermercados da região mesmo sem cadastro no banco.
+  const { data: places, isLoading: isLoadingPlaces } = useNearbyPlaces(
+    location.latitude,
+    location.longitude,
+  );
   const { start, isStarting } = useStartPurchase();
   const linked = useLinkedListParam();
+  const [registeringPlaceId, setRegisteringPlaceId] = useState<string | null>(null);
+
+  const options = useMemo(
+    () => mergeNearbyStores(stores, places, location),
+    // location muda de identidade a cada render; só lat/lng importam aqui.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [stores, places, location.latitude, location.longitude],
+  );
   const isWaitingForGps = location.status === 'requesting' || location.status === 'idle';
   const [slowSince, setSlowSince] = useState<LocationStatus | null>(null);
 
@@ -102,6 +104,43 @@ export function StoreSelectScreen() {
     if (ok) {
       // Volta direto para o carrinho, descartando as telas de escolha da pilha.
       router.dismissTo('/cart');
+    }
+  }
+
+  /**
+   * Loja vinda do Google: cadastra na API (idempotente por googlePlaceId, a API
+   * devolve a existente) e inicia a compra com o registro persistido.
+   */
+  async function handleSelectPlace(place: NearbyPlace) {
+    logger.info('Cart', 'Google place selected', place.placeId);
+    setRegisteringPlaceId(place.placeId);
+    try {
+      const details = await getPlaceDetails(place.placeId);
+      const store = await storeRepository.create({
+        name: details.name || place.name,
+        address: details.address || place.address,
+        city: details.city,
+        state: details.state,
+        latitude: details.latitude,
+        longitude: details.longitude,
+        googlePlaceId: place.placeId,
+      });
+      const ok = await start({
+        storeId: store.id,
+        storeName: store.name,
+        linkedList: linked.linkedList,
+      });
+      if (ok) {
+        router.dismissTo('/cart');
+      }
+    } catch (error) {
+      logger.error('Cart', 'Failed to register place', error);
+      Alert.alert(
+        'Não foi possível cadastrar',
+        'Tente novamente ou escolha o supermercado pelo mapa.',
+      );
+    } finally {
+      setRegisteringPlaceId(null);
     }
   }
 
@@ -251,7 +290,9 @@ export function StoreSelectScreen() {
   }
 
   const isLocationReady = location.status === 'granted';
-  const hasStores = stores && stores.length > 0;
+  const isLoadingOptions = isLoadingStores || (hasGooglePlacesKey() && isLoadingPlaces);
+  const hasOptions = options.length > 0;
+  const isBusy = isStarting || registeringPlaceId !== null;
 
   return (
     <View className="flex-1 bg-background-50">
@@ -260,7 +301,7 @@ export function StoreSelectScreen() {
 
       {!isLocationReady ? (
         renderLocationState()
-      ) : isLoadingStores ? (
+      ) : isLoadingOptions && !hasOptions ? (
         <View className="flex-1 items-center justify-center px-8">
           <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-primary-50">
             <ActivityIndicator size="large" color={colors.primary} />
@@ -269,7 +310,7 @@ export function StoreSelectScreen() {
             Buscando supermercados proximos...
           </Text>
         </View>
-      ) : !hasStores ? (
+      ) : !hasOptions ? (
         <View className="flex-1 items-center justify-center px-8">
           <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-background-100">
             <Ionicons
@@ -282,7 +323,7 @@ export function StoreSelectScreen() {
             Nenhum supermercado encontrado
           </Text>
           <Text className="mb-6 text-center text-sm leading-5 text-typography-500">
-            Nao encontramos supermercados num raio de 50km da sua localizacao.
+            Não encontramos supermercados perto da sua localização.
           </Text>
           <TouchableOpacity
             className="mb-3 rounded-full bg-primary-500 px-8 py-3.5"
@@ -313,58 +354,75 @@ export function StoreSelectScreen() {
           </View>
 
           <FlatList
-            data={stores}
-            keyExtractor={(item) => item.id}
+            data={options}
+            keyExtractor={(item) => item.key}
             contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}
             renderItem={({ item }) => {
-              const distance =
-                item.distanceKm ??
-                (location.latitude && location.longitude
-                  ? getDistanceKm(
-                      location.latitude,
-                      location.longitude,
-                      item.latitude,
-                      item.longitude,
-                    )
-                  : null);
+              const isStore = item.kind === 'store';
+              const name = isStore ? item.store.name : item.place.name;
+              const address = isStore ? item.store.address : item.place.address;
+              const secondary = isStore
+                ? `${item.store.city}, ${item.store.state}`
+                : 'Toque para cadastrar e começar a compra';
+              const isRegistering = !isStore && registeringPlaceId === item.place.placeId;
 
               return (
                 <TouchableOpacity
-                  onPress={() => handleSelectStore(item)}
+                  onPress={() =>
+                    isStore ? handleSelectStore(item.store) : handleSelectPlace(item.place)
+                  }
                   accessibilityRole="button"
-                  accessibilityLabel={`Selecionar ${item.name}`}
+                  accessibilityLabel={`Selecionar ${name}`}
                   className="mb-2.5"
                   activeOpacity={0.7}
-                  disabled={isStarting}
+                  disabled={isBusy}
                 >
                   <View className="flex-row items-center gap-3 rounded-2xl bg-background-0 p-4">
-                    <View className="h-11 w-11 items-center justify-center rounded-full bg-primary-50">
-                      <Ionicons
-                        name="storefront-outline"
-                        size={20}
-                        color={colors.primary}
-                      />
+                    <View
+                      className={`h-11 w-11 items-center justify-center rounded-full ${
+                        isStore ? 'bg-primary-50' : 'bg-background-100'
+                      }`}
+                    >
+                      {isRegistering ? (
+                        <ActivityIndicator size="small" color={colors.primary} />
+                      ) : (
+                        <Ionicons
+                          name={isStore ? 'storefront' : 'storefront-outline'}
+                          size={20}
+                          color={isStore ? colors.primary : colors.textTertiary}
+                        />
+                      )}
                     </View>
                     <View className="flex-1">
-                      <Text className="text-sm font-bold text-typography-900">
-                        {item.name}
+                      <Text className="text-sm font-bold text-typography-900" numberOfLines={1}>
+                        {name}
                       </Text>
-                      <Text className="mt-0.5 text-xs text-typography-500">
-                        {item.address}
+                      <Text className="mt-0.5 text-xs text-typography-500" numberOfLines={2}>
+                        {address}
                       </Text>
-                      <Text className="text-xs text-typography-400">
-                        {item.city}, {item.state}
+                      <Text className="text-xs text-typography-400" numberOfLines={1}>
+                        {secondary}
                       </Text>
                     </View>
                     <View className="items-end gap-1">
-                      <View className="rounded-full bg-background-50 px-2.5 py-1">
-                        <Text className="text-xs text-typography-500">
-                          {STORE_TYPE_LABELS[item.type] ?? item.type}
+                      <View
+                        className={`rounded-full px-2.5 py-1 ${
+                          isStore ? 'bg-success-50' : 'bg-background-50'
+                        }`}
+                      >
+                        <Text
+                          className={`text-xs ${
+                            isStore ? 'font-semibold text-success-700' : 'text-typography-500'
+                          }`}
+                        >
+                          {isStore
+                            ? STORE_TYPE_LABELS[item.store.type] ?? item.store.type
+                            : 'Google'}
                         </Text>
                       </View>
-                      {distance !== null && (
+                      {item.distanceKm !== null && (
                         <Text className="text-xs font-semibold text-primary-500">
-                          {formatDistance(distance)}
+                          {formatDistance(item.distanceKm)}
                         </Text>
                       )}
                     </View>

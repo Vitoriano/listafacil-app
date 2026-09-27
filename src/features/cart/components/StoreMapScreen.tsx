@@ -16,6 +16,7 @@ import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { useLocation } from '@/shared/hooks/useLocation';
 import { logger } from '@/shared/utils/logger';
 import { storeRepository } from '@/data/repositories';
+import { extractCityState } from '@/lib/googlePlaces';
 import { useStartPurchase } from '../hooks/useStartPurchase';
 import { useLinkedListParam } from '../hooks/useLinkedListParam';
 
@@ -29,29 +30,6 @@ interface SelectedPlace {
   state: string;
   latitude: number;
   longitude: number;
-}
-
-function extractCityState(addressComponents: any[]): {
-  city: string;
-  state: string;
-} {
-  let city = '';
-  let state = '';
-
-  for (const component of addressComponents ?? []) {
-    const types: string[] = component.types ?? [];
-    if (
-      types.includes('administrative_area_level_2') ||
-      types.includes('locality')
-    ) {
-      city = component.long_name;
-    }
-    if (types.includes('administrative_area_level_1')) {
-      state = component.short_name;
-    }
-  }
-
-  return { city, state };
 }
 
 export function StoreMapScreen() {
