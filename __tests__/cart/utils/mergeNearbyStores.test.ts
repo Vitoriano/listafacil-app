@@ -68,6 +68,15 @@ describe('mergeNearbyStores', () => {
     expect(result.map((o) => o.key)).toEqual(['place:near-place', 'store:far-store']);
   });
 
+  it('drops duplicated Google places (same placeId from nearby and name search)', () => {
+    const result = mergeNearbyStores(
+      [],
+      [place({ placeId: 'dup' }), place({ placeId: 'dup', name: 'Nordestão (busca)' })],
+      origin,
+    );
+    expect(result).toHaveLength(1);
+  });
+
   it('works with empty inputs', () => {
     expect(mergeNearbyStores(undefined, undefined, origin)).toEqual([]);
   });

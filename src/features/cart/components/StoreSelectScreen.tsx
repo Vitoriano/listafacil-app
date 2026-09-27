@@ -4,6 +4,7 @@ import {
   Alert,
   FlatList,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -12,11 +13,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { AppHeader } from '@/shared/components/AppHeader';
 import { useThemeColors } from '@/shared/hooks/useThemeColors';
 import { useLocation, type LocationStatus } from '@/shared/hooks/useLocation';
+import { useDebounce } from '@/shared/hooks/useDebounce';
 import { logger } from '@/shared/utils/logger';
 import { storeRepository } from '@/data/repositories';
 import { getPlaceDetails, hasGooglePlacesKey, type NearbyPlace } from '@/lib/googlePlaces';
 import { useNearbyStores } from '../hooks/useNearbyStores';
-import { useNearbyPlaces } from '../hooks/useNearbyPlaces';
+import { useNearbyPlaces, useSearchPlaces } from '../hooks/useNearbyPlaces';
 import { useStartPurchase } from '../hooks/useStartPurchase';
 import { useLinkedListParam } from '../hooks/useLinkedListParam';
 import { mergeNearbyStores } from '../utils/mergeNearbyStores';
@@ -29,6 +31,14 @@ const STORE_TYPE_LABELS: Record<string, string> = {
   convenience: 'Conveniencia',
   wholesale: 'Atacado',
 };
+
+function normalizeText(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
 
 function formatDistance(km: number): string {
   if (km < 1) {
@@ -61,20 +71,43 @@ export function StoreSelectScreen() {
     location.longitude,
   );
   // Google Places: mostra supermercados da região mesmo sem cadastro no banco.
-  const { data: places, isLoading: isLoadingPlaces } = useNearbyPlaces(
-    location.latitude,
-    location.longitude,
-  );
+  const {
+    data: places,
+    isLoading: isLoadingPlaces,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useNearbyPlaces(location.latitude, location.longitude);
   const { start, isStarting } = useStartPurchase();
   const linked = useLinkedListParam();
   const [registeringPlaceId, setRegisteringPlaceId] = useState<string | null>(null);
 
-  const options = useMemo(
-    () => mergeNearbyStores(stores, places, location),
+  // Busca por nome: filtra o que já está na tela e consulta o Google a partir de 3 letras.
+  const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 400);
+  const { data: searchedPlaces, isFetching: isSearchingPlaces } = useSearchPlaces(
+    debouncedSearch,
+    location.latitude,
+    location.longitude,
+  );
+  const isSearching = search.trim().length > 0;
+
+  const options = useMemo(() => {
+    const all = mergeNearbyStores(
+      stores,
+      [...(places ?? []), ...(searchedPlaces ?? [])],
+      location,
+    );
+    const term = normalizeText(search);
+    if (!term) return all;
+    return all.filter((option) => {
+      const name = option.kind === 'store' ? option.store.name : option.place.name;
+      const address = option.kind === 'store' ? option.store.address : option.place.address;
+      return normalizeText(name).includes(term) || normalizeText(address).includes(term);
+    });
     // location muda de identidade a cada render; só lat/lng importam aqui.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [stores, places, location.latitude, location.longitude],
-  );
+  }, [stores, places, searchedPlaces, search, location.latitude, location.longitude]);
   const isWaitingForGps = location.status === 'requesting' || location.status === 'idle';
   const [slowSince, setSlowSince] = useState<LocationStatus | null>(null);
 
@@ -310,7 +343,7 @@ export function StoreSelectScreen() {
             Buscando supermercados proximos...
           </Text>
         </View>
-      ) : !hasOptions ? (
+      ) : !hasOptions && !isSearching ? (
         <View className="flex-1 items-center justify-center px-8">
           <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-background-100">
             <Ionicons
@@ -339,12 +372,12 @@ export function StoreSelectScreen() {
         </View>
       ) : (
         <>
-          <View className="flex-row items-center gap-2 px-5 py-3">
+          <View className="flex-row items-center gap-2 px-5 pt-3">
             <Ionicons name="location" size={14} color={colors.primary} />
             <Text className="flex-1 text-sm text-typography-500">
               {location.isApproximate
                 ? 'Perto da sua última localização'
-                : 'Supermercados num raio de 50km'}
+                : 'Supermercados mais próximos'}
             </Text>
             <TouchableOpacity onPress={handleManualSelect}>
               <Text className="text-xs font-semibold text-primary-500">
@@ -353,10 +386,83 @@ export function StoreSelectScreen() {
             </TouchableOpacity>
           </View>
 
+          <View className="px-5 py-3">
+            <View className="flex-row items-center gap-2.5 rounded-xl bg-background-0 px-3.5">
+              <Ionicons name="search" size={18} color={colors.textTertiary} />
+              <TextInput
+                className="flex-1 py-3 text-sm text-typography-900"
+                placeholder="Buscar mercado pelo nome..."
+                placeholderTextColor={colors.textQuaternary}
+                value={search}
+                onChangeText={setSearch}
+                autoCapitalize="none"
+                autoCorrect={false}
+                returnKeyType="search"
+                accessibilityLabel="Buscar mercado pelo nome"
+              />
+              {isSearchingPlaces ? (
+                <ActivityIndicator size="small" color={colors.primary} />
+              ) : search.length > 0 ? (
+                <TouchableOpacity
+                  onPress={() => setSearch('')}
+                  accessibilityRole="button"
+                  accessibilityLabel="Limpar busca"
+                >
+                  <Ionicons name="close-circle" size={18} color={colors.textTertiary} />
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          </View>
+
           <FlatList
             data={options}
             keyExtractor={(item) => item.key}
             contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}
+            keyboardShouldPersistTaps="handled"
+            ListEmptyComponent={
+              isSearching ? (
+                <View className="items-center py-12">
+                  {isSearchingPlaces || search !== debouncedSearch ? (
+                    <ActivityIndicator size="small" color={colors.primary} />
+                  ) : (
+                    <>
+                      <Ionicons name="storefront-outline" size={28} color={colors.textTertiary} />
+                      <Text className="mt-3 text-center text-sm text-typography-500">
+                        Nenhum mercado com esse nome perto de você.
+                      </Text>
+                      {search.trim().length < 3 ? (
+                        <Text className="mt-1 text-center text-xs text-typography-400">
+                          Digite pelo menos 3 letras para buscar no Google.
+                        </Text>
+                      ) : null}
+                    </>
+                  )}
+                </View>
+              ) : null
+            }
+            ListFooterComponent={
+              !isSearching && hasNextPage ? (
+                <TouchableOpacity
+                  onPress={() => fetchNextPage()}
+                  disabled={isFetchingNextPage}
+                  accessibilityRole="button"
+                  accessibilityLabel="Carregar mais mercados"
+                  className="mt-1 flex-row items-center justify-center gap-2 rounded-full border-2 border-outline-200 py-3.5"
+                  activeOpacity={0.7}
+                >
+                  {isFetchingNextPage ? (
+                    <ActivityIndicator size="small" color={colors.primary} />
+                  ) : (
+                    <>
+                      <Ionicons name="chevron-down" size={18} color={colors.icon} />
+                      <Text className="text-sm font-bold text-typography-700">
+                        Carregar mais 20
+                      </Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+              ) : null
+            }
             renderItem={({ item }) => {
               const isStore = item.kind === 'store';
               const name = isStore ? item.store.name : item.place.name;

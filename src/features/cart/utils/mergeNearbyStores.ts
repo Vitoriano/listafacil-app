@@ -54,7 +54,14 @@ export function mergeNearbyStores(
     (stores ?? []).map((s) => s.googlePlaceId).filter((id): id is string => !!id),
   );
 
+  const seenPlaceIds = new Set<string>();
   const placeOptions: NearbyOption[] = (places ?? [])
+    // Mesmo lugar vindo de duas buscas (próximos + por nome): mantém o primeiro.
+    .filter((place) => {
+      if (seenPlaceIds.has(place.placeId)) return false;
+      seenPlaceIds.add(place.placeId);
+      return true;
+    })
     .filter((place) => !knownPlaceIds.has(place.placeId))
     .filter((place) => {
       const name = normalizeName(place.name);
