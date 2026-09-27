@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -10,7 +10,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { AppHeader } from '@/shared/components/AppHeader';
 import { useThemeColors } from '@/shared/hooks/useThemeColors';
-import { useLocation } from '@/shared/hooks/useLocation';
+import { useLocation, type LocationStatus } from '@/shared/hooks/useLocation';
 import { logger } from '@/shared/utils/logger';
 import { useNearbyStores } from '../hooks/useNearbyStores';
 import { useStartPurchase } from '../hooks/useStartPurchase';
@@ -73,6 +73,16 @@ export function StoreSelectScreen() {
   );
   const { start, isStarting } = useStartPurchase();
   const linked = useLinkedListParam();
+  const isWaitingForGps = location.status === 'requesting' || location.status === 'idle';
+  const [slowSince, setSlowSince] = useState<LocationStatus | null>(null);
+
+  // Depois de alguns segundos sem resposta do GPS, avisa e destaca a escolha manual.
+  useEffect(() => {
+    if (!isWaitingForGps) return;
+    const timer = setTimeout(() => setSlowSince(location.status), 5000);
+    return () => clearTimeout(timer);
+  }, [isWaitingForGps, location.status]);
+  const isTakingLong = isWaitingForGps && slowSince !== null;
 
   function handleBack() {
     router.back();
@@ -103,8 +113,31 @@ export function StoreSelectScreen() {
             <ActivityIndicator size="large" color={colors.primary} />
           </View>
           <Text className="text-center text-sm text-typography-500">
-            Obtendo sua localizacao...
+            {isTakingLong
+              ? 'O GPS está demorando para responder...'
+              : 'Obtendo sua localização...'}
           </Text>
+          {isTakingLong ? (
+            <Text className="mt-2 text-center text-xs leading-5 text-typography-400">
+              Em lugares fechados o sinal pode falhar. Você pode escolher o
+              supermercado manualmente enquanto isso.
+            </Text>
+          ) : null}
+          <View className="mt-6">
+            {isTakingLong ? (
+              <TouchableOpacity
+                className="rounded-full bg-primary-500 px-8 py-3.5"
+                onPress={handleManualSelect}
+                accessibilityRole="button"
+                accessibilityLabel="Selecionar manualmente"
+                activeOpacity={0.8}
+              >
+                <Text className="text-sm font-bold text-white">Selecionar manualmente</Text>
+              </TouchableOpacity>
+            ) : (
+              <ManualSelectButton onPress={handleManualSelect} />
+            )}
+          </View>
         </View>
       );
     }
@@ -268,7 +301,9 @@ export function StoreSelectScreen() {
           <View className="flex-row items-center gap-2 px-5 py-3">
             <Ionicons name="location" size={14} color={colors.primary} />
             <Text className="flex-1 text-sm text-typography-500">
-              Supermercados num raio de 50km
+              {location.isApproximate
+                ? 'Perto da sua última localização'
+                : 'Supermercados num raio de 50km'}
             </Text>
             <TouchableOpacity onPress={handleManualSelect}>
               <Text className="text-xs font-semibold text-primary-500">
@@ -283,14 +318,15 @@ export function StoreSelectScreen() {
             contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}
             renderItem={({ item }) => {
               const distance =
-                location.latitude && location.longitude
+                item.distanceKm ??
+                (location.latitude && location.longitude
                   ? getDistanceKm(
                       location.latitude,
                       location.longitude,
                       item.latitude,
                       item.longitude,
                     )
-                  : null;
+                  : null);
 
               return (
                 <TouchableOpacity

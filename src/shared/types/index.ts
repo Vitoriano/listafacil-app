@@ -15,6 +15,8 @@ export interface Store {
   latitude: number;
   longitude: number;
   type: 'supermarket' | 'hypermarket' | 'convenience' | 'wholesale';
+  /** Distância até o usuário, devolvida pela API em buscas por proximidade. */
+  distanceKm?: number;
 }
 
 export interface CreateStorePayload {
