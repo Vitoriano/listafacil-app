@@ -1,5 +1,4 @@
-import type { Store } from '@/shared/types';
-import type { NearbyPlace } from '@/lib/googlePlaces';
+import type { NearbyPlace, Store } from '@/shared/types';
 
 export type NearbyOption =
   | { kind: 'store'; key: string; store: Store; distanceKm: number | null }

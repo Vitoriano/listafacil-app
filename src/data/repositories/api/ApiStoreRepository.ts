@@ -1,6 +1,6 @@
 import { api } from '@/config/api';
 import type { IStoreRepository } from '../interfaces/IStoreRepository';
-import type { Store, CreateStorePayload } from '@/shared/types';
+import type { Store, CreateStorePayload, NearbyPlacesResult } from '@/shared/types';
 
 export class ApiStoreRepository implements IStoreRepository {
   async getAll(): Promise<Store[]> {
@@ -34,5 +34,32 @@ export class ApiStoreRepository implements IStoreRepository {
   async create(payload: CreateStorePayload): Promise<Store> {
     const { data } = await api.post('/stores', payload);
     return data;
+  }
+
+  async getNearbyPlaces(
+    lat: number,
+    lng: number,
+    pageToken?: string,
+  ): Promise<NearbyPlacesResult> {
+    const { data } = await api.get('/stores/places/nearby', {
+      params: { lat, lng, pageToken },
+    });
+    return data as NearbyPlacesResult;
+  }
+
+  async searchPlacesByName(
+    query: string,
+    lat: number,
+    lng: number,
+  ): Promise<NearbyPlacesResult> {
+    const { data } = await api.get('/stores/places/search', {
+      params: { q: query, lat, lng },
+    });
+    return data as NearbyPlacesResult;
+  }
+
+  async createFromPlace(placeId: string): Promise<Store> {
+    const { data } = await api.post(`/stores/places/${encodeURIComponent(placeId)}`);
+    return data as Store;
   }
 }

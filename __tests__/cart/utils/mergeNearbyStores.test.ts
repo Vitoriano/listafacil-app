@@ -1,6 +1,5 @@
 import { mergeNearbyStores } from '@/features/cart/utils/mergeNearbyStores';
-import type { Store } from '@/shared/types';
-import type { NearbyPlace } from '@/lib/googlePlaces';
+import type { NearbyPlace, Store } from '@/shared/types';
 
 const origin = { latitude: -5.79, longitude: -35.21 };
 

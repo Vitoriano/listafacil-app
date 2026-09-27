@@ -39,7 +39,7 @@ Gera `~/.listafacil-secrets/upload-keystore.jks` (faça backup!) e envia para o 
 | secret   | `ANDROID_KEYSTORE_BASE64`                   | keystore em base64             |
 | secret   | `ANDROID_KEYSTORE_PASSWORD` / `ANDROID_KEY_ALIAS` / `ANDROID_KEY_PASSWORD` | `keystore.env` |
 | secret   | `PLAY_SERVICE_ACCOUNT_JSON`                 | `play-publisher.json`          |
-| secret   | `EXPO_PUBLIC_FIREBASE_*`, `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` | `.env` local  |
+| secret   | `EXPO_PUBLIC_FIREBASE_*` | `.env` local  |
 | variable | `EXPO_PUBLIC_API_URL`                       | argumento do script            |
 | variable | `EXPO_PUBLIC_FIREBASE_STORAGE_PATH_PREFIX`  | `.env` local                   |
 

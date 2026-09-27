@@ -30,3 +30,19 @@ export interface CreateStorePayload {
   longitude: number;
   googlePlaceId?: string;
 }
+
+/** Supermercado devolvido pelo Google Places (via API), ainda não cadastrado no banco. */
+export interface NearbyPlace {
+  placeId: string;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface NearbyPlacesResult {
+  /** false quando a API não tem chave do Google configurada. */
+  available: boolean;
+  places: NearbyPlace[];
+  nextPageToken?: string;
+}

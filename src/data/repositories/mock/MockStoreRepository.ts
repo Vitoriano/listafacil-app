@@ -1,7 +1,7 @@
 import { InMemoryStore } from '@/data/helpers/InMemoryStore';
 import { simulateDelay } from '@/data/helpers/delay';
 import type { IStoreRepository } from '../interfaces/IStoreRepository';
-import type { Store, CreateStorePayload } from '@/shared/types';
+import type { Store, CreateStorePayload, NearbyPlacesResult } from '@/shared/types';
 import seedStores from '@/data/seed/stores.json';
 
 function haversineDistanceKm(
@@ -69,6 +69,35 @@ export class MockStoreRepository implements IStoreRepository {
       latitude: payload.latitude,
       longitude: payload.longitude,
       type: 'supermarket',
+    };
+    this.store.create(newStore);
+    return newStore;
+  }
+
+  async getNearbyPlaces(): Promise<NearbyPlacesResult> {
+    await simulateDelay();
+    return { available: false, places: [] };
+  }
+
+  async searchPlacesByName(): Promise<NearbyPlacesResult> {
+    await simulateDelay();
+    return { available: false, places: [] };
+  }
+
+  async createFromPlace(placeId: string): Promise<Store> {
+    await simulateDelay();
+    const existing = this.store.getAll().find((s) => s.googlePlaceId === placeId);
+    if (existing) return existing;
+    const newStore: Store = {
+      id: `store-${Date.now()}`,
+      name: 'Mercado Google',
+      address: 'Endereço do Google',
+      city: 'Natal',
+      state: 'RN',
+      latitude: 0,
+      longitude: 0,
+      type: 'supermarket',
+      googlePlaceId: placeId,
     };
     this.store.create(newStore);
     return newStore;

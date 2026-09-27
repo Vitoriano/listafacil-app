@@ -82,7 +82,6 @@ O script lê o `.env` local e cria cada variável nos ambientes `development`, `
 |--------------------------------------------|--------------|---------------------------------|
 | `EXPO_PUBLIC_API_URL`                      | plaintext    | argumento do script (padrão `https://api.listafacil.nataldev.com.br/v1`) |
 | `EXPO_PUBLIC_FIREBASE_STORAGE_PATH_PREFIX` | plaintext    | `.env`                          |
-| `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY`          | sensitive    | `.env`                          |
 | `EXPO_PUBLIC_FIREBASE_*` (6 chaves)        | sensitive    | `.env`                          |
 
 `sensitive` só oculta o valor no painel do EAS. Todas as `EXPO_PUBLIC_*` acabam embutidas no bundle
@@ -102,11 +101,11 @@ eas env:update --environment preview --name EXPO_PUBLIC_API_URL --value https://
 eas env:pull --environment preview     # gera .env.local com os valores do EAS
 ```
 
-### Chave do Google Places
+### Google Places
 
-`EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` é usada só no JS (Google Places: mercados próximos e busca por
-nome na escolha de loja). Precisa estar definida como variável de ambiente do EAS para entrar no
-build; sem ela o app mostra apenas as lojas cadastradas no banco.
+A chave do Google não fica mais no app: os mercados próximos e a busca por nome passam pela API
+(`/stores/places/*`), que guarda a chave (`GOOGLE_PLACES_API_KEY` no Dokploy) e cacheia as buscas
+no Redis. Nenhuma variável do Google é necessária no EAS.
 
 ## Gerar um APK de teste
 

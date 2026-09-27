@@ -16,14 +16,17 @@ import { useLocation, type LocationStatus } from '@/shared/hooks/useLocation';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { logger } from '@/shared/utils/logger';
 import { storeRepository } from '@/data/repositories';
-import { getPlaceDetails, hasGooglePlacesKey, type NearbyPlace } from '@/lib/googlePlaces';
 import { useNearbyStores } from '../hooks/useNearbyStores';
 import { useNearbyPlaces, useSearchPlaces } from '../hooks/useNearbyPlaces';
 import { useStartPurchase } from '../hooks/useStartPurchase';
 import { useLinkedListParam } from '../hooks/useLinkedListParam';
-import { mergeNearbyStores } from '../utils/mergeNearbyStores';
+import { haversineKm, mergeNearbyStores } from '../utils/mergeNearbyStores';
 import { LinkedListChip } from './LinkedListChip';
-import type { Store } from '@/shared/types';
+import type { NearbyPlace, Store } from '@/shared/types';
+
+/** Banco "cobre a região" quando há pelo menos N lojas cadastradas neste raio. */
+const DB_COVERAGE_RADIUS_KM = 3;
+const DB_COVERAGE_MIN_STORES = 8;
 
 const STORE_TYPE_LABELS: Record<string, string> = {
   supermarket: 'Supermercado',
@@ -70,14 +73,30 @@ export function StoreSelectScreen() {
     location.latitude,
     location.longitude,
   );
-  // Google Places: mostra supermercados da região mesmo sem cadastro no banco.
+  // Google só entra quando o banco não cobre a região (poucas lojas perto) ou quando
+  // o usuário pede ("Ver mais mercados do Google"). Reduz chamadas conforme o cadastro cresce.
+  const dbCoversRegion = useMemo(() => {
+    if (!stores || location.latitude === null || location.longitude === null) return false;
+    const near = stores.filter(
+      (store) =>
+        (store.distanceKm ??
+          haversineKm(location.latitude!, location.longitude!, store.latitude, store.longitude)) <=
+        DB_COVERAGE_RADIUS_KM,
+    );
+    return near.length >= DB_COVERAGE_MIN_STORES;
+  }, [stores, location.latitude, location.longitude]);
+  const [googleRequested, setGoogleRequested] = useState(false);
+  const googleEnabled = googleRequested || (!isLoadingStores && !!stores && !dbCoversRegion);
+
   const {
-    data: places,
+    places,
+    available: placesAvailable,
     isLoading: isLoadingPlaces,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useNearbyPlaces(location.latitude, location.longitude);
+  } = useNearbyPlaces(location.latitude, location.longitude, googleEnabled);
+  const googleAvailable = placesAvailable !== false;
   const { start, isStarting } = useStartPurchase();
   const linked = useLinkedListParam();
   const [registeringPlaceId, setRegisteringPlaceId] = useState<string | null>(null);
@@ -85,10 +104,11 @@ export function StoreSelectScreen() {
   // Busca por nome: filtra o que já está na tela e consulta o Google a partir de 3 letras.
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 400);
-  const { data: searchedPlaces, isFetching: isSearchingPlaces } = useSearchPlaces(
+  const { places: searchedPlaces, isFetching: isSearchingPlaces } = useSearchPlaces(
     debouncedSearch,
     location.latitude,
     location.longitude,
+    googleAvailable,
   );
   const isSearching = search.trim().length > 0;
 
@@ -141,23 +161,14 @@ export function StoreSelectScreen() {
   }
 
   /**
-   * Loja vinda do Google: cadastra na API (idempotente por googlePlaceId, a API
-   * devolve a existente) e inicia a compra com o registro persistido.
+   * Loja vinda do Google: a API busca os detalhes e cadastra uma única vez
+   * (idempotente por googlePlaceId); a compra começa com o registro persistido.
    */
   async function handleSelectPlace(place: NearbyPlace) {
     logger.info('Cart', 'Google place selected', place.placeId);
     setRegisteringPlaceId(place.placeId);
     try {
-      const details = await getPlaceDetails(place.placeId);
-      const store = await storeRepository.create({
-        name: details.name || place.name,
-        address: details.address || place.address,
-        city: details.city,
-        state: details.state,
-        latitude: details.latitude,
-        longitude: details.longitude,
-        googlePlaceId: place.placeId,
-      });
+      const store = await storeRepository.createFromPlace(place.placeId);
       const ok = await start({
         storeId: store.id,
         storeName: store.name,
@@ -323,7 +334,7 @@ export function StoreSelectScreen() {
   }
 
   const isLocationReady = location.status === 'granted';
-  const isLoadingOptions = isLoadingStores || (hasGooglePlacesKey() && isLoadingPlaces);
+  const isLoadingOptions = isLoadingStores || (googleEnabled && isLoadingPlaces);
   const hasOptions = options.length > 0;
   const isBusy = isStarting || registeringPlaceId !== null;
 
@@ -430,7 +441,7 @@ export function StoreSelectScreen() {
                       <Text className="mt-3 text-center text-sm text-typography-500">
                         Nenhum mercado com esse nome perto de você.
                       </Text>
-                      {search.trim().length < 3 ? (
+                      {googleAvailable && search.trim().length < 3 ? (
                         <Text className="mt-1 text-center text-xs text-typography-400">
                           Digite pelo menos 3 letras para buscar no Google.
                         </Text>
@@ -441,7 +452,24 @@ export function StoreSelectScreen() {
               ) : null
             }
             ListFooterComponent={
-              !isSearching && hasNextPage ? (
+              !isSearching && !googleEnabled ? (
+                <TouchableOpacity
+                  onPress={() => setGoogleRequested(true)}
+                  accessibilityRole="button"
+                  accessibilityLabel="Ver mais mercados do Google"
+                  className="mt-1 flex-row items-center justify-center gap-2 rounded-full border-2 border-outline-200 py-3.5"
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="logo-google" size={16} color={colors.icon} />
+                  <Text className="text-sm font-bold text-typography-700">
+                    Ver mais mercados do Google
+                  </Text>
+                </TouchableOpacity>
+              ) : !isSearching && googleEnabled && isLoadingPlaces ? (
+                <View className="items-center py-4">
+                  <ActivityIndicator size="small" color={colors.primary} />
+                </View>
+              ) : !isSearching && hasNextPage ? (
                 <TouchableOpacity
                   onPress={() => fetchNextPage()}
                   disabled={isFetchingNextPage}
