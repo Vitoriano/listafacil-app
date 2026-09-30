@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
-        "backgroundColor": "#EA1D2C"
+        "backgroundColor": "#EA1D2C",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "package": "br.com.nataldev.listafacil",
       "permissions": [
