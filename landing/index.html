@@ -3,21 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Lista Fácil: escaneie o código de barras, compare preços dos mercados perto de você e monte a compra mais barata antes de sair de casa.">
-<meta property="og:title" content="Lista Fácil">
-<meta property="og:description" content="Sua lista de compras sabe onde está mais barato.">
+<title>Lista Fácil · Descubra em qual mercado sua lista sai mais barata</title>
+<meta name="description" content="Monte a lista, escaneie o código de barras e compare o preço de cada item nos mercados perto de você. Grátis, sem anúncios. Disponível na Google Play.">
+<link rel="canonical" href="https://vitoriano.github.io/listafacil-app/">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="Lista Fácil">
+<meta property="og:title" content="Lista Fácil · A lista que sabe onde está mais barato">
+<meta property="og:description" content="Escaneie, compare os mercados perto de você e compre com o total na mão. Grátis na Google Play.">
+<meta property="og:image" content="https://vitoriano.github.io/listafacil-app/assets/og-banner.jpg">
+<meta property="og:image:width" content="1440">
+<meta property="og:image:height" content="810">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#EA1D2C">
+<link rel="icon" type="image/png" sizes="64x64" href="assets/favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <!--
-  Landing page estática do Lista Fácil.
-  Captura de leads: defina LEAD_ENDPOINT no <script> ao final (ex.: https://api.seudominio.com/v1/leads
-  ou um formulário do Formspree). Sem endpoint, o formulário roda em modo demonstração.
+  Landing page estática do Lista Fácil (publicada via GitHub Pages).
+  - PLAY_URL: link da ficha na Google Play (também usado no JSON-LD).
+  - LEAD_ENDPOINT: destino do formulário "avise-me" (iOS/novidades). Vazio = modo demonstração.
+  Ambos ficam no <script> ao final do arquivo.
 -->
-<title>Lista Fácil</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="preload" as="image" href="assets/hero-bg.jpg">
+<link rel="preload" as="image" href="assets/mockup-home.png">
 <style>
+  /* Layout: hero vermelho da marca com o celular real; seções claras alternadas com uma faixa escura de recursos. */
   :root {
     color-scheme: light;
     --tomate: #EA1D2C;
@@ -57,8 +71,6 @@
       --linha: #3A2E33;
       --verde: #3ECF7E;
       --verde-suave: #143024;
-      --etiqueta: #FFD84D;
-      --etiqueta-tinta: #3A2E00;
       --sombra: 0 18px 50px -24px rgba(0, 0, 0, .7);
     }
   }
@@ -76,8 +88,6 @@
     --linha: #3A2E33;
     --verde: #3ECF7E;
     --verde-suave: #143024;
-    --etiqueta: #FFD84D;
-    --etiqueta-tinta: #3A2E00;
     --sombra: 0 18px 50px -24px rgba(0, 0, 0, .7);
   }
 
@@ -93,9 +103,10 @@
     -webkit-font-smoothing: antialiased;
   }
   img, svg { max-width: 100%; }
+  img { height: auto; display: block; }
   a { color: inherit; }
   h1, h2, h3 { font-family: var(--display); line-height: 1.05; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
-  h1 { font-size: clamp(2.4rem, 6vw, 4.4rem); font-weight: 800; }
+  h1 { font-size: clamp(2.5rem, 6.2vw, 4.6rem); font-weight: 800; }
   h2 { font-size: clamp(1.8rem, 3.6vw, 2.7rem); font-weight: 800; }
   h3 { font-size: 1.25rem; font-weight: 700; }
   p { margin: 0; }
@@ -106,23 +117,33 @@
   }
   .eyebrow::before { content: ""; width: 22px; height: 3px; background: var(--tomate); border-radius: 2px; }
   .lead { font-size: 1.15rem; color: var(--tinta-2); max-width: 34em; }
-  .muted { color: var(--mudo); }
   .num { font-variant-numeric: tabular-nums; }
   section { padding-block: clamp(56px, 9vw, 112px); }
   .sec-head { display: grid; gap: 14px; max-width: 42em; margin-bottom: clamp(32px, 5vw, 56px); }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-  /* Botões e formulário */
+  /* Botões */
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 10px;
     font: 600 1rem var(--corpo); padding: 14px 22px; border-radius: 999px; border: 2px solid transparent;
     cursor: pointer; text-decoration: none; transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
     white-space: nowrap;
   }
-  .btn:focus-visible, input:focus-visible, summary:focus-visible, .chk:focus-within { outline: 3px solid var(--etiqueta); outline-offset: 3px; }
+  .btn:focus-visible, input:focus-visible, summary:focus-visible, .chk:focus-within, a:focus-visible { outline: 3px solid var(--etiqueta); outline-offset: 3px; }
   .btn-primary { background: var(--tomate); color: #fff; box-shadow: 0 10px 24px -12px rgba(234, 29, 44, .7); }
   .btn-primary:hover { background: var(--tomate-escuro); transform: translateY(-1px); }
   .btn-ghost { background: transparent; color: var(--tinta); border-color: var(--linha); }
   .btn-ghost:hover { border-color: var(--tinta); }
+  .btn-play { background: #fff; color: #C4121F; padding: 14px 24px; box-shadow: 0 14px 30px -14px rgba(0,0,0,.5); }
+  .btn-play:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 18px 34px -14px rgba(0,0,0,.55); }
+  .btn-play svg { flex: none; }
+  .btn-play b { display: block; font-size: 1rem; line-height: 1.1; }
+  .btn-play small { display: block; font-size: .7rem; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; opacity: .75; line-height: 1.1; }
+  .btn-play span { text-align: left; }
+  .btn-outline-light { background: transparent; color: #fff; border-color: rgba(255,255,255,.45); }
+  .btn-outline-light:hover { border-color: #fff; }
+
+  /* Formulário "avise-me" */
   .lead-form { display: grid; gap: 10px; max-width: 520px; }
   .lead-form .row { display: flex; gap: 10px; flex-wrap: wrap; }
   .lead-form input {
@@ -141,24 +162,65 @@
   .nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--papel) 88%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--linha); }
   .nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 68px; }
   .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--display); font-weight: 800; font-size: 1.2rem; }
-  .brand .mark { width: 36px; height: 36px; border-radius: 9px; background: var(--tomate); display: grid; place-items: center; }
+  .brand img { width: 36px; height: 36px; border-radius: 9px; }
   .nav-links { display: flex; gap: 22px; font-weight: 500; font-size: .95rem; }
   .nav-links a { text-decoration: none; color: var(--tinta-2); }
   .nav-links a:hover { color: var(--tinta); }
+  .nav .btn { padding: 11px 18px; font-size: .95rem; }
   @media (max-width: 760px) { .nav-links { display: none; } }
 
-  /* Hero */
-  .hero { padding-block: clamp(40px, 7vw, 96px) clamp(48px, 7vw, 96px); overflow: hidden; }
-  .hero .wrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(32px, 6vw, 72px); align-items: center; }
-  .hero-copy { display: grid; gap: 22px; }
-  .hero h1 em { font-style: normal; color: var(--tomate); }
-  .proof { display: flex; flex-wrap: wrap; gap: 18px 28px; font-size: .9rem; color: var(--mudo); }
+  /* Hero: composição do banner (fundo vermelho com ondas, texto à esquerda, celular inclinado saindo pela direita) */
+  .hero { background: #EA1D2C url(assets/hero-bg.jpg) center / cover no-repeat; color: #fff; padding-block: clamp(40px, 7vw, 96px) 0; overflow: hidden; position: relative; }
+  .hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(234,29,44,.97) 0%, rgba(234,29,44,.92) 40%, rgba(234,29,44,.45) 62%, rgba(234,29,44,0) 85%); pointer-events: none; }
+  .hero .wrap { position: relative; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(24px, 5vw, 64px); align-items: end; }
+  .hero-copy { display: grid; gap: 24px; padding-bottom: clamp(48px, 7vw, 96px); }
+  .hero .eyebrow { color: #fff; }
+  .hero .eyebrow::before { background: var(--etiqueta); }
+  .hero h1 { color: #fff; font-size: clamp(2.6rem, 6.6vw, 5rem); text-shadow: 0 2px 24px rgba(0,0,0,.12); }
+  .hero .lead { color: rgba(255,255,255,.9); max-width: 28em; font-size: 1.2rem; }
+  .hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .hero-ios { font-size: .9rem; color: rgba(255,255,255,.8); }
+  .hero-ios a { color: #fff; font-weight: 600; }
+  .proof { display: flex; flex-wrap: wrap; gap: 12px 24px; font-size: .9rem; color: rgba(255,255,255,.85); }
   .proof span { display: inline-flex; align-items: center; gap: 8px; }
-  .proof svg { color: var(--verde); }
-  @media (max-width: 900px) { .hero .wrap { grid-template-columns: 1fr; } }
+  .proof svg { color: var(--etiqueta); flex: none; }
+  .hero-cart { position: absolute; left: clamp(8px, 2vw, 32px); bottom: 12px; width: clamp(90px, 10vw, 150px); opacity: .28; pointer-events: none; }
+  .hero-phone { position: relative; align-self: end; justify-self: end; width: min(100%, 400px); }
+  .hero-phone .frame { margin-bottom: -22%; transform: rotate(-9deg) translateX(10%); transform-origin: 50% 100%; }
+  .hero-phone img { width: 100%; filter: drop-shadow(-24px 30px 50px rgba(0,0,0,.42)); }
+  @media (max-width: 900px) {
+    .hero .wrap { grid-template-columns: 1fr; }
+    .hero-copy { padding-bottom: 0; }
+    .hero-cart { display: none; }
+    .hero-phone { width: min(72%, 320px); justify-self: center; margin-top: 12px; }
+    .hero-phone .frame { margin-bottom: -30%; transform: rotate(-6deg) translateX(4%); }
+  }
 
-  /* Simulador de comparação */
-  .sim { background: var(--papel-2); border: 1px solid var(--linha); border-radius: 22px; box-shadow: var(--sombra); overflow: hidden; }
+  /* Faixa de confiança sob o hero */
+  .trust { background: var(--papel-2); border-bottom: 1px solid var(--linha); padding-block: 22px; }
+  .trust .wrap { display: flex; flex-wrap: wrap; gap: 14px 36px; justify-content: center; font-size: .92rem; color: var(--tinta-2); font-weight: 500; }
+  .trust span { display: inline-flex; align-items: center; gap: 8px; }
+  .trust svg { color: var(--tomate); flex: none; }
+
+  /* Como funciona */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; counter-reset: passo; }
+  .step { display: grid; gap: 14px; align-content: start; background: var(--papel-2); border: 1px solid var(--linha); border-radius: 22px; overflow: hidden; }
+  .step figure { margin: 0; background: #fff; aspect-ratio: 1 / 1; display: grid; place-items: center; overflow: hidden; }
+  .step figure img { width: 100%; height: 100%; object-fit: cover; }
+  .step .body { display: grid; gap: 10px; padding: 8px 26px 28px; }
+  .step .n { counter-increment: passo; font-family: var(--display); font-weight: 800; font-size: .9rem; letter-spacing: .1em; color: var(--tomate); }
+  .step .n::before { content: "Passo " counter(passo); }
+  .step p { color: var(--tinta-2); font-size: .98rem; }
+  @media (max-width: 860px) { .steps { grid-template-columns: 1fr; max-width: 520px; margin-inline: auto; } }
+
+  /* Simulador */
+  .simulador { background: var(--papel-2); border-block: 1px solid var(--linha); }
+  .simulador .wrap { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 64px); align-items: center; }
+  .sim-copy { display: grid; gap: 18px; }
+  .sim-copy ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; color: var(--tinta-2); }
+  .sim-copy li { display: flex; gap: 10px; align-items: start; }
+  .sim-copy li svg { color: var(--verde); flex: none; margin-top: 4px; }
+  .sim { background: var(--papel); border: 1px solid var(--linha); border-radius: 22px; box-shadow: var(--sombra); overflow: hidden; }
   .sim-top { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px dashed var(--linha); }
   .sim-top strong { font-family: var(--display); font-size: 1.05rem; }
   .tag { display: inline-block; background: var(--etiqueta); color: var(--etiqueta-tinta); font: 700 .72rem var(--corpo); letter-spacing: .08em; text-transform: uppercase; padding: 5px 9px; border-radius: 6px; }
@@ -178,30 +240,18 @@
   .sim-list .best small { display: block; color: var(--verde); font-size: .75rem; font-weight: 600; }
   .sim-list li.off { opacity: .45; }
   .sim-stores { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 12px 16px 6px; }
-  .store { border: 1.5px solid var(--linha); border-radius: 12px; padding: 10px 12px; display: grid; gap: 2px; transition: border-color .2s ease; }
-  .store small { font-size: .78rem; color: var(--mudo); }
+  .store { border: 1.5px solid var(--linha); border-radius: 12px; padding: 10px 12px; display: grid; gap: 2px; transition: border-color .2s ease; min-width: 0; }
+  .store small { font-size: .78rem; color: var(--mudo); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .store b { font-family: var(--display); font-size: 1.1rem; font-weight: 700; }
   .store.cheapest { border-color: var(--verde); background: var(--verde-suave); }
   .store.cheapest small { color: var(--verde); font-weight: 600; }
   .sim-total { margin: 8px 16px 16px; padding: 14px 16px; border-radius: 14px; background: var(--escuro); color: var(--claro); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
   .sim-total small { display: block; font-size: .78rem; opacity: .7; }
-  .sim-total b { font-family: var(--display); font-size: 1.6rem; font-weight: 800; color: var(--etiqueta); }
+  .sim-total > div { min-width: 0; }
+  .sim-total b { font-family: var(--display); font-size: 1.6rem; font-weight: 800; color: var(--etiqueta); white-space: nowrap; flex: none; }
   .sim-foot { padding: 0 20px 14px; font-size: .75rem; color: var(--mudo); }
-
-  /* Dores */
-  .pains { background: var(--papel-2); border-block: 1px solid var(--linha); }
-  .pain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .pain { padding: 26px; border-radius: var(--raio); background: var(--papel); display: grid; gap: 12px; }
-  .pain q { font-family: var(--display); font-weight: 700; font-size: 1.25rem; line-height: 1.25; quotes: "“" "”"; }
-  .pain p { color: var(--tinta-2); font-size: .98rem; }
-  @media (max-width: 860px) { .pain-grid { grid-template-columns: 1fr; } }
-
-  /* Como funciona */
-  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; counter-reset: passo; }
-  .step { display: grid; gap: 14px; padding-top: 18px; border-top: 3px solid var(--linha); position: relative; }
-  .step::before { counter-increment: passo; content: counter(passo, decimal-leading-zero); font-family: var(--display); font-weight: 800; font-size: 2.4rem; color: var(--tomate); line-height: 1; }
-  .step p { color: var(--tinta-2); }
-  @media (max-width: 860px) { .steps { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { .simulador .wrap { grid-template-columns: 1fr; } .sim-stores { grid-template-columns: 1fr 1fr 1fr; } }
+  @media (max-width: 420px) { .sim-stores { grid-template-columns: 1fr; } }
 
   /* Recursos */
   .features { background: var(--escuro); color: var(--claro); }
@@ -215,51 +265,55 @@
   @media (max-width: 960px) { .feat-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 600px) { .feat-grid { grid-template-columns: 1fr; } }
 
-  /* Perfis */
-  .profiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .profile { border: 1.5px solid var(--linha); border-radius: 18px; padding: 26px; display: grid; gap: 14px; background: var(--papel-2); }
-  .profile .who { font-family: var(--display); font-weight: 800; font-size: 1.4rem; }
-  .profile .gain { display: grid; gap: 6px; padding: 14px; border-radius: 12px; background: var(--verde-suave); color: var(--verde); font-weight: 600; font-size: .95rem; }
-  .profile .gain small { color: inherit; opacity: .8; font-weight: 500; }
-  .profile p { color: var(--tinta-2); font-size: .98rem; }
-  @media (max-width: 860px) { .profiles { grid-template-columns: 1fr; } }
+  /* Dia a dia (mockup + argumentos) */
+  .diaadia .wrap { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
+  .diaadia .phone { justify-self: center; width: min(100%, 320px); }
+  .diaadia .phone img { filter: drop-shadow(0 24px 40px rgba(33,20,23,.28)); }
+  .args { display: grid; gap: 22px; }
+  .arg { display: grid; grid-template-columns: 44px 1fr; gap: 16px; align-items: start; }
+  .arg .ico { width: 44px; height: 44px; border-radius: 12px; background: var(--tomate-suave); color: var(--tomate); display: grid; place-items: center; }
+  .arg h3 { font-size: 1.15rem; }
+  .arg p { color: var(--tinta-2); font-size: .98rem; margin-top: 4px; }
+  @media (max-width: 860px) { .diaadia .wrap { grid-template-columns: 1fr; } .diaadia .phone { order: 2; width: min(70%, 280px); } }
 
   /* Comunidade */
+  .community { background: var(--papel-2); border-block: 1px solid var(--linha); }
   .community .wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: clamp(28px, 5vw, 64px); align-items: center; }
-  .barcode { display: flex; gap: 3px; align-items: end; height: 120px; padding: 20px; border-radius: 18px; background: var(--papel-2); border: 1px solid var(--linha); }
+  .barcode { display: flex; gap: 3px; align-items: end; height: 120px; padding: 20px; border-radius: 18px; background: var(--papel); border: 1px solid var(--linha); }
   .barcode i { display: block; background: var(--tinta); height: 100%; border-radius: 1px; }
   .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
-  .stat { padding: 16px; border-radius: 12px; background: var(--papel-2); border: 1px solid var(--linha); }
-  .stat b { display: block; font-family: var(--display); font-size: 1.6rem; font-weight: 800; color: var(--tomate); }
+  .stat { padding: 16px; border-radius: 12px; background: var(--papel); border: 1px solid var(--linha); }
+  .stat b { display: block; font-family: var(--display); font-size: 1.5rem; font-weight: 800; color: var(--tomate); }
   .stat small { color: var(--mudo); }
   @media (max-width: 860px) { .community .wrap { grid-template-columns: 1fr; } }
+  @media (max-width: 420px) { .stats { grid-template-columns: 1fr; } }
 
   /* FAQ */
-  .faq { background: var(--papel-2); border-block: 1px solid var(--linha); }
   .faq-list { display: grid; gap: 0; max-width: 760px; border-top: 1px solid var(--linha); }
   details { border-bottom: 1px solid var(--linha); }
   summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px 4px; font-family: var(--display); font-weight: 700; font-size: 1.1rem; }
   summary::-webkit-details-marker { display: none; }
-  summary::after { content: "+"; font-size: 1.6rem; color: var(--tomate); font-weight: 500; transition: transform .2s ease; }
+  summary::after { content: "+"; font-size: 1.6rem; color: var(--tomate); font-weight: 500; transition: transform .2s ease; flex: none; }
   details[open] summary::after { transform: rotate(45deg); }
   details p { padding: 0 4px 22px; color: var(--tinta-2); max-width: 62ch; }
 
   /* CTA final */
-  .cta-final { background: #EA1D2C; color: #fff; }
-  .cta-final .wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: clamp(28px, 5vw, 64px); align-items: center; }
+  .cta-final { background: #EA1D2C; color: #fff; position: relative; overflow: hidden; }
+  .cta-final::before { content: ""; position: absolute; inset: 0; background: radial-gradient(50% 70% at 100% 100%, rgba(255,255,255,.12), transparent 60%); pointer-events: none; }
+  .cta-final .wrap { position: relative; display: grid; grid-template-columns: 1.1fr .9fr; gap: clamp(28px, 5vw, 64px); align-items: center; }
   .cta-final h2 { color: #fff; }
-  .cta-final .lead { color: rgba(255, 255, 255, .85); }
+  .cta-final .lead { color: rgba(255, 255, 255, .88); }
+  .cta-final .eyebrow { color: #fff; }
+  .cta-final .eyebrow::before { background: var(--etiqueta); }
+  .cta-box { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); border-radius: 22px; padding: 26px; display: grid; gap: 14px; backdrop-filter: blur(6px); }
+  .cta-box h3 { color: #fff; font-size: 1.2rem; }
+  .cta-box p { color: rgba(255,255,255,.85); font-size: .95rem; }
   .cta-final .lead-form input { border-color: transparent; background: #fff; color: var(--escuro); }
-  .cta-final .btn-primary { background: var(--escuro); color: var(--claro); box-shadow: none; }
-  .cta-final .btn-primary:hover { background: #000; }
+  .cta-final .lead-form .btn-primary { background: var(--escuro); color: var(--claro); box-shadow: none; }
+  .cta-final .lead-form .btn-primary:hover { background: #000; }
   .cta-final .fine { color: rgba(255, 255, 255, .8); }
   .cta-final .ok { background: rgba(255, 255, 255, .18); color: #fff; }
   .cta-final .err { color: #fff; }
-  .cta-final .eyebrow { color: var(--etiqueta); }
-  .cta-final .eyebrow::before { background: var(--etiqueta); }
-  .checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; font-weight: 500; }
-  .checklist li { display: flex; gap: 12px; align-items: start; }
-  .checklist svg { flex: none; margin-top: 3px; }
   @media (max-width: 860px) { .cta-final .wrap { grid-template-columns: 1fr; } }
 
   /* Rodapé */
@@ -286,18 +340,16 @@
 <header class="nav">
   <div class="wrap">
     <a class="brand" href="#topo" aria-label="Lista Fácil, início">
-      <span class="mark" aria-hidden="true">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16v12H4z"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/><path d="M15 15l-5-5M10 10h4M10 10v4"/></svg>
-      </span>
+      <img src="assets/icon-192.png" alt="" width="36" height="36">
       Lista Fácil
     </a>
     <nav class="nav-links" aria-label="Seções">
       <a href="#como-funciona">Como funciona</a>
+      <a href="#simulador">Faça a conta</a>
       <a href="#recursos">Recursos</a>
-      <a href="#para-quem">Para quem</a>
       <a href="#faq">Dúvidas</a>
     </nav>
-    <a class="btn btn-primary" href="#cadastro">Quero testar</a>
+    <a class="btn btn-primary" href="#baixar">Baixar grátis</a>
   </div>
 </header>
 
@@ -306,25 +358,89 @@
 <section class="hero">
   <div class="wrap">
     <div class="hero-copy">
-      <span class="eyebrow">Fase de testes · Android e iOS</span>
-      <h1>Sua lista de compras sabe <em>onde está mais barato.</em></h1>
-      <p class="lead">Escaneie o código de barras, compare os preços dos mercados perto de você e monte a compra mais barata antes de sair de casa. Quem compara antes de comprar economiza até 25% no mês.</p>
-
-      <form class="lead-form" data-lead-form novalidate>
-        <div class="row">
-          <input id="email-hero" type="email" name="email" placeholder="Seu melhor e-mail" aria-label="E-mail" autocomplete="email" required>
-          <button class="btn btn-primary" type="submit">Quero testar primeiro</button>
-        </div>
-        <p class="fine">Grátis. Sem cartão. Você recebe o convite assim que abrir a próxima leva de testes.</p>
-        <p class="err" role="alert">Confira o e-mail e tente de novo.</p>
-        <p class="ok" role="status">Pronto! Seu lugar na fila está garantido. Fique de olho na caixa de entrada.</p>
-      </form>
-
-      <div class="proof">
-        <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg> Preços de quem está no mercado agora</span>
-        <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg> Listas compartilhadas com a família</span>
-        <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg> Feito para mercados brasileiros</span>
+      <span class="eyebrow">Grátis na Google Play · iPhone em breve</span>
+      <h1>Economize nas suas compras</h1>
+      <p class="lead">Monte sua lista, escaneie os produtos e compare os preços entre os mercados da sua cidade. Antes de sair de casa, com o total na mão.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-play" data-play-link href="https://play.google.com/store/apps/details?id=br.com.nataldev.listafacil" rel="noopener">
+          <svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true"><path d="M1.2 1.1C.8 1.5.6 2.1.6 2.9v22.2c0 .8.2 1.4.6 1.8l.1.1L14 14.4v-.3L1.3 1z" fill="#00A0FF"/><path d="M18.2 18.6 14 14.4v-.3l4.2-4.2.1.1 5 2.8c1.4.8 1.4 2.1 0 2.9l-5 2.8-.1.1z" fill="#FFBC00"/><path d="M18.3 18.5 14 14.2 1.2 27c.5.5 1.2.5 2.1.1l15-8.6" fill="#FF3A44"/><path d="M18.3 9.9 3.3 1.4C2.4.9 1.7.9 1.2 1.4L14 14.2l4.3-4.3z" fill="#32A071"/></svg>
+          <span><small>Baixar na</small><b>Google Play</b></span>
+        </a>
+        <a class="btn btn-outline-light" href="#como-funciona">Ver como funciona</a>
       </div>
+      <p class="hero-ios">Usa iPhone? <a href="#baixar">Deixe seu e-mail</a> e a gente avisa quando chegar na App Store.</p>
+      <div class="proof">
+        <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Sem anúncios</span>
+        <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Sem cartão de crédito</span>
+        <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Preços de mercados brasileiros</span>
+      </div>
+    </div>
+
+    <div class="hero-phone">
+      <div class="frame">
+        <img src="assets/mockup-home.png" alt="Tela inicial do Lista Fácil mostrando o painel Sua Economia, atalhos para carrinho e scanner, compras recentes e listas" width="779" height="1640" fetchpriority="high">
+      </div>
+    </div>
+  </div>
+  <svg class="hero-cart" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 3h2.6l2.3 11.5h11.6L21.5 6.5H6"/><path d="M8 9.5h11.5M8.6 12h9.8"/><circle cx="9" cy="19" r="1.5"/><circle cx="17.5" cy="19" r="1.5"/></svg>
+</section>
+
+<div class="trust" aria-label="Resumo">
+  <div class="wrap">
+    <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 8v8M11 8v8M15 8v8M18 8v8"/></svg> Scanner de código de barras</span>
+    <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Mercados perto de você</span>
+    <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.5a5 5 0 0 1 6 5"/></svg> Listas compartilhadas com a família</span>
+    <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-6 4 3 5-8 4 5"/><path d="M3 21h18"/></svg> Economia registrada mês a mês</span>
+  </div>
+</div>
+
+<section id="como-funciona">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Como funciona</span>
+      <h2>Três passos entre a lista e o troco.</h2>
+      <p class="lead">Você continua comprando do seu jeito. O app só coloca a informação que faltava na sua mão.</p>
+    </div>
+    <div class="steps">
+      <article class="step">
+        <figure><img src="assets/ilustracao-scanner.jpg" alt="Mão segurando um celular que escaneia o código de barras de uma caixa de leite" loading="lazy" width="1000" height="1000"></figure>
+        <div class="body">
+          <span class="n"></span>
+          <h3>Escaneie e monte a lista</h3>
+          <p>Aponte a câmera para o código de barras. O produto entra na lista com nome, marca e preço estimado. Nada de digitar.</p>
+        </div>
+      </article>
+      <article class="step">
+        <figure><img src="assets/ilustracao-comparar.jpg" alt="Dois mercados lado a lado, um com etiqueta verde de menor preço e outro com etiqueta vermelha de preço alto" loading="lazy" width="1000" height="1000"></figure>
+        <div class="body">
+          <span class="n"></span>
+          <h3>Compare os mercados perto de você</h3>
+          <p>Com um toque, o app calcula sua lista inteira em cada mercado da região e mostra onde ela sai mais barata e por quanto.</p>
+        </div>
+      </article>
+      <article class="step">
+        <figure><img src="assets/ilustracao-economia.jpg" alt="Celular com lista de compras marcada ao lado de um carrinho e um cofrinho recebendo moedas" loading="lazy" width="1000" height="1000"></figure>
+        <div class="body">
+          <span class="n"></span>
+          <h3>Compre com o total na mão</h3>
+          <p>No mercado, escaneie enquanto enche o carrinho. O total sobe em tempo real, os itens da lista são marcados sozinhos e a economia fica guardada.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="simulador" id="simulador">
+  <div class="wrap">
+    <div class="sim-copy">
+      <span class="eyebrow">Faça a conta</span>
+      <h2>Sete itens, três mercados. A diferença paga a gasolina e sobra.</h2>
+      <p class="lead">Desmarque os itens que você não compra e veja o total de cada mercado mudar. É exatamente o que o app faz com a sua lista, só que com preços da sua região.</p>
+      <ul>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> O app soma a lista inteira em cada mercado, não só um item.</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Mostra quanto você deixa de gastar em relação ao mercado mais caro.</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Você escolhe: tudo em um mercado só ou dividir para pagar menos.</li>
+      </ul>
     </div>
 
     <div class="sim" aria-label="Simulação de comparação de preços">
@@ -336,59 +452,12 @@
       <div class="sim-stores" id="sim-stores"></div>
       <div class="sim-total">
         <div>
-          <small>Economia dividindo entre os mercados</small>
+          <small>Economia comprando cada item no mais barato</small>
           <span class="num" id="sim-vs">vs. comprar tudo no mais caro</span>
         </div>
         <b class="num" id="sim-saving">R$ 0,00</b>
       </div>
-      <p class="sim-foot">Desmarque itens e veja os totais mudarem. Valores ilustrativos, baseados em preços típicos de 2025.</p>
-    </div>
-  </div>
-</section>
-
-<section class="pains">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow">Você se reconhece?</span>
-      <h2>Comparar preço não deveria ser um segundo emprego.</h2>
-    </div>
-    <div class="pain-grid">
-      <article class="pain">
-        <q>Passo o domingo rodando três mercados e ainda não sei se paguei o menor preço.</q>
-        <p>Quando termina de comparar, a promoção já acabou e a manhã foi embora. O Lista Fácil compara em segundos, no sofá.</p>
-      </article>
-      <article class="pain">
-        <q>Meu orçamento é apertado. Pagar R$ 20 a mais no arroz bagunça o mês inteiro.</q>
-        <p>Sem carro, você precisa acertar o mercado de primeira. O app mostra qual vale a viagem antes de sair.</p>
-      </article>
-      <article class="pain">
-        <q>Não tenho tempo de pesquisar, mas odeio a sensação de estar pagando caro.</q>
-        <p>Você não muda sua rotina. Só passa a saber quando um item está muito acima do preço da região.</p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section id="como-funciona">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow">Como funciona</span>
-      <h2>Três passos entre a lista e a economia.</h2>
-      <p class="lead">Do jeito que você já faz compras, só que com a informação que faltava.</p>
-    </div>
-    <div class="steps">
-      <article class="step">
-        <h3>Monte a lista e escaneie</h3>
-        <p>Aponte a câmera para o código de barras. O app reconhece o produto, a marca e a foto na hora. Sem digitar nome de produto.</p>
-      </article>
-      <article class="step">
-        <h3>Compare os mercados perto de você</h3>
-        <p>Veja o preço de cada item em cada mercado da sua região, com histórico para saber se aquela "promoção" é promoção mesmo.</p>
-      </article>
-      <article class="step">
-        <h3>Otimize e compre com o total na mão</h3>
-        <p>O otimizador divide a lista entre os mercados que compensam. No caixa, o carrinho soma tudo ao vivo e registra sua economia.</p>
-      </article>
+      <p class="sim-foot">Valores ilustrativos, baseados em preços típicos de 2025. No app, os preços vêm dos mercados da sua região.</p>
     </div>
   </div>
 </section>
@@ -398,65 +467,76 @@
     <div class="sec-head">
       <span class="eyebrow">O que vem no app</span>
       <h2>Tudo que uma compra de mercado precisa. Nada que ela não precisa.</h2>
-      <p class="lead">Cada recurso nasceu de um problema real de quem faz compras toda semana.</p>
+      <p class="lead">Cada recurso resolve um problema de quem faz compras toda semana.</p>
     </div>
     <div class="feat-grid">
       <article class="feat">
-        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 8v8M11 8v8M15 8v8M18 8v8"/></svg></div>
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 8v8M11 8v8M15 8v8M18 8v8"/></svg></div>
         <h3>Scanner de código de barras</h3>
-        <p>Reconhece o produto e preenche nome, marca e imagem automaticamente. Funciona no corredor do mercado, com a mão cheia.</p>
+        <p>Reconhece o produto e preenche nome, marca e foto sozinho. Funciona no corredor do mercado, com a mão cheia.</p>
       </article>
       <article class="feat">
-        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h12M3 18h6"/><path d="m16 16 2 2 4-4"/></svg></div>
-        <h3>Otimizador de lista</h3>
-        <p>Diz em qual mercado comprar cada item, ou se vale concentrar tudo em um só. Você escolhe entre menor preço e menos deslocamento.</p>
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h12M3 18h6"/><path d="m16 16 2 2 4-4"/></svg></div>
+        <h3>Onde comprar mais barato</h3>
+        <p>Compara a lista inteira entre os mercados da região e diz em qual ela sai mais em conta. Ou em quais, se dividir compensar.</p>
       </article>
       <article class="feat">
-        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.5a5 5 0 0 1 6 5"/></svg></div>
-        <h3>Listas compartilhadas em tempo real</h3>
-        <p>Compartilhe por QR code ou link. Quem marcou um item, todo mundo vê na hora. Acabou o "você já pegou o leite?".</p>
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.5a5 5 0 0 1 6 5"/></svg></div>
+        <h3>Listas compartilhadas</h3>
+        <p>Convide quem mora com você por e-mail ou QR Code. Todo mundo adiciona e marca itens, e a lista atualiza na hora em cada celular.</p>
       </article>
       <article class="feat">
-        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.5 11h11L21 7H6"/><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/></svg></div>
-        <h3>Carrinho com total ao vivo</h3>
-        <p>Escaneie enquanto coloca no carrinho e veja o total antes do caixa. Sem surpresa na hora de passar o cartão.</p>
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.5 11h11L21 7H6"/><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/></svg></div>
+        <h3>Modo compra com total ao vivo</h3>
+        <p>Escolha o mercado, escaneie enquanto coloca no carrinho e veja o total subir. Se vinculou uma lista, o app avisa o que ainda falta.</p>
       </article>
       <article class="feat">
-        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 3 5-8 4 5"/><path d="M3 21h18"/></svg></div>
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-6 4 3 5-8 4 5"/><path d="M3 21h18"/></svg></div>
         <h3>Histórico de preços</h3>
-        <p>Cada produto guarda o preço por mercado ao longo do tempo. Você descobre se a oferta é real ou só a etiqueta trocada.</p>
+        <p>Cada produto guarda o preço por mercado ao longo do tempo. Você descobre se a oferta é real ou só a etiqueta que mudou.</p>
       </article>
       <article class="feat">
-        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
         <h3>Mercados perto de você</h3>
-        <p>Com a localização, o app só compara mercados que você consegue ir de verdade. Preço de bairro, não média nacional.</p>
+        <p>Pela localização, o app encontra os supermercados mais próximos, inclusive os que ainda não estão cadastrados. Preço de bairro, não média nacional.</p>
       </article>
     </div>
   </div>
 </section>
 
-<section id="para-quem">
+<section class="diaadia" id="dia-a-dia">
   <div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow">Para quem é</span>
-      <h2>Três jeitos de fazer compras. Um app que serve aos três.</h2>
+    <div class="phone">
+      <img src="assets/mockup-login.png" alt="Tela de entrada do Lista Fácil com o logo, campos de e-mail e senha e o botão Entrar" loading="lazy" width="779" height="1640">
     </div>
-    <div class="profiles">
-      <article class="profile">
-        <div class="who">Quem organiza a casa</div>
-        <p>Faz a lista da semana, compra duas vezes por mês para a família e quer saber se o esforço de comparar está valendo a pena.</p>
-        <div class="gain">Compra da semana montada em minutos<small>Lista compartilhada com quem mora junto e relatório mensal de economia.</small></div>
-      </article>
-      <article class="profile">
-        <div class="who">Quem conta cada real</div>
-        <p>Orçamento fixo no mês, sem carro, e o mercado errado custa caro. Precisa acertar a escolha na primeira ida.</p>
-        <div class="gain">Sabe qual mercado vale a viagem<small>Otimizador por preço e distância, com total previsto antes de sair.</small></div>
-      </article>
-      <article class="profile">
-        <div class="who">Quem não tem tempo</div>
-        <p>Compra no mercado de sempre e não quer virar caçador de promoção. Só não quer pagar caro sem saber.</p>
-        <div class="gain">Alerta quando está pagando demais<small>Comparação rápida dos itens caros, como carne e café, sem mudar a rotina.</small></div>
-      </article>
+    <div>
+      <div class="sec-head" style="margin-bottom:28px">
+        <span class="eyebrow">Feito para o dia a dia</span>
+        <h2>Pensado para o corredor do mercado, não para a mesa do escritório.</h2>
+      </div>
+      <div class="args">
+        <div class="arg">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v6M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-5.9-2.5L3 15.4a2 2 0 0 1 3-2.6L8 15"/></svg></div>
+          <div>
+            <h3>Funciona com uma mão só</h3>
+            <p>As ações principais ficam na parte de baixo da tela, ao alcance do polegar. A outra mão fica livre para o carrinho.</p>
+          </div>
+        </div>
+        <div class="arg">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></div>
+          <div>
+            <h3>Retoma de onde parou</h3>
+            <p>Fechou o app no meio da compra? Ao abrir de novo, o carrinho está lá, com tudo que você já escaneou.</p>
+          </div>
+        </div>
+        <div class="arg">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+          <div>
+            <h3>Grátis, sem anúncios, sem cartão</h3>
+            <p>Conta criada em segundos com e-mail e senha. Seus dados ficam com você e nunca são vendidos.</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -464,16 +544,16 @@
 <section class="community">
   <div class="wrap">
     <div>
-      <span class="eyebrow">Comunidade</span>
+      <span class="eyebrow">De onde vêm os preços</span>
       <h2 style="margin-top:14px">Cada preço registrado ajuda a próxima família.</h2>
-      <p class="lead" style="margin-top:16px">Os preços vêm de quem está no mercado agora, não de uma tabela antiga. Você registra um preço em 3 segundos e recebe centenas em troca. Preços recentes valem mais e registros repetidos confirmam uns aos outros.</p>
+      <p class="lead" style="margin-top:16px">Os preços vêm de quem está no mercado agora, não de uma tabela antiga. Você registra um preço em segundos, ao escanear, e recebe centenas em troca. Registros recentes pesam mais, valores fora do padrão são sinalizados e você sempre vê a data do último registro.</p>
     </div>
     <div>
       <div class="barcode" aria-hidden="true" id="barcode"></div>
       <div class="stats">
         <div class="stat"><b class="num">3 s</b><small>para registrar um preço</small></div>
-        <div class="stat"><b class="num">até 25%</b><small>de economia no mês</small></div>
         <div class="stat"><b class="num">R$ 0</b><small>para usar, sempre</small></div>
+        <div class="stat"><b class="num">0</b><small>anúncios no app</small></div>
       </div>
     </div>
   </div>
@@ -483,58 +563,64 @@
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow">Dúvidas frequentes</span>
-      <h2>O que as pessoas perguntam antes de entrar.</h2>
+      <h2>O que as pessoas perguntam antes de baixar.</h2>
     </div>
     <div class="faq-list">
       <details open>
-        <summary>O Lista Fácil é grátis?</summary>
-        <p>Sim. Lista, scanner, comparação e otimizador são e continuarão gratuitos. No futuro, recursos extras para quem quiser mais poderão ser pagos, mas o básico não muda.</p>
+        <summary>O Lista Fácil é grátis mesmo?</summary>
+        <p>Sim. Lista, scanner, comparação de preços e histórico são gratuitos e sem anúncios. Não pedimos cartão. Se um dia existirem recursos extras pagos, o básico continua grátis.</p>
       </details>
       <details>
         <summary>De onde vêm os preços? Dá para confiar?</summary>
-        <p>Da comunidade: cada pessoa registra o preço que viu na gôndola. Registros recentes pesam mais, valores fora do padrão são sinalizados e preços repetidos por várias pessoas ganham confiança. Você sempre vê a data do último registro.</p>
+        <p>Da comunidade: cada pessoa registra o preço que viu na gôndola ao escanear. Registros recentes pesam mais, valores fora do padrão são sinalizados e preços confirmados por várias pessoas ganham confiança. Você sempre vê a data do último registro.</p>
       </details>
       <details>
         <summary>Funciona na minha cidade?</summary>
-        <p>O app funciona em qualquer lugar do Brasil. A comparação fica boa à medida que a comunidade da sua região cresce, por isso estamos começando pelas capitais e regiões metropolitanas. Cadastre seu e-mail e a gente avisa quando sua região estiver ativa.</p>
+        <p>O app funciona em qualquer lugar do Brasil e encontra os mercados perto de você pela localização, mesmo os que ainda não têm preços cadastrados. A comparação fica melhor conforme a comunidade da sua região cresce. Quanto antes você começar, mais rápido ela cresce.</p>
       </details>
       <details>
         <summary>Preciso escanear tudo que compro?</summary>
         <p>Não. Escaneie o que quiser comparar. Muita gente começa pelos itens mais caros da lista, como carne, café, leite e fralda, que é onde a diferença entre mercados mais pesa.</p>
       </details>
       <details>
-        <summary>Quando eu recebo o convite?</summary>
-        <p>Os convites saem em levas, primeiro para Android e depois iOS. Quem se cadastra antes entra antes. Você recebe um e-mail com o link de instalação e um canal direto para mandar sugestões.</p>
+        <summary>Tem para iPhone?</summary>
+        <p>Ainda não. Hoje o app está na Google Play. A versão para iOS está em desenvolvimento. Deixe seu e-mail no fim da página e a gente avisa no dia em que ela entrar na App Store.</p>
+      </details>
+      <details>
+        <summary>Quais permissões o app pede?</summary>
+        <p>Câmera, para ler códigos de barras e QR Codes de convite. Localização, para encontrar os mercados perto de você, usada só enquanto o app está aberto. Nada é vendido nem compartilhado com anunciantes.</p>
       </details>
     </div>
   </div>
 </section>
 
-<section class="cta-final" id="cadastro">
+<section class="cta-final" id="baixar">
   <div class="wrap">
     <div style="display:grid;gap:18px">
-      <span class="eyebrow">Vagas limitadas na fase de testes</span>
-      <h2>Entre antes. Economize antes.</h2>
-      <p class="lead">Quem testa primeiro ajuda a definir o app e recebe os novos recursos antes de todo mundo.</p>
+      <span class="eyebrow">Comece na próxima compra</span>
+      <h2>Baixe grátis e descubra quanto dá para economizar.</h2>
+      <p class="lead">Crie a primeira lista em um minuto. Na próxima ida ao mercado, você já sabe onde sua compra sai mais barata.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-play" data-play-link href="https://play.google.com/store/apps/details?id=br.com.nataldev.listafacil" rel="noopener">
+          <svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true"><path d="M1.2 1.1C.8 1.5.6 2.1.6 2.9v22.2c0 .8.2 1.4.6 1.8l.1.1L14 14.4v-.3L1.3 1z" fill="#00A0FF"/><path d="M18.2 18.6 14 14.4v-.3l4.2-4.2.1.1 5 2.8c1.4.8 1.4 2.1 0 2.9l-5 2.8-.1.1z" fill="#FFBC00"/><path d="M18.3 18.5 14 14.2 1.2 27c.5.5 1.2.5 2.1.1l15-8.6" fill="#FF3A44"/><path d="M18.3 9.9 3.3 1.4C2.4.9 1.7.9 1.2 1.4L14 14.2l4.3-4.3z" fill="#32A071"/></svg>
+          <span><small>Disponível na</small><b>Google Play</b></span>
+        </a>
+      </div>
+      <p class="hero-ios">Android · Grátis · Sem anúncios · Sem cartão</p>
+    </div>
+    <div class="cta-box">
+      <h3>Usa iPhone?</h3>
+      <p>A versão para iOS está a caminho. Deixe seu e-mail e você recebe o link no dia em que ela entrar na App Store.</p>
       <form class="lead-form" data-lead-form novalidate>
         <div class="row">
-          <input id="email-final" type="email" name="email" placeholder="Seu melhor e-mail" aria-label="E-mail" autocomplete="email" required>
-          <input id="cidade-final" type="text" name="cidade" placeholder="Sua cidade (opcional)" aria-label="Cidade" autocomplete="address-level2">
+          <input id="email-ios" type="email" name="email" placeholder="Seu melhor e-mail" aria-label="E-mail" autocomplete="email" required>
+          <button class="btn btn-primary" type="submit">Me avise</button>
         </div>
-        <div class="row">
-          <button class="btn btn-primary" type="submit">Garantir meu convite</button>
-        </div>
-        <p class="fine">Sem spam. Só o convite e, no máximo, um e-mail por mês com novidades.</p>
+        <p class="fine">Só o aviso do lançamento. Sem spam, sem newsletter semanal.</p>
         <p class="err" role="alert">Confira o e-mail e tente de novo.</p>
-        <p class="ok" role="status">Pronto! Seu lugar na fila está garantido. Fique de olho na caixa de entrada.</p>
+        <p class="ok" role="status">Anotado! Você recebe o aviso assim que o app chegar na App Store.</p>
       </form>
     </div>
-    <ul class="checklist">
-      <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg> Acesso antecipado ao app no Android e depois no iOS</li>
-      <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg> Canal direto com o time para pedir recursos</li>
-      <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg> Sua região priorizada na cobertura de preços</li>
-      <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg> Grátis agora e grátis depois do lançamento</li>
-    </ul>
   </div>
 </section>
 
@@ -543,9 +629,7 @@
 <footer>
   <div class="wrap">
     <a class="brand" href="#topo" style="font-size:1rem">
-      <span class="mark" aria-hidden="true" style="width:28px;height:28px;border-radius:7px">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16v12H4z"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/><path d="M15 15l-5-5M10 10h4M10 10v4"/></svg>
-      </span>
+      <img src="assets/icon-192.png" alt="" width="28" height="28" style="width:28px;height:28px;border-radius:7px">
       Lista Fácil
     </a>
     <nav aria-label="Rodapé">
@@ -556,34 +640,52 @@
       <a href="termos.html">Termos</a>
       <a href="mailto:contato@listafacil.app">Contato</a>
     </nav>
-    <span>Feito no Brasil · Seus dados ficam com você, nunca são vendidos.</span>
+    <span>Feito em Natal, RN · Seus dados ficam com você, nunca são vendidos.</span>
   </div>
 </footer>
 
 <div class="sticky-cta" id="sticky-cta">
-  <a class="btn btn-primary" href="#cadastro">Quero testar primeiro</a>
+  <a class="btn btn-primary" data-play-link href="https://play.google.com/store/apps/details?id=br.com.nataldev.listafacil" rel="noopener">Baixar grátis na Google Play</a>
 </div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MobileApplication",
+  "name": "Lista Fácil",
+  "operatingSystem": "ANDROID",
+  "applicationCategory": "ShoppingApplication",
+  "inLanguage": "pt-BR",
+  "description": "Monte a lista, escaneie o código de barras e compare o preço de cada item nos mercados perto de você.",
+  "installUrl": "https://play.google.com/store/apps/details?id=br.com.nataldev.listafacil",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" }
+}
+</script>
 
 <script>
 (function () {
-  // ---- Captura de leads ---------------------------------------------------
-  // Aponte para a sua API (ex.: https://api.seudominio.com/v1/leads) ou um Formspree.
+  // ---- Configuração ---------------------------------------------------------
+  // Link da ficha na Google Play. Todos os botões com [data-play-link] usam este valor.
+  var PLAY_URL = 'https://play.google.com/store/apps/details?id=br.com.nataldev.listafacil';
+  // Destino do formulário "avise-me" (ex.: https://api.seudominio.com/v1/leads ou um Formspree).
   // Vazio = modo demonstração (mostra sucesso e guarda no navegador).
   var LEAD_ENDPOINT = '';
 
+  document.querySelectorAll('[data-play-link]').forEach(function (a) { a.href = PLAY_URL; });
+
+  // ---- Captura de e-mail (iOS / novidades) -----------------------------------
   function validEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); }
 
   document.querySelectorAll('[data-lead-form]').forEach(function (form) {
     form.addEventListener('submit', function (ev) {
       ev.preventDefault();
       form.classList.remove('error');
-      var email = (form.querySelector('input[name=email]').value || '').trim();
-      var cidadeEl = form.querySelector('input[name=cidade]');
-      var cidade = cidadeEl ? cidadeEl.value.trim() : '';
-      if (!validEmail(email)) { form.classList.add('error'); form.querySelector('input[name=email]').focus(); return; }
+      var emailEl = form.querySelector('input[name=email]');
+      var email = (emailEl.value || '').trim();
+      if (!validEmail(email)) { form.classList.add('error'); emailEl.focus(); return; }
       var btn = form.querySelector('button[type=submit]');
       btn.disabled = true; btn.textContent = 'Enviando…';
-      var payload = { email: email, cidade: cidade, origem: 'landing', quando: new Date().toISOString() };
+      var payload = { email: email, plataforma: 'ios', origem: 'landing', quando: new Date().toISOString() };
       var done = function () { form.classList.add('sent'); };
       var fail = function () { btn.disabled = false; btn.textContent = 'Tentar de novo'; form.classList.add('error'); };
       if (!LEAD_ENDPOINT) {
@@ -599,7 +701,7 @@
 
   // ---- Simulador de comparação --------------------------------------------
   // Preços ilustrativos (R$) em três mercados. A melhor combinação compra cada item no mais barato.
-  var STORES = ['Atacadão', 'Extra', 'Guanabara'];
+  var STORES = ['Atacadão', 'Nordestão', 'Carrefour'];
   var ITEMS = [
     { n: 'Arroz tipo 1', d: '5 kg', p: [24.90, 29.49, 26.99] },
     { n: 'Feijão carioca', d: '1 kg', p: [7.49, 8.99, 7.99] },
@@ -687,7 +789,7 @@
   // ---- Barra fixa no celular ------------------------------------------------
   var sticky = document.getElementById('sticky-cta');
   var hero = document.querySelector('.hero');
-  var final = document.getElementById('cadastro');
+  var final = document.getElementById('baixar');
   if (sticky && hero && final && 'IntersectionObserver' in window) {
     var heroVisible = true, finalVisible = false;
     var update = function () { sticky.classList.toggle('show', !heroVisible && !finalVisible); };
